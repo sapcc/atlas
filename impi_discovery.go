@@ -48,31 +48,35 @@ type discovery struct {
 	logger           log.Logger
 }
 
-func (d *discovery) parseServiceNodes() (*targetgroup.Group, error) {
-	tgroup := targetgroup.Group{
-		Source: "ipmi",
-		Labels: make(model.LabelSet),
-	}
-
+func (d *discovery) parseServiceNodes() ([]*targetgroup.Group, error) {
 	nodes, err := d.ironicClient.GetNodes()
-
 	if err != nil {
 		logger.Log(err.Error())
 		return nil, err
 	}
-	tgroup.Targets = make([]model.LabelSet, 0, len(nodes))
+
+	var tgroups []*targetgroup.Group
 
 	for _, node := range nodes {
+		tgroup := targetgroup.Group{
+			Source:  node.DriverInfo.IpmiAddress,
+			Labels:  make(model.LabelSet),
+			Targets: make([]model.LabelSet, 0, 1),
+		}
+
 		target := model.LabelSet{model.AddressLabel: model.LabelValue(node.DriverInfo.IpmiAddress)}
 		labels := model.LabelSet{
-			model.LabelName("job"): "impi",
+			model.LabelName("job"):          "impi",
+			model.LabelName("serial"):       model.LabelValue(node.Properties.SerialNumber),
+			model.LabelName("manufacturer"): model.LabelValue(node.Properties.Manufacturer),
+			model.LabelName("model"):        model.LabelValue(node.Properties.Model),
 		}
 		tgroup.Labels = labels
-
 		tgroup.Targets = append(tgroup.Targets, target)
+		tgroups = append(tgroups, &tgroup)
 	}
 
-	return &tgroup, nil
+	return tgroups, nil
 }
 
 // Note: create a config struct for your custom SD type here.
@@ -92,9 +96,7 @@ func newDiscovery(conf sdConfig) (*discovery, error) {
 
 func (d *discovery) Run(ctx context.Context, ch chan<- []*targetgroup.Group) {
 	for c := time.Tick(time.Duration(d.refreshInterval) * time.Second); ; {
-		var tgs []*targetgroup.Group
-		tg, err := d.parseServiceNodes()
-		tgs = append(tgs, tg)
+		tgs, err := d.parseServiceNodes()
 		if err == nil {
 			ch <- tgs
 		}
@@ -111,7 +113,7 @@ func (d *discovery) Run(ctx context.Context, ch chan<- []*targetgroup.Group) {
 func main() {
 
 	authOptions := &tokens.AuthOptions{
-		IdentityEndpoint: "https",
+		IdentityEndpoint: "https:",
 		Username:         "",
 		Password:         "",
 		DomainName:       "",
@@ -122,7 +124,7 @@ func main() {
 		},
 	}
 
-	provider, err := openstack.NewClient("https")
+	provider, err := openstack.NewClient("https:")
 	if err != nil {
 		fmt.Errorf("could not initialize openstack client: %v", err)
 	}
