@@ -64,6 +64,8 @@ type ironicNode struct {
 		CPUArchitecture string             `json:"cpu_arch"`
 		Capabilities    string             `json:"capabilities"` //e.g. "cpu_txt:true,cpu_aes:true"
 		SerialNumber    string             `json:"serial"`
+		Manufacturer    string             `json:"manufacturer"`
+		Model           string             `json:"model"`
 	} `json:"properties"`
 	DriverInfo struct {
 		IpmiPassword string `json:"ipmi_password"`
