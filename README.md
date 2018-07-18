@@ -1,3 +1,3 @@
-# impi_sd
+# ipmi_sd
 
-Custom Prometheus service discovery to get impi address of ironic nodes.
+Custom Prometheus service discovery to get ipmi address of ironic nodes.
