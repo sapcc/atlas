@@ -98,9 +98,17 @@ func (a *Adapter) writeOutput() error {
 	b, _ := json.MarshalIndent(arr, "", "    ")
 
 	config, err := rest.InClusterConfig()
+	if err != nil {
+		return err
+	}
 	clientset, err := kubernetes.NewForConfig(config)
-
+	if err != nil {
+		return err
+	}
 	configMap, err := clientset.CoreV1().ConfigMaps(a.namespace).Get(a.configMap, metav1.GetOptions{})
+	if err != nil {
+		return err
+	}
 	configMap.Data[a.output] = string(b)
 
 	level.Debug(log.With(a.logger, "component", "sd-adapter")).Log("info", fmt.Sprintf("writing targets to configmap: %s, in namespace: %s", a.configMap, a.namespace))
