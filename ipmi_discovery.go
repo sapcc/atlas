@@ -154,7 +154,7 @@ func main() {
 	if err != nil {
 		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", err)
 	}
-	sdAdapter := adapter.NewAdapter(ctx, *outputFile, "impiDiscovery", disc, "prometheus-collector", "default", logger)
+	sdAdapter := adapter.NewAdapter(ctx, *outputFile, "impiDiscovery", disc, os.Getenv("OS_PROM_CONFIGMAP_NAME"), "default", logger)
 	sdAdapter.Run()
 
 	<-ctx.Done()
