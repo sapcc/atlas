@@ -3,7 +3,7 @@ WORKDIR /src
 ADD vendor $GOPATH/src/
 ADD client_ironic.go /src/
 ADD ipmi_discovery.go /src/
-ADD adapter $GOPATH/src/github.com/sapcc/impi_sd/adapter/
+ADD adapter $GOPATH/src/github.com/sapcc/ipmi_sd/adapter/
 RUN CGO_ENABLED=0 GOOS=linux go build -a -tags netgo -ldflags '-w' -o ipmi_sd
 
 FROM quay.io/prometheus/busybox:latest
