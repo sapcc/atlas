@@ -32,7 +32,7 @@ import (
 	"github.com/gophercloud/gophercloud/openstack/identity/v3/tokens"
 	"github.com/prometheus/common/model"
 	"github.com/prometheus/prometheus/discovery/targetgroup"
-	"github.com/sapcc/impi_sd/adapter"
+	"github.com/sapcc/ipmi_sd/adapter""
 )
 
 var (
