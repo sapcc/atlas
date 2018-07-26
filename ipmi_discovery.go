@@ -33,7 +33,11 @@ import (
 	"github.com/gophercloud/gophercloud/openstack/identity/v3/tokens"
 	"github.com/prometheus/common/model"
 	"github.com/prometheus/prometheus/discovery/targetgroup"
+<<<<<<< HEAD
 	"github.com/sapcc/ipmi_sd/adapter"
+=======
+	"github.com/sapcc/ipmi_sd/adapter""
+>>>>>>> b0c75ac9f5a98c8b4ffb26f6142c1682165bff6d
 )
 
 var (
