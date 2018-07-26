@@ -23,6 +23,7 @@ import (
 	"context"
 	"flag"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/go-kit/kit/log"
@@ -32,12 +33,13 @@ import (
 	"github.com/gophercloud/gophercloud/openstack/identity/v3/tokens"
 	"github.com/prometheus/common/model"
 	"github.com/prometheus/prometheus/discovery/targetgroup"
-	"github.com/sapcc/impi_sd/adapter"
+	"github.com/sapcc/ipmi_sd/adapter"
 )
 
 var (
-	outputFile = flag.String("output.file", "ipmi_targets.json", "Output file for file_sd compatible file.")
-	logger     log.Logger
+	outputFile      = flag.String("output.file", "ipmi_targets.json", "Output file for file_sd compatible file.")
+	refreshInterval = flag.Int("refreshInterval", 600, "refreshInterval for fetching ironic nodes")
+	logger          log.Logger
 )
 
 type discovery struct {
@@ -65,7 +67,7 @@ func (d *discovery) parseServiceNodes() ([]*targetgroup.Group, error) {
 
 		target := model.LabelSet{model.AddressLabel: model.LabelValue(node.DriverInfo.IpmiAddress)}
 		labels := model.LabelSet{
-			model.LabelName("job"):          "impi",
+			model.LabelName("job"):          "ipmi",
 			model.LabelName("serial"):       model.LabelValue(node.Properties.SerialNumber),
 			model.LabelName("manufacturer"): model.LabelValue(node.Properties.Manufacturer),
 			model.LabelName("model"):        model.LabelValue(node.Properties.Model),
@@ -144,9 +146,17 @@ func main() {
 
 	ctx := context.Background()
 
-	// NOTE: create an instance of your new SD implementation here.
+	if val, ok := os.LookupEnv("REFRESH_INTERVAL"); ok {
+		val, err := strconv.Atoi(val)
+		if err != nil {
+			level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", err)
+		} else {
+			*refreshInterval = val
+		}
+	}
+
 	cfg := sdConfig{
-		RefreshInterval: 30,
+		RefreshInterval: *refreshInterval,
 		IronicClient:    ic,
 	}
 
@@ -154,7 +164,7 @@ func main() {
 	if err != nil {
 		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", err)
 	}
-	sdAdapter := adapter.NewAdapter(ctx, *outputFile, "ipmiDiscovery", disc, os.Getenv("OS_PROM_CONFIGMAP_NAME"), "default", logger)
+	sdAdapter := adapter.NewAdapter(ctx, *outputFile, "ipmiDiscovery", disc, os.Getenv("OS_PROM_CONFIGMAP_NAME"), "kube-monitoring", logger)
 	sdAdapter.Run()
 
 	<-ctx.Done()

@@ -109,6 +109,9 @@ func (a *Adapter) writeOutput() error {
 	if err != nil {
 		return err
 	}
+	if configMap.Data == nil {
+		configMap.Data = make(map[string]string)
+	}
 	configMap.Data[a.output] = string(b)
 
 	level.Debug(log.With(a.logger, "component", "sd-adapter")).Log("info", fmt.Sprintf("writing targets to configmap: %s, in namespace: %s", a.configMap, a.namespace))
