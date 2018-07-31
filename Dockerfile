@@ -1,10 +1,12 @@
 FROM golang:1.10.0 AS build-env
-WORKDIR /src
 ADD vendor $GOPATH/src/
-ADD client_ironic.go /src/
-ADD ipmi_discovery.go /src/
-ADD adapter $GOPATH/src/github.com/sapcc/ipmi_sd/adapter/
-RUN CGO_ENABLED=0 GOOS=linux go build -a -tags netgo -ldflags '-w' -o ipmi_sd
+ADD cmd $GOPATH/src/github.com/sapcc/ipmi_sd/cmd/
+ADD internal $GOPATH/src/github.com/sapcc/ipmi_sd/internal/
+ADD pkg $GOPATH/src/github.com/sapcc/ipmi_sd/pkg/
+
+WORKDIR /src
+
+RUN CGO_ENABLED=0 GOOS=linux go build -a -tags netgo -ldflags '-w' -o ipmi_sd github.com/sapcc/ipmi_sd/cmd/discovery
 
 FROM quay.io/prometheus/busybox:latest
 LABEL maintainer "sapcc <stefan.hipfel@sap.com>"

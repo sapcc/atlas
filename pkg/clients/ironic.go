@@ -17,7 +17,7 @@
 *
 *******************************************************************************/
 
-package main
+package clients
 
 import (
 	"encoding/json"
@@ -27,11 +27,11 @@ import (
 	"github.com/gophercloud/gophercloud/pagination"
 )
 
-type ironicClient struct {
+type IronicClient struct {
 	*gophercloud.ServiceClient
 }
 
-func NewIronicClient(provider *gophercloud.ProviderClient) (*ironicClient, error) {
+func NewIronicClient(provider *gophercloud.ProviderClient) (*IronicClient, error) {
 	serviceType := "baremetal"
 	eo := gophercloud.EndpointOpts{Availability: gophercloud.AvailabilityPublic}
 	eo.ApplyDefaults(serviceType)
@@ -40,7 +40,7 @@ func NewIronicClient(provider *gophercloud.ProviderClient) (*ironicClient, error
 	if err != nil {
 		return nil, err
 	}
-	return &ironicClient{
+	return &IronicClient{
 		ServiceClient: &gophercloud.ServiceClient{
 			ProviderClient: provider,
 			Endpoint:       url,
@@ -103,7 +103,7 @@ func (p ironicNodePage) LastMarker() (string, error) {
 	return nodes[len(nodes)-1].ID, nil
 }
 
-func (c ironicClient) GetNodes() ([]ironicNode, error) {
+func (c IronicClient) GetNodes() ([]ironicNode, error) {
 	url := c.ServiceURL("nodes", "detail")
 	pager := pagination.NewPager(c.ServiceClient, url, func(r pagination.PageResult) pagination.Page {
 		page := ironicNodePage{pagination.MarkerPageBase{PageResult: r}}
