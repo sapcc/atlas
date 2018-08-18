@@ -39,7 +39,7 @@ func (d *discovery) parseServiceNodes() ([]*targetgroup.Group, error) {
 
 		target := model.LabelSet{model.AddressLabel: model.LabelValue(node.DriverInfo.IpmiAddress)}
 		labels := model.LabelSet{
-			model.LabelName("job"):          "ipmi",
+			model.LabelName("job"):          "baremetal/ironic",
 			model.LabelName("serial"):       model.LabelValue(node.Properties.SerialNumber),
 			model.LabelName("manufacturer"): model.LabelValue(node.Properties.Manufacturer),
 			model.LabelName("model"):        model.LabelValue(node.Properties.Model),
