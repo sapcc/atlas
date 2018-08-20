@@ -2,9 +2,11 @@ package discovery
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/go-kit/kit/log"
+	"github.com/go-kit/kit/log/level"
 	"github.com/prometheus/common/model"
 	"github.com/prometheus/prometheus/discovery/targetgroup"
 	"github.com/sapcc/ipmi_sd/pkg/clients"
@@ -24,7 +26,13 @@ type discovery struct {
 func (d *discovery) parseServiceNodes() ([]*targetgroup.Group, error) {
 	nodes, err := d.ironicClient.GetNodes()
 	if err != nil {
-		d.logger.Log(err.Error())
+		level.Error(log.With(logger, "component", "ironicClient")).Log("err", err)
+		return nil, err
+	}
+
+	if len(nodes) == 0 {
+		err = errors.New("did not find any ironic nodes")
+		level.Error(log.With(logger, "component", "discovery")).Log("err", err)
 		return nil, err
 	}
 

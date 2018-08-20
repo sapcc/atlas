@@ -13,7 +13,6 @@
 
 package adapter
 
-// NOTE: you do not need to edit this file when implementing a custom sd.
 import (
 	"context"
 	"encoding/json"
@@ -34,8 +33,8 @@ type customSD struct {
 	Labels  map[string]string `json:"labels"`
 }
 
-// Adapter runs an unknown service discovery implementation and converts its target groups
-// to JSON and writes to a file for file_sd.
+// Adapter runs service discovery implementation and converts its target groups
+// to JSON and writes to a k8s configmap.
 type Adapter struct {
 	ctx       context.Context
 	disc      discovery.Discoverer

@@ -62,7 +62,7 @@ type ironicNode struct {
 		DiskGiB         veryFlexibleUint64 `json:"local_gb"`
 		MemoryMiB       veryFlexibleUint64 `json:"memory_mb"`
 		CPUArchitecture string             `json:"cpu_arch"`
-		Capabilities    string             `json:"capabilities"` //e.g. "cpu_txt:true,cpu_aes:true"
+		Capabilities    string             `json:"capabilities"`
 		SerialNumber    string             `json:"serial"`
 		Manufacturer    string             `json:"manufacturer"`
 		Model           string             `json:"model"`
