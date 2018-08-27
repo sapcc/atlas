@@ -55,6 +55,7 @@ func NewIronicClient(provider *gophercloud.ProviderClient) (*IronicClient, error
 type ironicNode struct {
 	ID                   string  `json:"uuid"`
 	Name                 string  `json:"name"`
+	InstanceUuid         string  `json:"instance_uuid"`
 	ProvisionState       string  `json:"provision_state"`
 	TargetProvisionState *string `json:"target_provision_state"`
 	Properties           struct {

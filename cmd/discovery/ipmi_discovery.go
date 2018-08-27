@@ -73,6 +73,7 @@ func main() {
 	}
 
 	ic, err := clients.NewIronicClient(provider)
+	nc, err := openstack.NewComputeV2(provider, gophercloud.EndpointOpts{})
 
 	ctx := context.Background()
 
@@ -91,7 +92,7 @@ func main() {
 		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", "no configmap name given")
 	}
 
-	disc, err := discovery.NewDiscovery(ic, *refreshInterval, logger)
+	disc, err := discovery.NewDiscovery(nc, ic, *refreshInterval, logger)
 	if err != nil {
 		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", err)
 	}
