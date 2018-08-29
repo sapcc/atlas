@@ -17,12 +17,16 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"os"
+	"path/filepath"
 	"reflect"
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	"github.com/prometheus/prometheus/discovery"
 	"github.com/prometheus/prometheus/discovery/targetgroup"
+
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
@@ -36,15 +40,16 @@ type customSD struct {
 // Adapter runs service discovery implementation and converts its target groups
 // to JSON and writes to a k8s configmap.
 type Adapter struct {
-	ctx       context.Context
-	disc      discovery.Discoverer
-	groups    map[string]*customSD
-	manager   *discovery.Manager
-	output    string
-	configMap string
-	namespace string
-	name      string
-	logger    log.Logger
+	ctx          context.Context
+	disc         discovery.Discoverer
+	groups       map[string]*customSD
+	manager      *discovery.Manager
+	output       string
+	configMap    string
+	outputTarget string
+	namespace    string
+	name         string
+	logger       log.Logger
 }
 
 func mapToArray(m map[string]*customSD) []customSD {
@@ -83,16 +88,49 @@ func (a *Adapter) generateTargetGroups(allTargetGroups map[string][]*targetgroup
 	}
 	if !reflect.DeepEqual(a.groups, tempGroups) {
 		a.groups = tempGroups
-		err := a.writeOutput()
-		if err != nil {
-			level.Error(log.With(a.logger, "component", "sd-adapter")).Log("err", err)
+		if a.outputTarget == "configmap" {
+			err := a.writeConfigMap()
+			if err != nil {
+				level.Error(log.With(a.logger, "component", "sd-adapter")).Log("err", err)
+			}
+		} else if a.outputTarget == "file" {
+			err := a.writeFile()
+			if err != nil {
+				level.Error(log.With(a.logger, "component", "sd-adapter")).Log("err", err)
+			}
+		} else {
+			level.Error(log.With(a.logger, "component", "sd-adapter")).Log("err", "No ouput (file or configmap) choosen")
 		}
 	}
 
 }
 
-// Writes JSON formatted targets to configmap.
-func (a *Adapter) writeOutput() error {
+// Writes JSON formatted targets to file
+func (a *Adapter) writeFile() error {
+	arr := mapToArray(a.groups)
+	b, _ := json.MarshalIndent(arr, "", "    ")
+
+	dir, _ := filepath.Split(a.output)
+	tmpfile, err := ioutil.TempFile(dir, "ipmi-sd")
+	if err != nil {
+		return err
+	}
+	defer tmpfile.Close()
+
+	_, err = tmpfile.Write(b)
+	if err != nil {
+		return err
+	}
+
+	err = os.Rename(tmpfile.Name(), a.output)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// Writes JSON formatted targets to a file in a configmap
+func (a *Adapter) writeConfigMap() error {
 	arr := mapToArray(a.groups)
 	b, _ := json.MarshalIndent(arr, "", "    ")
 
@@ -146,16 +184,17 @@ func (a *Adapter) Run() {
 }
 
 // NewAdapter creates a new instance of Adapter.
-func NewAdapter(ctx context.Context, fileName string, name string, d discovery.Discoverer, configMap string, namespace string, logger log.Logger) *Adapter {
+func NewAdapter(ctx context.Context, fileName string, name string, d discovery.Discoverer, configMap string, outputTarget string, namespace string, logger log.Logger) *Adapter {
 	return &Adapter{
-		ctx:       ctx,
-		disc:      d,
-		groups:    make(map[string]*customSD),
-		manager:   discovery.NewManager(ctx, logger),
-		output:    fileName,
-		name:      name,
-		configMap: configMap,
-		namespace: namespace,
-		logger:    logger,
+		ctx:          ctx,
+		disc:         d,
+		groups:       make(map[string]*customSD),
+		manager:      discovery.NewManager(ctx, logger),
+		output:       fileName,
+		name:         name,
+		configMap:    configMap,
+		outputTarget: outputTarget,
+		namespace:    namespace,
+		logger:       logger,
 	}
 }
