@@ -91,11 +91,18 @@ func main() {
 		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", "no configmap name given")
 	}
 
+	var outputTarget string
+	if val, ok := os.LookupEnv("OS_PROM_OUTPUT_TARGET"); ok {
+		outputTarget = val
+	} else {
+		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", "no output target  given")
+	}
+
 	disc, err := discovery.NewDiscovery(ic, *refreshInterval, logger)
 	if err != nil {
 		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", err)
 	}
-	sdAdapter := adapter.NewAdapter(ctx, *outputFile, "ipmiDiscovery", disc, configmapName, "kube-monitoring", logger)
+	sdAdapter := adapter.NewAdapter(ctx, *outputFile, "ipmiDiscovery", disc, configmapName, outputTarget, "kube-monitoring", logger)
 	sdAdapter.Run()
 
 	<-ctx.Done()
