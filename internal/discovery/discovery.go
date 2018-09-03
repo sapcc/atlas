@@ -26,7 +26,7 @@ func (d *discovery) parseServiceNodes() ([]*targetgroup.Group, error) {
 	}
 
 	if len(nodes) == 0 {
-		level.Info(log.With(d.logger, "component", "discovery")).Log("err", "no ironic nodes found")
+		level.Info(log.With(d.logger, "component", "discovery")).Log("info", "no ironic nodes found")
 	}
 
 	var tgroups []*targetgroup.Group
