@@ -19,5 +19,7 @@ A Dockerfile is provided to run it on Kubernetes. The following environment vari
   - OS_USER_DOMAIN_NAME
   - OS_PROJECT_NAME
   - OS_PROJECT_DOMAIN_NAME
-  
-  A sample prometheus job to read those nodes is shown [here](https://github.com/sapcc/ipmi_sd/blob/master/prometheus.yml)
+
+
+Prometheus server configuration:
+A sample prometheus job to read those nodes is shown [here](https://github.com/sapcc/ipmi_sd/blob/master/prometheus.yml)
