@@ -55,7 +55,7 @@ func (d *discovery) parseServiceNodes() ([]*targetgroup.Group, error) {
 		if node.InstanceUuid != "" {
 			instance, err = servers.Get(d.novaClient, node.InstanceUuid).Extract()
 			if err != nil {
-				d.logger.Log(err.Error())
+				level.Error(log.With(d.logger, "component", "novaClient")).Log("err", err)
 				return nil, err
 			}
 			labels[model.LabelName("server_id")] = model.LabelValue(node.InstanceUuid)
