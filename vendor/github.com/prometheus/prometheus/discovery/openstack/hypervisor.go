@@ -123,7 +123,9 @@ func (h *HypervisorDiscovery) refresh() (*targetgroup.Group, error) {
 			return false, fmt.Errorf("could not extract hypervisors: %s", err)
 		}
 		for _, hypervisor := range hypervisorList {
-			labels := model.LabelSet{}
+			labels := model.LabelSet{
+				openstackLabelHypervisorHostIP: model.LabelValue(hypervisor.HostIP),
+			}
 			addr := net.JoinHostPort(hypervisor.HostIP, fmt.Sprintf("%d", h.port))
 			labels[model.AddressLabel] = model.LabelValue(addr)
 			labels[openstackLabelHypervisorHostName] = model.LabelValue(hypervisor.HypervisorHostname)
