@@ -407,7 +407,7 @@
     "ed25519/internal/edwards25519",
   ]
   pruneopts = "UT"
-  revision = "0709b304e793a5edb4a2c0145f281ecdc20838a4"
+  revision = "182538f80094b6a8efaade63a8fd8e0d9d5843dd"
 
 [[projects]]
   digest = "1:36d9c6b79aee8c09aa93e50aff3330b749dadb7950532475a2a0f4ec67000220"
@@ -529,6 +529,14 @@
   pruneopts = "UT"
   revision = "3887ee99ecf07df5b447e9b00d9c0b2adaa9f3e4"
   version = "v0.9.0"
+
+[[projects]]
+  digest = "1:b24d38b282bacf9791408a080f606370efa3d364e4b5fd9ba0f7b87786d3b679"
+  name = "gopkg.in/urfave/cli.v1"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "cfb38830724cc34fedffe9a2a29fb54fa9169cd1"
+  version = "v1.20.0"
 
 [[projects]]
   digest = "1:bfc3483ad7fd73bce5f9c4b6b1e8cc947baa1d87953ce2d056462a5d4035c51b"
@@ -684,6 +692,7 @@
     "github.com/prometheus/common/model",
     "github.com/prometheus/prometheus/discovery",
     "github.com/prometheus/prometheus/discovery/targetgroup",
+    "gopkg.in/urfave/cli.v1",
     "k8s.io/apimachinery/pkg/apis/meta/v1",
     "k8s.io/client-go/kubernetes",
     "k8s.io/client-go/rest",
