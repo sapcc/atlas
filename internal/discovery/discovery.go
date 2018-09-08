@@ -28,9 +28,8 @@ func (d *discovery) parseServiceNodes() ([]*targetgroup.Group, error) {
 		return nil, err
 	}
 
-	if len(ironicNodes) == 0 {
-		err := level.Error(log.With(d.logger, "component", "discovery")).Log("err", "no ironic nodes found")
-		return nil, err
+	if len(nodes) == 0 {
+		level.Info(log.With(d.logger, "component", "discovery")).Log("info", "no ironic nodes found")
 	}
 
 	var tgroups []*targetgroup.Group
@@ -59,7 +58,7 @@ func (d *discovery) parseServiceNodes() ([]*targetgroup.Group, error) {
 				tgroup.Labels = labels
 				tgroup.Targets = append(tgroup.Targets, target)
 				tgroups = append(tgroups, &tgroup)
-				return tgroups, err
+				return tgroups, nil
 			}
 			labels[model.LabelName("server_id")] = model.LabelValue(node.InstanceUuid)
 			labels[model.LabelName("server_name")] = model.LabelValue(instance.Name)
