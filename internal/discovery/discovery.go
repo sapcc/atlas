@@ -55,15 +55,12 @@ func (d *discovery) parseServiceNodes() ([]*targetgroup.Group, error) {
 			instance, err = servers.Get(d.novaClient, node.InstanceUuid).Extract()
 			if err != nil {
 				level.Error(log.With(d.logger, "component", "novaClient")).Log("err", err)
-				tgroup.Labels = labels
-				tgroup.Targets = append(tgroup.Targets, target)
-				tgroups = append(tgroups, &tgroup)
-				return tgroups, nil
+			} else {
+				labels[model.LabelName("server_id")] = model.LabelValue(node.InstanceUuid)
+				labels[model.LabelName("server_name")] = model.LabelValue(instance.Name)
+				labels[model.LabelName("project_id")] = model.LabelValue(instance.TenantID)
+				labels[model.LabelName("user_id")] = model.LabelValue(instance.UserID)
 			}
-			labels[model.LabelName("server_id")] = model.LabelValue(node.InstanceUuid)
-			labels[model.LabelName("server_name")] = model.LabelValue(instance.Name)
-			labels[model.LabelName("project_id")] = model.LabelValue(instance.TenantID)
-			labels[model.LabelName("user_id")] = model.LabelValue(instance.UserID)
 		}
 
 		tgroup.Labels = labels
