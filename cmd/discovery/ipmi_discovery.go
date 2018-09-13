@@ -23,7 +23,6 @@ import (
 	"context"
 	"flag"
 	"os"
-	"strconv"
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
@@ -36,30 +35,47 @@ import (
 )
 
 var (
-	outputFile      = flag.String("output.file", "ipmi_targets.json", "Output file for file_sd compatible file.")
-	refreshInterval = flag.Int("refreshInterval", 600, "refreshInterval for fetching ironic nodes")
-	logger          log.Logger
+	appEnv           string
+	outputFile       string
+	refreshInterval  int
+	identityEndpoint string
+	username         string
+	password         string
+	domainName       string
+	projectName      string
+	logger           log.Logger
 )
+
+func init() {
+	flag.StringVar(&appEnv, "APP_ENV", "development", "To set Log Level: development or production")
+	flag.StringVar(&outputFile, "output.file", "ipmi_targets.json", "Output file for file_sd compatible file.")
+	flag.IntVar(&refreshInterval, "REFRESH_INTERVAL", 600, "refreshInterval for fetching ironic nodes")
+	flag.StringVar(&identityEndpoint, "OS_AUTH_URL", "", "Openstack identity endpoint")
+	flag.StringVar(&username, "OS_USERNAME", "", "Openstack username")
+	flag.StringVar(&password, "OS_PASSWORD", "", "Openstack password")
+	flag.StringVar(&domainName, "OS_USER_DOMAIN_NAME", "", "Openstack domain name")
+	flag.StringVar(&projectName, "OS_PROJECT_DOMAIN_NAME", "", "Openstack project")
+	flag.Parse()
+}
 
 func main() {
 	logger = log.NewLogfmtLogger(log.NewSyncWriter(os.Stderr))
 	logger = log.With(logger, "ts", log.DefaultTimestampUTC)
-	env := os.Getenv("APP_ENV")
-	if env == "production" {
+	if appEnv == "production" {
 		logger = level.NewFilter(logger, level.AllowWarn())
 	} else {
 		logger = level.NewFilter(logger, level.AllowDebug())
 	}
 
 	authOptions := &tokens.AuthOptions{
-		IdentityEndpoint: os.Getenv("OS_AUTH_URL"),
-		Username:         os.Getenv("OS_USERNAME"),
-		Password:         os.Getenv("OS_PASSWORD"),
-		DomainName:       os.Getenv("OS_USER_DOMAIN_NAME"),
+		IdentityEndpoint: identityEndpoint,
+		Username:         username,
+		Password:         password,
+		DomainName:       domainName,
 		AllowReauth:      true,
 		Scope: tokens.Scope{
-			ProjectName: os.Getenv("OS_PROJECT_NAME"),
-			DomainName:  os.Getenv("OS_PROJECT_DOMAIN_NAME"),
+			ProjectName: projectName,
+			DomainName:  domainName,
 		},
 	}
 
@@ -78,14 +94,6 @@ func main() {
 		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", err)
 	}
 
-	if val, ok := os.LookupEnv("REFRESH_INTERVAL"); ok {
-		val, err := strconv.Atoi(val)
-		if err != nil {
-			level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", err)
-		} else {
-			*refreshInterval = val
-		}
-	}
 	var configmapName string
 	if val, ok := os.LookupEnv("OS_PROM_CONFIGMAP_NAME"); ok {
 		configmapName = val
@@ -93,13 +101,13 @@ func main() {
 		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", "no configmap name given")
 	}
 
-	disc, err := discovery.NewDiscovery(ic, *refreshInterval, logger)
+	disc, err := discovery.NewDiscovery(ic, refreshInterval, logger)
 	if err != nil {
 		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", err)
 	}
 	ctx := context.Background()
 
-	sdAdapter, err := adapter.NewAdapter(ctx, *outputFile, "ipmiDiscovery", disc, configmapName, "kube-monitoring", logger)
+	sdAdapter, err := adapter.NewAdapter(ctx, outputFile, "ipmiDiscovery", disc, configmapName, "kube-monitoring", logger)
 	if err != nil {
 		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", err)
 	}
