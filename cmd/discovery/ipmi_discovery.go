@@ -42,7 +42,8 @@ var (
 )
 
 func main() {
-	logger = log.NewJSONLogger(log.NewSyncWriter(os.Stderr))
+	logger = log.NewLogfmtLogger(log.NewSyncWriter(os.Stderr))
+	logger = log.With(logger, "ts", log.DefaultTimestampUTC)
 	env := os.Getenv("APP_ENV")
 	if env == "production" {
 		logger = level.NewFilter(logger, level.AllowWarn())
@@ -73,8 +74,9 @@ func main() {
 	}
 
 	ic, err := clients.NewIronicClient(provider)
-
-	ctx := context.Background()
+	if err != nil {
+		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", err)
+	}
 
 	if val, ok := os.LookupEnv("REFRESH_INTERVAL"); ok {
 		val, err := strconv.Atoi(val)
@@ -95,7 +97,12 @@ func main() {
 	if err != nil {
 		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", err)
 	}
-	sdAdapter := adapter.NewAdapter(ctx, *outputFile, "ipmiDiscovery", disc, configmapName, "kube-monitoring", logger)
+	ctx := context.Background()
+
+	sdAdapter, err := adapter.NewAdapter(ctx, *outputFile, "ipmiDiscovery", disc, configmapName, "kube-monitoring", logger)
+	if err != nil {
+		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", err)
+	}
 	sdAdapter.Run()
 
 	<-ctx.Done()

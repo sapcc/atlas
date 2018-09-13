@@ -25,6 +25,7 @@ import (
 	"github.com/prometheus/prometheus/discovery/targetgroup"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/pkg/api/v1"
 	"k8s.io/client-go/rest"
 )
 
@@ -40,6 +41,7 @@ type Adapter struct {
 	disc      discovery.Discoverer
 	groups    map[string]*customSD
 	manager   *discovery.Manager
+	cs        *kubernetes.Clientset
 	output    string
 	configMap string
 	namespace string
@@ -91,30 +93,32 @@ func (a *Adapter) generateTargetGroups(allTargetGroups map[string][]*targetgroup
 
 }
 
+func (a *Adapter) getConfigMap() (*v1.ConfigMap, error) {
+	configMap, err := a.cs.CoreV1().ConfigMaps(a.namespace).Get(a.configMap, metav1.GetOptions{})
+	if err != nil {
+		return nil, err
+	}
+	if configMap.Data == nil {
+		configMap.Data = make(map[string]string)
+	}
+
+	return configMap, nil
+
+}
+
 // Writes JSON formatted targets to configmap.
 func (a *Adapter) writeOutput() error {
 	arr := mapToArray(a.groups)
 	b, _ := json.MarshalIndent(arr, "", "    ")
 
-	config, err := rest.InClusterConfig()
+	configMap, err := a.getConfigMap()
 	if err != nil {
 		return err
-	}
-	clientset, err := kubernetes.NewForConfig(config)
-	if err != nil {
-		return err
-	}
-	configMap, err := clientset.CoreV1().ConfigMaps(a.namespace).Get(a.configMap, metav1.GetOptions{})
-	if err != nil {
-		return err
-	}
-	if configMap.Data == nil {
-		configMap.Data = make(map[string]string)
 	}
 	configMap.Data[a.output] = string(b)
 
-	level.Debug(log.With(a.logger, "component", "sd-adapter")).Log("info", fmt.Sprintf("writing targets to configmap: %s, in namespace: %s", a.configMap, a.namespace))
-	configMap, err = clientset.CoreV1().ConfigMaps(a.namespace).Update(configMap)
+	level.Debug(log.With(a.logger, "component", "sd-adapter")).Log("debug", fmt.Sprintf("writing targets to configmap: %s, in namespace: %s", a.configMap, a.namespace))
+	configMap, err = a.cs.CoreV1().ConfigMaps(a.namespace).Update(configMap)
 	if err != nil {
 		return err
 	}
@@ -123,6 +127,16 @@ func (a *Adapter) writeOutput() error {
 }
 
 func (a *Adapter) runCustomSD(ctx context.Context) {
+	configMap, err := a.getConfigMap()
+	if err != nil {
+		level.Error(log.With(a.logger, "component", "sd-adapter")).Log("err", err)
+		return
+	}
+	// write dummy if configMap is not empty, so that when the node list is empty deepEqual will be false and
+	// an empty node list is written to configMap
+	if len(configMap.Data[a.output]) > 0 {
+		a.groups["dummy"] = &customSD{}
+	}
 	updates := a.manager.SyncCh()
 	for {
 		select {
@@ -146,10 +160,19 @@ func (a *Adapter) Run() {
 }
 
 // NewAdapter creates a new instance of Adapter.
-func NewAdapter(ctx context.Context, fileName string, name string, d discovery.Discoverer, configMap string, namespace string, logger log.Logger) *Adapter {
+func NewAdapter(ctx context.Context, fileName string, name string, d discovery.Discoverer, configMap string, namespace string, logger log.Logger) (*Adapter, error) {
+	config, err := rest.InClusterConfig()
+	if err != nil {
+		return nil, err
+	}
+	clientset, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		return nil, err
+	}
 	return &Adapter{
 		ctx:       ctx,
 		disc:      d,
+		cs:        clientset,
 		groups:    make(map[string]*customSD),
 		manager:   discovery.NewManager(ctx, logger),
 		output:    fileName,
@@ -157,5 +180,5 @@ func NewAdapter(ctx context.Context, fileName string, name string, d discovery.D
 		configMap: configMap,
 		namespace: namespace,
 		logger:    logger,
-	}
+	}, nil
 }

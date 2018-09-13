@@ -2,6 +2,7 @@ package discovery
 
 import (
 	"context"
+	"strconv"
 	"time"
 
 	"github.com/go-kit/kit/log"
@@ -32,6 +33,7 @@ func (d *discovery) parseServiceNodes() ([]*targetgroup.Group, error) {
 	var tgroups []*targetgroup.Group
 
 	for _, node := range nodes {
+
 		tgroup := targetgroup.Group{
 			Source:  node.DriverInfo.IpmiAddress,
 			Labels:  make(model.LabelSet),
@@ -40,10 +42,12 @@ func (d *discovery) parseServiceNodes() ([]*targetgroup.Group, error) {
 
 		target := model.LabelSet{model.AddressLabel: model.LabelValue(node.DriverInfo.IpmiAddress)}
 		labels := model.LabelSet{
-			model.LabelName("job"):          "baremetal/ironic",
-			model.LabelName("serial"):       model.LabelValue(node.Properties.SerialNumber),
-			model.LabelName("manufacturer"): model.LabelValue(node.Properties.Manufacturer),
-			model.LabelName("model"):        model.LabelValue(node.Properties.Model),
+			model.LabelName("job"):             "baremetal/ironic",
+			model.LabelName("provision_state"): model.LabelValue(node.ProvisionState),
+			model.LabelName("maintenance"):     model.LabelValue(strconv.FormatBool(node.Maintenance)),
+			model.LabelName("serial"):          model.LabelValue(node.Properties.SerialNumber),
+			model.LabelName("manufacturer"):    model.LabelValue(node.Properties.Manufacturer),
+			model.LabelName("model"):           model.LabelValue(node.Properties.Model),
 		}
 		tgroup.Labels = labels
 		tgroup.Targets = append(tgroup.Targets, target)
