@@ -21,7 +21,7 @@ package main
 
 import (
 	"context"
-	"flag"
+	"fmt"
 	"os"
 
 	"github.com/go-kit/kit/log"
@@ -29,6 +29,7 @@ import (
 	"github.com/gophercloud/gophercloud"
 	"github.com/gophercloud/gophercloud/openstack"
 	"github.com/gophercloud/gophercloud/openstack/identity/v3/tokens"
+	"github.com/namsral/flag"
 	"github.com/sapcc/ipmi_sd/internal/discovery"
 	"github.com/sapcc/ipmi_sd/pkg/adapter"
 	"github.com/sapcc/ipmi_sd/pkg/clients"
@@ -62,30 +63,31 @@ func main() {
 	logger = log.NewLogfmtLogger(log.NewSyncWriter(os.Stderr))
 	logger = log.With(logger, "ts", log.DefaultTimestampUTC)
 	if appEnv == "production" {
-		logger = level.NewFilter(logger, level.AllowWarn())
+		logger = level.NewFilter(logger, level.AllowInfo())
 	} else {
 		logger = level.NewFilter(logger, level.AllowDebug())
 	}
 
 	authOptions := &tokens.AuthOptions{
-		IdentityEndpoint: identityEndpoint,
-		Username:         username,
-		Password:         password,
-		DomainName:       domainName,
+		IdentityEndpoint: os.Getenv("OS_AUTH_URL"),
+		Username:         os.Getenv("OS_USERNAME"),
+		Password:         os.Getenv("OS_PASSWORD"),
+		DomainName:       os.Getenv("OS_USER_DOMAIN_NAME"),
 		AllowReauth:      true,
 		Scope: tokens.Scope{
-			ProjectName: projectName,
-			DomainName:  domainName,
+			ProjectName: os.Getenv("OS_PROJECT_NAME"),
+			DomainName:  os.Getenv("OS_PROJECT_DOMAIN_NAME"),
 		},
 	}
 
-	provider, err := openstack.NewClient(os.Getenv("OS_AUTH_URL"))
+	provider, err := openstack.NewClient(identityEndpoint)
 	if err != nil {
 		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", err)
 	}
 
 	err = openstack.AuthenticateV3(provider, authOptions, gophercloud.EndpointOpts{})
 	if err != nil {
+		fmt.Println("FUCK", authOptions)
 		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", err)
 	}
 
