@@ -36,15 +36,16 @@ import (
 )
 
 var (
-	appEnv           string
-	outputFile       string
-	refreshInterval  int
-	identityEndpoint string
-	username         string
-	password         string
-	domainName       string
-	projectName      string
-	logger           log.Logger
+	appEnv            string
+	outputFile        string
+	refreshInterval   int
+	identityEndpoint  string
+	username          string
+	password          string
+	domainName        string
+	projectName       string
+	projectDomainName string
+	logger            log.Logger
 )
 
 func init() {
@@ -55,7 +56,8 @@ func init() {
 	flag.StringVar(&username, "OS_USERNAME", "", "Openstack username")
 	flag.StringVar(&password, "OS_PASSWORD", "", "Openstack password")
 	flag.StringVar(&domainName, "OS_USER_DOMAIN_NAME", "", "Openstack domain name")
-	flag.StringVar(&projectName, "OS_PROJECT_DOMAIN_NAME", "", "Openstack project")
+	flag.StringVar(&projectName, "OS_PROJECT_NAME", "", "Openstack project")
+	flag.StringVar(&projectDomainName, "OS_PROJECT_DOMAIN_NAME", "", "Openstack project domain name")
 	flag.Parse()
 }
 
@@ -69,14 +71,14 @@ func main() {
 	}
 
 	authOptions := &tokens.AuthOptions{
-		IdentityEndpoint: os.Getenv("OS_AUTH_URL"),
-		Username:         os.Getenv("OS_USERNAME"),
-		Password:         os.Getenv("OS_PASSWORD"),
-		DomainName:       os.Getenv("OS_USER_DOMAIN_NAME"),
+		IdentityEndpoint: identityEndpoint,
+		Username:         username,
+		Password:         password,
+		DomainName:       domainName,
 		AllowReauth:      true,
 		Scope: tokens.Scope{
-			ProjectName: os.Getenv("OS_PROJECT_NAME"),
-			DomainName:  os.Getenv("OS_PROJECT_DOMAIN_NAME"),
+			ProjectName: projectName,
+			DomainName:  projectDomainName,
 		},
 	}
 
