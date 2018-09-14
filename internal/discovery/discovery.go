@@ -14,6 +14,7 @@ import (
 
 type discovery struct {
 	ironicClient    *clients.IronicClient
+	computeClient   *clients.ComputeClient
 	refreshInterval int
 	tagSeparator    string
 	logger          log.Logger
@@ -33,6 +34,14 @@ func (d *discovery) parseServiceNodes() ([]*targetgroup.Group, error) {
 	var tgroups []*targetgroup.Group
 
 	for _, node := range nodes {
+		server, err := d.computeClient.GetServer(node.ID)
+		var tenantID string
+		if err != nil {
+			level.Error(log.With(d.logger, "component", "discovery")).Log("err", err)
+			tenantID = ""
+		} else {
+			tenantID = server.TenantID
+		}
 
 		tgroup := targetgroup.Group{
 			Source:  node.DriverInfo.IpmiAddress,
@@ -48,6 +57,7 @@ func (d *discovery) parseServiceNodes() ([]*targetgroup.Group, error) {
 			model.LabelName("serial"):          model.LabelValue(node.Properties.SerialNumber),
 			model.LabelName("manufacturer"):    model.LabelValue(node.Properties.Manufacturer),
 			model.LabelName("model"):           model.LabelValue(node.Properties.Model),
+			model.LabelName("tenant_id"):       model.LabelValue(tenantID),
 		}
 		tgroup.Labels = labels
 		tgroup.Targets = append(tgroup.Targets, target)
@@ -57,9 +67,10 @@ func (d *discovery) parseServiceNodes() ([]*targetgroup.Group, error) {
 	return tgroups, nil
 }
 
-func NewDiscovery(client *clients.IronicClient, refreshInterval int, logger log.Logger) (*discovery, error) {
+func NewDiscovery(ic *clients.IronicClient, cc *clients.ComputeClient, refreshInterval int, logger log.Logger) (*discovery, error) {
 	cd := &discovery{
-		ironicClient:    client,
+		ironicClient:    ic,
+		computeClient:   cc,
 		refreshInterval: refreshInterval,
 		logger:          logger,
 	}

@@ -97,6 +97,10 @@ func main() {
 	if err != nil {
 		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", err)
 	}
+	cc, err := clients.NewComputeClient(provider)
+	if err != nil {
+		level.Error(log.With(logger, "component", "compute_client")).Log("err", err)
+	}
 
 	var configmapName string
 	if val, ok := os.LookupEnv("OS_PROM_CONFIGMAP_NAME"); ok {
@@ -105,7 +109,7 @@ func main() {
 		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", "no configmap name given")
 	}
 
-	disc, err := discovery.NewDiscovery(ic, refreshInterval, logger)
+	disc, err := discovery.NewDiscovery(ic, cc, refreshInterval, logger)
 	if err != nil {
 		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", err)
 	}
