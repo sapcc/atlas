@@ -21,7 +21,6 @@ package main
 
 import (
 	"context"
-	"flag"
 	"os"
 
 	"github.com/go-kit/kit/log"
@@ -29,21 +28,23 @@ import (
 	"github.com/gophercloud/gophercloud"
 	"github.com/gophercloud/gophercloud/openstack"
 	"github.com/gophercloud/gophercloud/openstack/identity/v3/tokens"
+	"github.com/namsral/flag"
 	"github.com/sapcc/ipmi_sd/internal/discovery"
 	"github.com/sapcc/ipmi_sd/pkg/adapter"
 	"github.com/sapcc/ipmi_sd/pkg/clients"
 )
 
 var (
-	appEnv           string
-	outputFile       string
-	refreshInterval  int
-	identityEndpoint string
-	username         string
-	password         string
-	domainName       string
-	projectName      string
-	logger           log.Logger
+	appEnv            string
+	outputFile        string
+	refreshInterval   int
+	identityEndpoint  string
+	username          string
+	password          string
+	domainName        string
+	projectName       string
+	projectDomainName string
+	logger            log.Logger
 )
 
 func init() {
@@ -54,14 +55,16 @@ func init() {
 	flag.StringVar(&username, "OS_USERNAME", "", "Openstack username")
 	flag.StringVar(&password, "OS_PASSWORD", "", "Openstack password")
 	flag.StringVar(&domainName, "OS_USER_DOMAIN_NAME", "", "Openstack domain name")
-	flag.StringVar(&projectName, "OS_PROJECT_DOMAIN_NAME", "", "Openstack project")
+	flag.StringVar(&projectName, "OS_PROJECT_NAME", "", "Openstack project")
+	flag.StringVar(&projectDomainName, "OS_PROJECT_DOMAIN_NAME", "", "Openstack project domain name")
 	flag.Parse()
 }
 
 func main() {
-	logger = log.NewJSONLogger(log.NewSyncWriter(os.Stderr))
+	logger = log.NewLogfmtLogger(log.NewSyncWriter(os.Stderr))
+	logger = log.With(logger, "ts", log.DefaultTimestampUTC)
 	if appEnv == "production" {
-		logger = level.NewFilter(logger, level.AllowWarn())
+		logger = level.NewFilter(logger, level.AllowInfo())
 	} else {
 		logger = level.NewFilter(logger, level.AllowDebug())
 	}
@@ -74,11 +77,11 @@ func main() {
 		AllowReauth:      true,
 		Scope: tokens.Scope{
 			ProjectName: projectName,
-			DomainName:  domainName,
+			DomainName:  projectDomainName,
 		},
 	}
 
-	provider, err := openstack.NewClient(os.Getenv("OS_AUTH_URL"))
+	provider, err := openstack.NewClient(identityEndpoint)
 	if err != nil {
 		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", err)
 	}
@@ -89,21 +92,32 @@ func main() {
 	}
 
 	ic, err := clients.NewIronicClient(provider)
-
-	ctx := context.Background()
+	if err != nil {
+		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", err)
+	}
+	cc, err := clients.NewComputeClient(provider)
+	if err != nil {
+		level.Error(log.With(logger, "component", "compute_client")).Log("err", err)
+	}
 
 	var configmapName string
 	if val, ok := os.LookupEnv("OS_PROM_CONFIGMAP_NAME"); ok {
 		configmapName = val
 	} else {
 		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", "no configmap name given")
+		os.Exit(2)
 	}
 
-	disc, err := discovery.NewDiscovery(ic, refreshInterval, logger)
+	disc, err := discovery.NewDiscovery(ic, cc, refreshInterval, logger)
 	if err != nil {
 		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", err)
 	}
-	sdAdapter := adapter.NewAdapter(ctx, outputFile, "ipmiDiscovery", disc, configmapName, "kube-monitoring", logger)
+	ctx := context.Background()
+
+	sdAdapter, err := adapter.NewAdapter(ctx, outputFile, "ipmiDiscovery", disc, configmapName, "kube-monitoring", logger)
+	if err != nil {
+		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", err)
+	}
 	sdAdapter.Run()
 
 	<-ctx.Done()
