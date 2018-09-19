@@ -21,7 +21,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"os"
 
 	"github.com/go-kit/kit/log"
@@ -89,7 +88,6 @@ func main() {
 
 	err = openstack.AuthenticateV3(provider, authOptions, gophercloud.EndpointOpts{})
 	if err != nil {
-		fmt.Println("FUCK", authOptions)
 		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", err)
 	}
 
@@ -107,6 +105,7 @@ func main() {
 		configmapName = val
 	} else {
 		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", "no configmap name given")
+		os.Exit(2)
 	}
 
 	disc, err := discovery.NewDiscovery(ic, cc, refreshInterval, logger)

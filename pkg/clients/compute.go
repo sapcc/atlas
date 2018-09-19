@@ -30,14 +30,13 @@ type ComputeClient struct {
 }
 
 func NewComputeClient(provider *gophercloud.ProviderClient) (*ComputeClient, error) {
-	//serviceType := "compute"
 	eo := gophercloud.EndpointOpts{Availability: gophercloud.AvailabilityPublic}
-	//eo.ApplyDefaults(serviceType)
 
 	sc, err := openstack.NewComputeV2(provider, eo)
 	if err != nil {
 		return nil, err
 	}
+
 	return &ComputeClient{
 		ServiceClient: sc,
 	}, nil
@@ -49,6 +48,5 @@ func (c ComputeClient) GetServer(id string) (*servers.Server, error) {
 	if err != nil {
 		return server, err
 	}
-
 	return server, nil
 }
