@@ -101,9 +101,11 @@ func main() {
 	}
 
 	var configmapName string
-	if configmapName, ok := os.LookupEnv("OS_PROM_CONFIGMAP_NAME"); !ok {
+	if val, ok := os.LookupEnv("OS_PROM_CONFIGMAP_NAME"); !ok {
 		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", "no configmap name given")
 		os.Exit(2)
+	} else {
+		configmapName = val
 	}
 
 	disc, err := discovery.NewDiscovery(ic, cc, refreshInterval, logger)
