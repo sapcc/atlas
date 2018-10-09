@@ -27,11 +27,10 @@ import (
 	"github.com/go-kit/kit/log/level"
 	"github.com/gophercloud/gophercloud"
 	"github.com/gophercloud/gophercloud/openstack"
-	"github.com/gophercloud/gophercloud/openstack/identity/v3/tokens"
 	"github.com/namsral/flag"
 	"github.com/sapcc/ipmi_sd/internal/discovery"
 	"github.com/sapcc/ipmi_sd/pkg/adapter"
-	"github.com/sapcc/ipmi_sd/pkg/clients"
+	internalClients "github.com/sapcc/ipmi_sd/pkg/clients"
 )
 
 var (
@@ -45,6 +44,8 @@ var (
 	projectName       string
 	projectDomainName string
 	logger            log.Logger
+	configmapName     string
+	provider          *gophercloud.ProviderClient
 )
 
 func init() {
@@ -58,9 +59,7 @@ func init() {
 	flag.StringVar(&projectName, "OS_PROJECT_NAME", "", "Openstack project")
 	flag.StringVar(&projectDomainName, "OS_PROJECT_DOMAIN_NAME", "", "Openstack project domain name")
 	flag.Parse()
-}
 
-func main() {
 	logger = log.NewLogfmtLogger(log.NewSyncWriter(os.Stderr))
 	logger = log.With(logger, "ts", log.DefaultTimestampUTC)
 	if appEnv == "production" {
@@ -69,38 +68,6 @@ func main() {
 		logger = level.NewFilter(logger, level.AllowDebug())
 	}
 
-	authOptions := &tokens.AuthOptions{
-		IdentityEndpoint: identityEndpoint,
-		Username:         username,
-		Password:         password,
-		DomainName:       domainName,
-		AllowReauth:      true,
-		Scope: tokens.Scope{
-			ProjectName: projectName,
-			DomainName:  projectDomainName,
-		},
-	}
-
-	provider, err := openstack.NewClient(identityEndpoint)
-	if err != nil {
-		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", err)
-	}
-
-	err = openstack.AuthenticateV3(provider, authOptions, gophercloud.EndpointOpts{})
-	if err != nil {
-		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", err)
-	}
-
-	ic, err := clients.NewIronicClient(provider)
-	if err != nil {
-		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", err)
-	}
-	cc, err := clients.NewComputeClient(provider)
-	if err != nil {
-		level.Error(log.With(logger, "component", "compute_client")).Log("err", err)
-	}
-
-	var configmapName string
 	if val, ok := os.LookupEnv("OS_PROM_CONFIGMAP_NAME"); ok {
 		configmapName = val
 	} else {
@@ -108,15 +75,52 @@ func main() {
 		os.Exit(2)
 	}
 
-	disc, err := discovery.NewDiscovery(ic, cc, refreshInterval, logger)
+	authOptions := gophercloud.AuthOptions{
+		IdentityEndpoint: identityEndpoint,
+		Username:         username,
+		Password:         password,
+		DomainName:       domainName,
+		AllowReauth:      true,
+		Scope: &gophercloud.AuthScope{
+			ProjectName: projectName,
+			DomainName:  projectDomainName,
+		},
+	}
+	var err error
+	provider, err = openstack.AuthenticatedClient(authOptions)
 	if err != nil {
-		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", err)
+		level.Error(log.With(logger, "component", "AuthenticatedClient")).Log("err", err)
+		os.Exit(2)
+	}
+}
+
+func main() {
+	v3c, err := openstack.NewIdentityV3(provider, gophercloud.EndpointOpts{
+		Region: os.Getenv("OS_REGION_NAME"),
+	})
+	if err != nil {
+		level.Error(log.With(logger, "component", "NewIdentityV3")).Log("err", err)
+	}
+
+	ic, err := internalClients.NewIronicClient(provider)
+	if err != nil {
+		level.Error(log.With(logger, "component", "NewIronicClient")).Log("err", err)
+	}
+
+	cc, err := internalClients.NewComputeClient(provider)
+	if err != nil {
+		level.Error(log.With(logger, "component", "NewComputeClient")).Log("err", err)
+	}
+
+	disc, err := discovery.NewDiscovery(ic, cc, v3c, refreshInterval, logger)
+	if err != nil {
+		level.Error(log.With(logger, "component", "NewDiscovery")).Log("err", err)
 	}
 	ctx := context.Background()
 
 	sdAdapter, err := adapter.NewAdapter(ctx, outputFile, "ipmiDiscovery", disc, configmapName, "kube-monitoring", logger)
 	if err != nil {
-		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", err)
+		level.Error(log.With(logger, "component", "NewAdapter")).Log("err", err)
 	}
 	sdAdapter.Run()
 

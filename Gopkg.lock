@@ -178,7 +178,9 @@
   name = "github.com/gophercloud/gophercloud"
   packages = [
     ".",
+    "acceptance/clients",
     "openstack",
+    "openstack/blockstorage/noauth",
     "openstack/compute/v2/extensions/floatingips",
     "openstack/compute/v2/extensions/hypervisors",
     "openstack/compute/v2/flavors",
@@ -186,11 +188,12 @@
     "openstack/compute/v2/servers",
     "openstack/identity/v2/tenants",
     "openstack/identity/v2/tokens",
+    "openstack/identity/v3/projects",
     "openstack/identity/v3/tokens",
     "openstack/utils",
     "pagination"
   ]
-  revision = "caf34a65f60295108141f62929245943bd00f237"
+  revision = "bfc006765209a570e9a783bd7e4372e24fb72781"
 
 [[projects]]
   name = "github.com/hashicorp/consul"
@@ -570,6 +573,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "107dd5c528e61c7d187444530c3ea8a6a309458c2c35aa69e8ee10dab6d7f5cc"
+  inputs-digest = "c8f3226abb04f0275970b819ef4f64cacc9756b04e4ba035746b26d9259bb3bc"
   solver-name = "gps-cdcl"
   solver-version = 1
