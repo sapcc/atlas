@@ -20,6 +20,8 @@
 package clients
 
 import (
+	"sync"
+
 	"github.com/gophercloud/gophercloud"
 	"github.com/gophercloud/gophercloud/openstack"
 	"github.com/gophercloud/gophercloud/openstack/compute/v2/servers"
@@ -27,6 +29,7 @@ import (
 
 type ComputeClient struct {
 	*gophercloud.ServiceClient
+	Authorized bool
 }
 
 func NewComputeClient(provider *gophercloud.ProviderClient) (*ComputeClient, error) {
@@ -37,16 +40,35 @@ func NewComputeClient(provider *gophercloud.ProviderClient) (*ComputeClient, err
 		return nil, err
 	}
 
-	return &ComputeClient{
+	cc := &ComputeClient{
 		ServiceClient: sc,
-	}, nil
+		Authorized:    true,
+	}
+
+	if err := checkAuthorized(sc); err != nil {
+		cc.Authorized = false
+	}
+
+	return cc, nil
 }
 
-func (c ComputeClient) GetServer(id string) (*servers.Server, error) {
-	server, err := servers.Get(c.ServiceClient, id).Extract()
-
-	if err != nil {
-		return server, err
+func checkAuthorized(sc *gophercloud.ServiceClient) error {
+	_, err := servers.Get(sc, "dummy_test").Extract()
+	switch err.(type) {
+	case gophercloud.ErrUnexpectedResponseCode:
+		// seems like our user misses the needed role!
+		return err
+	default:
+		return nil
 	}
-	return server, nil
+}
+
+func (c ComputeClient) GetServer(id string, sc chan<- *servers.Server, ec chan<- error, wg *sync.WaitGroup) {
+	server, err := servers.Get(c.ServiceClient, id).Extract()
+	defer wg.Done()
+	if err != nil {
+		ec <- err
+	} else {
+		sc <- server
+	}
 }

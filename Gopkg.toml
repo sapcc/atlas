@@ -30,6 +30,10 @@
   version = "2.3.2"
 
 [[constraint]]
+  name = "github.com/gophercloud/gophercloud"
+  revision = "bfc006765209a570e9a783bd7e4372e24fb72781"
+
+[[constraint]]
   name = "k8s.io/client-go"
   version = "3.0.0-beta.0"
 
