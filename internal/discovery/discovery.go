@@ -12,6 +12,7 @@ import (
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	"github.com/gophercloud/gophercloud"
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/common/model"
 	"github.com/prometheus/prometheus/discovery/targetgroup"
 	"github.com/sapcc/ipmi_sd/pkg/clients"
@@ -23,16 +24,18 @@ type discovery struct {
 	serviceClient   *gophercloud.ServiceClient
 	refreshInterval int
 	logger          log.Logger
+	upGauge         prometheus.Gauge
 }
 
 //NewDiscovery creates a new Discovery
-func NewDiscovery(ic *clients.IronicClient, cc *clients.ComputeClient, sc *gophercloud.ServiceClient, refreshInterval int, logger log.Logger) (*discovery, error) {
+func NewDiscovery(ic *clients.IronicClient, cc *clients.ComputeClient, sc *gophercloud.ServiceClient, refreshInterval int, logger log.Logger, upGauge prometheus.Gauge) (*discovery, error) {
 	cd := &discovery{
 		ironicClient:    ic,
 		computeClient:   cc,
 		serviceClient:   sc,
 		refreshInterval: refreshInterval,
 		logger:          logger,
+		upGauge:         upGauge,
 	}
 	return cd, nil
 }
@@ -42,7 +45,11 @@ func (d *discovery) Run(ctx context.Context, ch chan<- []*targetgroup.Group) {
 		tgs, err := d.parseServiceNodes()
 		d.setAdditionalLabels(tgs)
 		if err == nil {
+			d.upGauge.Set(1)
 			ch <- tgs
+		} else {
+			d.upGauge.Set(0)
+			continue
 		}
 		// Wait for ticker or exit when ctx is closed.
 		select {

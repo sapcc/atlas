@@ -21,6 +21,7 @@ package main
 
 import (
 	"context"
+	"net/http"
 	"os"
 
 	"github.com/go-kit/kit/log"
@@ -28,6 +29,8 @@ import (
 	"github.com/gophercloud/gophercloud"
 	"github.com/gophercloud/gophercloud/openstack"
 	"github.com/namsral/flag"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sapcc/ipmi_sd/internal/discovery"
 	"github.com/sapcc/ipmi_sd/pkg/adapter"
 	internalClients "github.com/sapcc/ipmi_sd/pkg/clients"
@@ -46,6 +49,24 @@ var (
 	logger            log.Logger
 	configmapName     string
 	provider          *gophercloud.ProviderClient
+)
+
+var (
+	ipmiSdUp = prometheus.NewGauge(prometheus.GaugeOpts{
+		Name: "ipmi_sd_up",
+		Help: "Shows if ipmi service discovery is up and running",
+		ConstLabels: map[string]string{
+			"version": "v0.2.7",
+		},
+	})
+
+	ipmiSdNodeCount = prometheus.NewGauge(prometheus.GaugeOpts{
+		Name: "ipmi_sd_nodes",
+		Help: "Shows number of found nodes",
+		ConstLabels: map[string]string{
+			"version": "v0.2.7",
+		},
+	})
 )
 
 func init() {
@@ -92,9 +113,13 @@ func init() {
 		level.Error(log.With(logger, "component", "AuthenticatedClient")).Log("err", err)
 		os.Exit(2)
 	}
+	r := prometheus.NewRegistry()
+	r.MustRegister(ipmiSdUp)
 }
 
 func main() {
+	go startPrometheus()
+
 	v3c, err := openstack.NewIdentityV3(provider, gophercloud.EndpointOpts{
 		Region: os.Getenv("OS_REGION_NAME"),
 	})
@@ -112,7 +137,7 @@ func main() {
 		level.Error(log.With(logger, "component", "NewComputeClient")).Log("err", err)
 	}
 
-	disc, err := discovery.NewDiscovery(ic, cc, v3c, refreshInterval, logger)
+	disc, err := discovery.NewDiscovery(ic, cc, v3c, refreshInterval, logger, ipmiSdUp)
 	if err != nil {
 		level.Error(log.With(logger, "component", "NewDiscovery")).Log("err", err)
 	}
@@ -125,4 +150,9 @@ func main() {
 	sdAdapter.Run()
 
 	<-ctx.Done()
+}
+
+func startPrometheus() {
+	http.Handle("/metrics", promhttp.Handler())
+	http.ListenAndServe(":8080", nil)
 }
