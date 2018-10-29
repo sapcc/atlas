@@ -75,6 +75,9 @@ func (d *discovery) parseServiceNodes() ([]*targetgroup.Group, error) {
 	var tgroups []*targetgroup.Group
 
 	for _, node := range nodes {
+		if node.ProvisionStateEnroll() {
+			continue
+		}
 
 		tgroup := targetgroup.Group{
 			Source:  node.DriverInfo.IpmiAddress,

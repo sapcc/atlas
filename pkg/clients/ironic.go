@@ -83,6 +83,10 @@ func (n ironicNode) StableProvisionState() string {
 	return n.ProvisionState
 }
 
+func (n ironicNode) ProvisionStateEnroll() bool {
+	return n.ProvisionState == "enroll"
+}
+
 func extractNodes(page pagination.Page) (nodes []ironicNode, err error) {
 	err = page.(ironicNodePage).Result.ExtractIntoSlicePtr(&nodes, "nodes")
 	return
@@ -112,6 +116,7 @@ func (c IronicClient) GetNodes() ([]ironicNode, error) {
 		page.MarkerPageBase.Owner = page
 		return page
 	})
+
 	//if this is not set, the provision_state fields will be there,
 	//but always be null ... #justopenstackthings
 	pager.Headers = map[string]string{
@@ -127,6 +132,7 @@ func (c IronicClient) GetNodes() ([]ironicNode, error) {
 		result = append(result, pageNodes...)
 		return true, nil
 	})
+
 	return result, err
 }
 

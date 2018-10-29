@@ -56,15 +56,7 @@ var (
 		Name: "ipmi_sd_up",
 		Help: "Shows if ipmi service discovery is up and running",
 		ConstLabels: map[string]string{
-			"version": "v0.2.7",
-		},
-	})
-
-	ipmiSdNodeCount = prometheus.NewGauge(prometheus.GaugeOpts{
-		Name: "ipmi_sd_nodes",
-		Help: "Shows number of found nodes",
-		ConstLabels: map[string]string{
-			"version": "v0.2.7",
+			"version": "v0.2.8",
 		},
 	})
 )
@@ -113,6 +105,7 @@ func init() {
 		level.Error(log.With(logger, "component", "AuthenticatedClient")).Log("err", err)
 		os.Exit(2)
 	}
+	provider.UseTokenLock()
 	r := prometheus.NewRegistry()
 	r.MustRegister(ipmiSdUp)
 }
