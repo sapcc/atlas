@@ -178,9 +178,7 @@
   name = "github.com/gophercloud/gophercloud"
   packages = [
     ".",
-    "acceptance/clients",
     "openstack",
-    "openstack/blockstorage/noauth",
     "openstack/compute/v2/extensions/floatingips",
     "openstack/compute/v2/extensions/hypervisors",
     "openstack/compute/v2/flavors",
@@ -261,7 +259,10 @@
 
 [[projects]]
   name = "github.com/prometheus/client_golang"
-  packages = ["prometheus"]
+  packages = [
+    "prometheus",
+    "prometheus/promhttp"
+  ]
   revision = "82f5ff156b29e276022b1a958f7d385870fb9814"
 
 [[projects]]
@@ -573,6 +574,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "c8f3226abb04f0275970b819ef4f64cacc9756b04e4ba035746b26d9259bb3bc"
+  inputs-digest = "253fa010f6ea02c6daa8df05567b6c4aedadbbc25a09f58b2936377b833807a5"
   solver-name = "gps-cdcl"
   solver-version = 1
