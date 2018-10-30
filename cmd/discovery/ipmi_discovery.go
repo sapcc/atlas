@@ -23,32 +23,24 @@ import (
 	"context"
 	"net/http"
 	"os"
+	"os/signal"
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	"github.com/gophercloud/gophercloud"
-	"github.com/gophercloud/gophercloud/openstack"
 	"github.com/namsral/flag"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sapcc/ipmi_sd/internal/discovery"
 	"github.com/sapcc/ipmi_sd/pkg/adapter"
-	internalClients "github.com/sapcc/ipmi_sd/pkg/clients"
+	"github.com/sapcc/ipmi_sd/pkg/auth"
+	"github.com/sapcc/ipmi_sd/pkg/config"
 )
 
 var (
-	appEnv            string
-	outputFile        string
-	refreshInterval   int
-	identityEndpoint  string
-	username          string
-	password          string
-	domainName        string
-	projectName       string
-	projectDomainName string
-	logger            log.Logger
-	configmapName     string
-	provider          *gophercloud.ProviderClient
+	logger  log.Logger
+	opts    config.Options
+	pClient *gophercloud.ProviderClient
 )
 
 var (
@@ -56,93 +48,81 @@ var (
 		Name: "ipmi_sd_up",
 		Help: "Shows if ipmi service discovery is up and running",
 		ConstLabels: map[string]string{
-			"version": "v0.2.8",
+			"version": "v0.3.0",
 		},
 	})
 )
 
 func init() {
-	flag.StringVar(&appEnv, "APP_ENV", "development", "To set Log Level: development or production")
-	flag.StringVar(&outputFile, "output.file", "ipmi_targets.json", "Output file for file_sd compatible file.")
-	flag.IntVar(&refreshInterval, "REFRESH_INTERVAL", 600, "refreshInterval for fetching ironic nodes")
-	flag.StringVar(&identityEndpoint, "OS_AUTH_URL", "", "Openstack identity endpoint")
-	flag.StringVar(&username, "OS_USERNAME", "", "Openstack username")
-	flag.StringVar(&password, "OS_PASSWORD", "", "Openstack password")
-	flag.StringVar(&domainName, "OS_USER_DOMAIN_NAME", "", "Openstack domain name")
-	flag.StringVar(&projectName, "OS_PROJECT_NAME", "", "Openstack project")
-	flag.StringVar(&projectDomainName, "OS_PROJECT_DOMAIN_NAME", "", "Openstack project domain name")
+	flag.StringVar(&opts.AppEnv, "APP_ENV", "development", "To set Log Level: development or production")
+	flag.StringVar(&opts.OutputFile, "output.file", "ipmi_targets.json", "Output file for file_sd compatible file.")
+	flag.IntVar(&opts.RefreshInterval, "REFRESH_INTERVAL", 600, "refreshInterval for fetching ironic nodes")
+	flag.StringVar(&opts.IdentityEndpoint, "OS_AUTH_URL", "", "Openstack identity endpoint")
+	flag.StringVar(&opts.Username, "OS_USERNAME", "", "Openstack username")
+	flag.StringVar(&opts.Password, "OS_PASSWORD", "", "Openstack password")
+	flag.StringVar(&opts.DomainName, "OS_USER_DOMAIN_NAME", "", "Openstack domain name")
+	flag.StringVar(&opts.ProjectName, "OS_PROJECT_NAME", "", "Openstack project")
+	flag.StringVar(&opts.ProjectDomainName, "OS_PROJECT_DOMAIN_NAME", "", "Openstack project domain name")
 	flag.Parse()
 
 	logger = log.NewLogfmtLogger(log.NewSyncWriter(os.Stderr))
 	logger = log.With(logger, "ts", log.DefaultTimestampUTC)
-	if appEnv == "production" {
+	if opts.AppEnv == "production" {
 		logger = level.NewFilter(logger, level.AllowInfo())
 	} else {
 		logger = level.NewFilter(logger, level.AllowDebug())
 	}
 
 	if val, ok := os.LookupEnv("OS_PROM_CONFIGMAP_NAME"); ok {
-		configmapName = val
+		opts.ConfigmapName = val
 	} else {
 		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", "no configmap name given")
 		os.Exit(2)
 	}
 
-	authOptions := gophercloud.AuthOptions{
-		IdentityEndpoint: identityEndpoint,
-		Username:         username,
-		Password:         password,
-		DomainName:       domainName,
-		AllowReauth:      true,
-		Scope: &gophercloud.AuthScope{
-			ProjectName: projectName,
-			DomainName:  projectDomainName,
-		},
-	}
-	var err error
-	provider, err = openstack.AuthenticatedClient(authOptions)
+	prometheus.MustRegister(ipmiSdUp)
+}
+
+func main() {
+	ctx := context.Background()
+	ctx, cancel := context.WithCancel(ctx)
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+
+	pClient, err := auth.NewProviderClient(opts)
 	if err != nil {
 		level.Error(log.With(logger, "component", "AuthenticatedClient")).Log("err", err)
 		os.Exit(2)
 	}
-	provider.UseTokenLock()
-	r := prometheus.NewRegistry()
-	r.MustRegister(ipmiSdUp)
-}
 
-func main() {
-	go startPrometheus()
-
-	v3c, err := openstack.NewIdentityV3(provider, gophercloud.EndpointOpts{
-		Region: os.Getenv("OS_REGION_NAME"),
-	})
-	if err != nil {
-		level.Error(log.With(logger, "component", "NewIdentityV3")).Log("err", err)
-	}
-
-	ic, err := internalClients.NewIronicClient(provider)
-	if err != nil {
-		level.Error(log.With(logger, "component", "NewIronicClient")).Log("err", err)
-	}
-
-	cc, err := internalClients.NewComputeClient(provider)
-	if err != nil {
-		level.Error(log.With(logger, "component", "NewComputeClient")).Log("err", err)
-	}
-
-	disc, err := discovery.NewDiscovery(ic, cc, v3c, refreshInterval, logger, ipmiSdUp)
+	disc, err := discovery.NewDiscovery(pClient, opts.RefreshInterval, logger, ipmiSdUp)
 	if err != nil {
 		level.Error(log.With(logger, "component", "NewDiscovery")).Log("err", err)
+		os.Exit(2)
 	}
-	ctx := context.Background()
 
-	sdAdapter, err := adapter.NewAdapter(ctx, outputFile, "ipmiDiscovery", disc, configmapName, "kube-monitoring", logger)
+	sdAdapter, err := adapter.NewAdapter(ctx, opts.OutputFile, "ipmiDiscovery", disc, opts.ConfigmapName, "kube-monitoring", logger)
 	if err != nil {
 		level.Error(log.With(logger, "component", "NewAdapter")).Log("err", err)
+		os.Exit(2)
 	}
-	sdAdapter.Run()
 
-	<-ctx.Done()
+	defer func() {
+		signal.Stop(c)
+		cancel()
+	}()
+
+	go func() {
+		select {
+		case <-c:
+			cancel()
+		case <-ctx.Done():
+		}
+	}()
+
+	go startPrometheus()
+
+	sdAdapter.Run()
 }
 
 func startPrometheus() {
