@@ -3,52 +3,61 @@ package discovery
 import (
 	"context"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	"github.com/gophercloud/gophercloud"
-	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/common/model"
 	"github.com/prometheus/prometheus/discovery/targetgroup"
 	"github.com/sapcc/ipmi_sd/pkg/clients"
 	internalClients "github.com/sapcc/ipmi_sd/pkg/clients"
 )
 
-type discovery struct {
+type Discovery struct {
 	providerClient  *gophercloud.ProviderClient
 	ironicClient    *clients.IronicClient
 	refreshInterval int
 	logger          log.Logger
-	upGauge         prometheus.Gauge
+	Status          *Status
+}
+
+type Status struct {
+	sync.Mutex
+	Up bool
 }
 
 //NewDiscovery creates a new Discovery
-func NewDiscovery(p *gophercloud.ProviderClient, refreshInterval int, logger log.Logger, upGauge prometheus.Gauge) (*discovery, error) {
+func NewDiscovery(p *gophercloud.ProviderClient, refreshInterval int, logger log.Logger) (*Discovery, error) {
 	ic, err := internalClients.NewIronicClient(p)
 	if err != nil {
 		level.Error(log.With(logger, "component", "NewIronicClient")).Log("err", err)
 		return nil, err
 	}
 
-	return &discovery{
+	return &Discovery{
 		providerClient:  p,
 		ironicClient:    ic,
 		refreshInterval: refreshInterval,
 		logger:          logger,
-		upGauge:         upGauge,
+		Status:          &Status{Up: false},
 	}, nil
 }
 
-func (d *discovery) Run(ctx context.Context, ch chan<- []*targetgroup.Group) {
+func (d *Discovery) Run(ctx context.Context, ch chan<- []*targetgroup.Group) {
 	for c := time.Tick(time.Duration(d.refreshInterval) * time.Second); ; {
 		tgs, err := d.parseServiceNodes()
 		d.setAdditionalLabels(tgs)
 		if err == nil {
-			d.upGauge.Set(1)
+			d.Status.Lock()
+			d.Status.Up = true
+			d.Status.Unlock()
 			ch <- tgs
 		} else {
-			d.upGauge.Set(0)
+			d.Status.Lock()
+			d.Status.Up = false
+			d.Status.Unlock()
 			continue
 		}
 		// Wait for ticker or exit when ctx is closed.
@@ -61,7 +70,7 @@ func (d *discovery) Run(ctx context.Context, ch chan<- []*targetgroup.Group) {
 	}
 }
 
-func (d *discovery) parseServiceNodes() ([]*targetgroup.Group, error) {
+func (d *Discovery) parseServiceNodes() ([]*targetgroup.Group, error) {
 	nodes, err := d.ironicClient.GetNodes()
 	if err != nil {
 		level.Error(log.With(d.logger, "component", "ironicClient")).Log("err", err)
@@ -108,7 +117,7 @@ func (d *discovery) parseServiceNodes() ([]*targetgroup.Group, error) {
 	return tgroups, nil
 }
 
-func (d *discovery) setAdditionalLabels(tgroups []*targetgroup.Group) {
+func (d *Discovery) setAdditionalLabels(tgroups []*targetgroup.Group) {
 	labels, err := NewLabels(d.providerClient, d.logger)
 	if err != nil {
 		level.Error(log.With(d.logger, "component", "nodeLabels")).Log("err", err)

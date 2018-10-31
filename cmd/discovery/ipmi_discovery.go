@@ -24,6 +24,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"syscall"
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
@@ -35,22 +36,13 @@ import (
 	"github.com/sapcc/ipmi_sd/pkg/adapter"
 	"github.com/sapcc/ipmi_sd/pkg/auth"
 	"github.com/sapcc/ipmi_sd/pkg/config"
+	"github.com/sapcc/ipmi_sd/pkg/metrics"
 )
 
 var (
 	logger  log.Logger
 	opts    config.Options
 	pClient *gophercloud.ProviderClient
-)
-
-var (
-	ipmiSdUp = prometheus.NewGauge(prometheus.GaugeOpts{
-		Name: "ipmi_sd_up",
-		Help: "Shows if ipmi service discovery is up and running",
-		ConstLabels: map[string]string{
-			"version": "v0.3.0",
-		},
-	})
 )
 
 func init() {
@@ -62,6 +54,7 @@ func init() {
 	flag.StringVar(&opts.Password, "OS_PASSWORD", "", "Openstack password")
 	flag.StringVar(&opts.DomainName, "OS_USER_DOMAIN_NAME", "", "Openstack domain name")
 	flag.StringVar(&opts.ProjectName, "OS_PROJECT_NAME", "", "Openstack project")
+	flag.StringVar(&opts.Version, "OS_VERSION", "v0.3.0", "IPMI SD Version")
 	flag.StringVar(&opts.ProjectDomainName, "OS_PROJECT_DOMAIN_NAME", "", "Openstack project domain name")
 	flag.Parse()
 
@@ -79,15 +72,13 @@ func init() {
 		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", "no configmap name given")
 		os.Exit(2)
 	}
-
-	prometheus.MustRegister(ipmiSdUp)
 }
 
 func main() {
 	ctx := context.Background()
 	ctx, cancel := context.WithCancel(ctx)
 	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 
 	pClient, err := auth.NewProviderClient(opts)
 	if err != nil {
@@ -95,7 +86,7 @@ func main() {
 		os.Exit(2)
 	}
 
-	disc, err := discovery.NewDiscovery(pClient, opts.RefreshInterval, logger, ipmiSdUp)
+	disc, err := discovery.NewDiscovery(pClient, opts.RefreshInterval, logger)
 	if err != nil {
 		level.Error(log.With(logger, "component", "NewDiscovery")).Log("err", err)
 		os.Exit(2)
@@ -107,25 +98,26 @@ func main() {
 		os.Exit(2)
 	}
 
+	prometheus.MustRegister(metrics.NewMetricsCollector(sdAdapter, disc, opts.Version))
+
+	go startPrometheus()
+	sdAdapter.Run()
+
 	defer func() {
 		signal.Stop(c)
 		cancel()
 	}()
 
-	go func() {
-		select {
-		case <-c:
-			cancel()
-		case <-ctx.Done():
-		}
-	}()
-
-	go startPrometheus()
-
-	sdAdapter.Run()
+	select {
+	case <-c:
+		cancel()
+	case <-ctx.Done():
+	}
 }
 
 func startPrometheus() {
 	http.Handle("/metrics", promhttp.Handler())
-	http.ListenAndServe(":8080", nil)
+	if err := http.ListenAndServe(":8080", nil); err != nil {
+		panic(err)
+	}
 }

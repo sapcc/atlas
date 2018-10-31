@@ -31,4 +31,5 @@ type Options struct {
 	ProjectName       string
 	ProjectDomainName string
 	ConfigmapName     string
+	Version           string
 }
