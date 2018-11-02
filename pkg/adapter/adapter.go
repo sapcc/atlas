@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
+	"sync"
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
@@ -47,6 +48,12 @@ type Adapter struct {
 	namespace string
 	name      string
 	logger    log.Logger
+	Status    *Status
+}
+
+type Status struct {
+	sync.Mutex
+	Up bool
 }
 
 func mapToArray(m map[string]*customSD) []customSD {
@@ -59,7 +66,7 @@ func mapToArray(m map[string]*customSD) []customSD {
 
 // Parses incoming target groups updates. If the update contains changes to the target groups
 // Adapter already knows about, or new target groups, we Marshal to JSON and write to file.
-func (a *Adapter) generateTargetGroups(allTargetGroups map[string][]*targetgroup.Group) {
+func (a *Adapter) generateTargetGroups(allTargetGroups map[string][]*targetgroup.Group) error {
 	tempGroups := make(map[string]*customSD)
 	for k, sdTargetGroups := range allTargetGroups {
 		for i, group := range sdTargetGroups {
@@ -88,8 +95,11 @@ func (a *Adapter) generateTargetGroups(allTargetGroups map[string][]*targetgroup
 		err := a.writeOutput()
 		if err != nil {
 			level.Error(log.With(a.logger, "component", "sd-adapter")).Log("err", err)
+			return err
 		}
 	}
+
+	return nil
 
 }
 
@@ -147,7 +157,10 @@ func (a *Adapter) runCustomSD(ctx context.Context) {
 			if !ok {
 				return
 			}
-			a.generateTargetGroups(allTargetGroups)
+			err := a.generateTargetGroups(allTargetGroups)
+			a.Status.Lock()
+			a.Status.Up = err == nil
+			a.Status.Unlock()
 		}
 	}
 }
@@ -179,6 +192,7 @@ func NewAdapter(ctx context.Context, fileName string, name string, d discovery.D
 		name:      name,
 		configMap: configMap,
 		namespace: namespace,
+		Status:    &Status{Up: false},
 		logger:    logger,
 	}, nil
 }

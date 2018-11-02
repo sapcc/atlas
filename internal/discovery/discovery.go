@@ -6,49 +6,58 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gophercloud/gophercloud/openstack/compute/v2/servers"
-	"github.com/gophercloud/gophercloud/openstack/identity/v3/projects"
-
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	"github.com/gophercloud/gophercloud"
-	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/common/model"
 	"github.com/prometheus/prometheus/discovery/targetgroup"
 	"github.com/sapcc/ipmi_sd/pkg/clients"
+	internalClients "github.com/sapcc/ipmi_sd/pkg/clients"
 )
 
-type discovery struct {
+type Discovery struct {
+	providerClient  *gophercloud.ProviderClient
 	ironicClient    *clients.IronicClient
-	computeClient   *clients.ComputeClient
-	serviceClient   *gophercloud.ServiceClient
 	refreshInterval int
 	logger          log.Logger
-	upGauge         prometheus.Gauge
+	Status          *Status
+}
+
+type Status struct {
+	sync.Mutex
+	Up bool
 }
 
 //NewDiscovery creates a new Discovery
-func NewDiscovery(ic *clients.IronicClient, cc *clients.ComputeClient, sc *gophercloud.ServiceClient, refreshInterval int, logger log.Logger, upGauge prometheus.Gauge) (*discovery, error) {
-	cd := &discovery{
+func NewDiscovery(p *gophercloud.ProviderClient, refreshInterval int, logger log.Logger) (*Discovery, error) {
+	ic, err := internalClients.NewIronicClient(p)
+	if err != nil {
+		level.Error(log.With(logger, "component", "NewIronicClient")).Log("err", err)
+		return nil, err
+	}
+
+	return &Discovery{
+		providerClient:  p,
 		ironicClient:    ic,
-		computeClient:   cc,
-		serviceClient:   sc,
 		refreshInterval: refreshInterval,
 		logger:          logger,
-		upGauge:         upGauge,
-	}
-	return cd, nil
+		Status:          &Status{Up: false},
+	}, nil
 }
 
-func (d *discovery) Run(ctx context.Context, ch chan<- []*targetgroup.Group) {
+func (d *Discovery) Run(ctx context.Context, ch chan<- []*targetgroup.Group) {
 	for c := time.Tick(time.Duration(d.refreshInterval) * time.Second); ; {
 		tgs, err := d.parseServiceNodes()
 		d.setAdditionalLabels(tgs)
 		if err == nil {
-			d.upGauge.Set(1)
+			d.Status.Lock()
+			d.Status.Up = true
+			d.Status.Unlock()
 			ch <- tgs
 		} else {
-			d.upGauge.Set(0)
+			d.Status.Lock()
+			d.Status.Up = false
+			d.Status.Unlock()
 			continue
 		}
 		// Wait for ticker or exit when ctx is closed.
@@ -61,7 +70,7 @@ func (d *discovery) Run(ctx context.Context, ch chan<- []*targetgroup.Group) {
 	}
 }
 
-func (d *discovery) parseServiceNodes() ([]*targetgroup.Group, error) {
+func (d *Discovery) parseServiceNodes() ([]*targetgroup.Group, error) {
 	nodes, err := d.ironicClient.GetNodes()
 	if err != nil {
 		level.Error(log.With(d.logger, "component", "ironicClient")).Log("err", err)
@@ -108,13 +117,20 @@ func (d *discovery) parseServiceNodes() ([]*targetgroup.Group, error) {
 	return tgroups, nil
 }
 
-func (d *discovery) setAdditionalLabels(tgroups []*targetgroup.Group) {
-	if d.computeClient.Authorized == false {
+func (d *Discovery) setAdditionalLabels(tgroups []*targetgroup.Group) {
+	labels, err := NewLabels(d.providerClient, d.logger)
+	if err != nil {
+		level.Error(log.With(d.logger, "component", "nodeLabels")).Log("err", err)
 		return
 	}
 
-	serverLabels := getServerLabels(d.computeClient, tgroups, d.logger)
-	projectLabels := getProjectLabels(d.serviceClient, serverLabels, d.logger)
+	serverLabels, err := labels.getComputeLabels(tgroups)
+	projectLabels, err := labels.getProjectLabels(serverLabels)
+
+	if err != nil {
+		level.Error(log.With(d.logger, "component", "nodeLabels")).Log("err", err)
+		return
+	}
 
 	for _, group := range tgroups {
 		id := string(group.Labels[model.LabelName("server_id")])
@@ -130,90 +146,5 @@ func (d *discovery) setAdditionalLabels(tgroups []*targetgroup.Group) {
 			}
 		}
 
-	}
-}
-
-func getServerLabels(client *clients.ComputeClient, tgroups []*targetgroup.Group, logger log.Logger) map[string]*servers.Server {
-	var wg sync.WaitGroup
-	serversCh := make(chan *servers.Server)
-	errCh := make(chan error)
-	result := make(map[string]*servers.Server)
-	for _, group := range tgroups {
-		id := string(group.Labels[model.LabelName("server_id")])
-		if len(id) == 0 {
-			continue
-		}
-		wg.Add(1)
-		go client.GetServer(id, serversCh, errCh, &wg)
-	}
-
-	go func() {
-		for err := range errCh {
-			level.Error(log.With(logger, "component", "compute")).Log("err", err)
-		}
-	}()
-
-	go func() {
-		defer close(serversCh)
-		defer close(errCh)
-		wg.Wait()
-	}()
-
-	for server := range serversCh {
-		result[server.ID] = server
-	}
-	return result
-}
-
-func getProjectLabels(client *gophercloud.ServiceClient, s map[string]*servers.Server, logger log.Logger) map[string]*projects.Project {
-	var wg sync.WaitGroup
-	projectslCh := make(chan map[string]*projects.Project)
-	result := make(map[string]*projects.Project)
-	errCh := make(chan error)
-
-	_, err := projects.Get(client, "").Extract()
-	if err != nil {
-		switch err.(type) {
-		case gophercloud.ErrDefault403:
-			level.Info(log.With(logger, "component", "project")).Log("info", "user missing role!")
-			return result
-		}
-	}
-
-	for _, server := range s {
-		wg.Add(1)
-		go fetchProjectLabels(client, server.TenantID, projectslCh, errCh, &wg)
-	}
-
-	go func() {
-		for err := range errCh {
-			level.Error(log.With(logger, "component", "project")).Log("error", err)
-		}
-	}()
-
-	go func() {
-		defer close(projectslCh)
-		defer close(errCh)
-		wg.Wait()
-	}()
-
-	for project := range projectslCh {
-		for k, v := range project {
-			result[k] = v
-		}
-	}
-
-	return result
-}
-
-func fetchProjectLabels(client *gophercloud.ServiceClient, tenantID string, pc chan<- map[string]*projects.Project, ec chan<- error, wg *sync.WaitGroup) {
-	p, err := projects.Get(client, tenantID).Extract()
-	r := make(map[string]*projects.Project)
-	defer wg.Done()
-	if err != nil {
-		ec <- err
-	} else {
-		r[tenantID] = p
-		pc <- r
 	}
 }
