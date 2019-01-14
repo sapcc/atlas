@@ -32,4 +32,10 @@ type Options struct {
 	ProjectDomainName string
 	ConfigmapName     string
 	Version           string
+
+	NetboxDiscovery  bool
+	NetboxHost       string
+	NetboxAPIToken   string
+	NetboxOutputFile string
+	Region           string
 }
