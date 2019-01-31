@@ -33,12 +33,19 @@ import (
 	internalClients "github.com/sapcc/ipmi_sd/pkg/clients"
 )
 
-type Discovery struct {
+type Discovery interface {
+	Up() bool
+	Lock()
+	Unlock()
+	Run(ctx context.Context, ch chan<- []*targetgroup.Group)
+}
+
+type IronicDiscovery struct {
 	providerClient  *gophercloud.ProviderClient
 	ironicClient    *clients.IronicClient
 	refreshInterval int
 	logger          log.Logger
-	Status          *Status
+	status          *Status
 }
 
 type Status struct {
@@ -46,36 +53,36 @@ type Status struct {
 	Up bool
 }
 
-//NewDiscovery creates a new Discovery
-func New(p *gophercloud.ProviderClient, r int, l log.Logger) (*Discovery, error) {
+//NewIronicDiscovery creates a new Ironic Discovery
+func NewIronicDiscovery(p *gophercloud.ProviderClient, r int, l log.Logger) (Discovery, error) {
 	i, err := internalClients.NewIronicClient(p)
 	if err != nil {
 		level.Error(log.With(l, "component", "NewIronicClient")).Log("err", err)
 		return nil, err
 	}
 
-	return &Discovery{
+	return &IronicDiscovery{
 		providerClient:  p,
 		ironicClient:    i,
 		refreshInterval: r,
 		logger:          l,
-		Status:          &Status{Up: false},
+		status:          &Status{Up: false},
 	}, nil
 }
 
-func (d *Discovery) Run(ctx context.Context, ch chan<- []*targetgroup.Group) {
+func (d *IronicDiscovery) Run(ctx context.Context, ch chan<- []*targetgroup.Group) {
 	for c := time.Tick(time.Duration(d.refreshInterval) * time.Second); ; {
 		tgs, err := d.parseServiceNodes()
 		d.setAdditionalLabels(tgs)
 		if err == nil {
-			d.Status.Lock()
-			d.Status.Up = true
-			d.Status.Unlock()
+			d.status.Lock()
+			d.status.Up = true
+			d.status.Unlock()
 			ch <- tgs
 		} else {
-			d.Status.Lock()
-			d.Status.Up = false
-			d.Status.Unlock()
+			d.status.Lock()
+			d.status.Up = false
+			d.status.Unlock()
 			continue
 		}
 		// Wait for ticker or exit when ctx is closed.
@@ -88,7 +95,19 @@ func (d *Discovery) Run(ctx context.Context, ch chan<- []*targetgroup.Group) {
 	}
 }
 
-func (d *Discovery) parseServiceNodes() ([]*targetgroup.Group, error) {
+func (d *IronicDiscovery) Up() bool {
+	return d.status.Up
+
+}
+func (d *IronicDiscovery) Lock() {
+	d.status.Lock()
+
+}
+func (d *IronicDiscovery) Unlock() {
+	d.status.Unlock()
+}
+
+func (d *IronicDiscovery) parseServiceNodes() ([]*targetgroup.Group, error) {
 	nodes, err := d.ironicClient.GetNodes()
 	if err != nil {
 		level.Error(log.With(d.logger, "component", "ironicClient")).Log("err", err)
@@ -135,7 +154,7 @@ func (d *Discovery) parseServiceNodes() ([]*targetgroup.Group, error) {
 	return tgroups, nil
 }
 
-func (d *Discovery) setAdditionalLabels(tgroups []*targetgroup.Group) {
+func (d *IronicDiscovery) setAdditionalLabels(tgroups []*targetgroup.Group) {
 	labels, err := NewLabels(d.providerClient, d.logger)
 	if err != nil {
 		level.Error(log.With(d.logger, "component", "nodeLabels")).Log("err", err)

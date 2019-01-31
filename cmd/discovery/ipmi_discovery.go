@@ -35,14 +35,14 @@ import (
 	"github.com/sapcc/ipmi_sd/pkg/config"
 	"github.com/sapcc/ipmi_sd/pkg/metrics"
 	"github.com/sapcc/ipmi_sd/pkg/netbox"
-  "github.com/sapcc/ipmi_sd/pkg/server"
+	"github.com/sapcc/ipmi_sd/pkg/server"
 )
 
 var (
 	logger log.Logger
 	opts   config.Options
 	adpt   *adapter.Adapter
-	disc   *discovery.Discovery
+	disc   discovery.Discovery
 )
 
 func init() {
@@ -111,7 +111,7 @@ func main() {
 		os.Exit(2)
 	}
 
-	disc, err = discovery.New(client, opts.RefreshInterval, logger)
+	disc, err = discovery.NewIronicDiscovery(client, opts.RefreshInterval, logger)
 	if err != nil {
 		level.Error(log.With(logger, "component", "NewDiscovery")).Log("err", err)
 		os.Exit(2)
@@ -123,10 +123,11 @@ func main() {
 		os.Exit(2)
 	}
 
-	prometheus.MustRegister(metrics.NewMetricsCollector(adpt, disc, opts.Version))
-	go server.New(adpt, disc, logger).Start()
+	prometheus.MustRegister(metrics.NewMetricsCollector("ipmi_sd_up", "Shows if service can load ironic nodes", adpt, disc, opts.Version))
 
- 
+	adapterList := []*adapter.Adapter{adpt}
+	discoveryList := []discovery.Discovery{disc}
+
 	var nAdapter *adapter.Adapter
 	if opts.NetboxDiscovery {
 		nClient, err := netbox.New(opts.NetboxHost, opts.NetboxAPIToken)
@@ -136,16 +137,19 @@ func main() {
 		}
 		nDisc := discovery.NewNetboxDiscovery(nClient, opts.Region, opts.RefreshInterval, logger)
 
-		nAdapter, err = adapter.NewAdapter(ctx, opts.NetboxOutputFile, "netbpxDiscovery", nDisc, opts.ConfigmapName, "kube-monitoring", logger)
+		nAdapter, err = adapter.New(ctx, opts.NetboxOutputFile, "netboxDiscovery", nDisc, opts.ConfigmapName, "kube-monitoring", logger)
 		if err != nil {
 			level.Error(log.With(logger, "component", "NewAdapter")).Log("err", err)
 			os.Exit(2)
 		}
 
-		prometheus.MustRegister(metrics.NewMetricsNetboxCollector(nAdapter, nDisc, opts.Version))
+		prometheus.MustRegister(metrics.NewMetricsCollector("ipmi_netbox_sd_up", "Shows if service can load netbox nodes", nAdapter, nDisc, opts.Version))
+		adapterList = append(adapterList, nAdapter)
+		discoveryList = append(discoveryList, nDisc)
 	}
 
-	go startPrometheus()
+	go server.New(adapterList, discoveryList, logger).Start()
+
 	adpt.Run()
 	if opts.NetboxDiscovery {
 		nAdapter.Run()
