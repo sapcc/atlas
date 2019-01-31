@@ -20,6 +20,8 @@ import (
 	"reflect"
 	"sync"
 
+	"github.com/sapcc/ipmi_sd/pkg/retry"
+
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	"github.com/prometheus/prometheus/discovery"
@@ -122,19 +124,18 @@ func (a *Adapter) writeOutput() error {
 	arr := mapToArray(a.groups)
 	b, _ := json.MarshalIndent(arr, "", "    ")
 
-	configMap, err := a.getConfigMap()
-	if err != nil {
-		return err
-	}
-	configMap.Data[a.output] = string(b)
+	err := retry.RetryOnConflict(retry.DefaultBackoff, func() (err error) {
+		configMap, err := a.getConfigMap()
+		if err != nil {
+			return err
+		}
+		configMap.Data[a.output] = string(b)
 
-	level.Info(log.With(a.logger, "component", "sd-adapter")).Log("debug", fmt.Sprintf("writing targets to configmap: %s, in namespace: %s", a.configMap, a.namespace))
-	configMap, err = a.cs.CoreV1().ConfigMaps(a.namespace).Update(configMap)
-	if err != nil {
+		level.Debug(log.With(a.logger, "component", "sd-adapter")).Log("debug", fmt.Sprintf("writing targets to configmap: %s, in namespace: %s", a.configMap, a.namespace))
+		configMap, err = a.cs.CoreV1().ConfigMaps(a.namespace).Update(configMap)
 		return err
-	}
-
-	return nil
+	})
+	return err
 }
 
 func (a *Adapter) runCustomSD(ctx context.Context) {

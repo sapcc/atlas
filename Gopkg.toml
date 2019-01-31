@@ -43,3 +43,11 @@
 
 [[constraint]]
   name = "github.com/prometheus/client_golang"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/hosting-de-labs/go-netbox"
+
+[[constraint]]
+  version= "v0.17.2"
+  name = "github.com/go-openapi/spec"

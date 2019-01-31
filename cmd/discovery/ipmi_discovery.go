@@ -34,7 +34,8 @@ import (
 	"github.com/sapcc/ipmi_sd/pkg/auth"
 	"github.com/sapcc/ipmi_sd/pkg/config"
 	"github.com/sapcc/ipmi_sd/pkg/metrics"
-	"github.com/sapcc/ipmi_sd/pkg/server"
+	"github.com/sapcc/ipmi_sd/pkg/netbox"
+  "github.com/sapcc/ipmi_sd/pkg/server"
 )
 
 var (
@@ -55,6 +56,12 @@ func init() {
 	flag.StringVar(&opts.ProjectName, "OS_PROJECT_NAME", "", "Openstack project")
 	flag.StringVar(&opts.Version, "OS_VERSION", "v0.3.0", "IPMI SD Version")
 	flag.StringVar(&opts.ProjectDomainName, "OS_PROJECT_DOMAIN_NAME", "", "Openstack project domain name")
+
+	flag.BoolVar(&opts.NetboxDiscovery, "NETBOX", false, "Use Netbox for discovery")
+	flag.StringVar(&opts.NetboxHost, "NETBOX_HOST", "netbox.global.cloud.sap", "Netbox host address")
+	flag.StringVar(&opts.NetboxAPIToken, "NETBOX_API_TOKEN", "", "Netbox API token")
+	flag.StringVar(&opts.NetboxOutputFile, "output.file.netbox", "netbox_targets.json", "Output file for file_sd compatible file")
+	flag.StringVar(&opts.Region, "OS_REGION", "", "Openstack region")
 	flag.Parse()
 
 	logger = log.NewLogfmtLogger(log.NewSyncWriter(os.Stderr))
@@ -70,6 +77,25 @@ func init() {
 	} else {
 		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", "no configmap name given")
 		os.Exit(2)
+	}
+
+	if opts.NetboxDiscovery {
+		if opts.NetboxHost == "" {
+			level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", "no netbox host given")
+			os.Exit(2)
+		}
+		if opts.NetboxAPIToken == "" {
+			level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", "no netbox api token given")
+			os.Exit(2)
+		}
+		if opts.NetboxOutputFile == "" {
+			level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", "no netbox output file given")
+			os.Exit(2)
+		}
+		if opts.Region == "" {
+			level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", "no region given")
+			os.Exit(2)
+		}
 	}
 }
 
@@ -100,7 +126,30 @@ func main() {
 	prometheus.MustRegister(metrics.NewMetricsCollector(adpt, disc, opts.Version))
 	go server.New(adpt, disc, logger).Start()
 
+ 
+	var nAdapter *adapter.Adapter
+	if opts.NetboxDiscovery {
+		nClient, err := netbox.New(opts.NetboxHost, opts.NetboxAPIToken)
+		if err != nil {
+			level.Error(log.With(logger, "component", "NetboxClient")).Log("err", err)
+			os.Exit(2)
+		}
+		nDisc := discovery.NewNetboxDiscovery(nClient, opts.Region, opts.RefreshInterval, logger)
+
+		nAdapter, err = adapter.NewAdapter(ctx, opts.NetboxOutputFile, "netbpxDiscovery", nDisc, opts.ConfigmapName, "kube-monitoring", logger)
+		if err != nil {
+			level.Error(log.With(logger, "component", "NewAdapter")).Log("err", err)
+			os.Exit(2)
+		}
+
+		prometheus.MustRegister(metrics.NewMetricsNetboxCollector(nAdapter, nDisc, opts.Version))
+	}
+
+	go startPrometheus()
 	adpt.Run()
+	if opts.NetboxDiscovery {
+		nAdapter.Run()
+	}
 
 	defer func() {
 		signal.Stop(c)
