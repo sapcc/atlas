@@ -1,3 +1,21 @@
+/*******************************************************************************
+*
+* Copyright 2018 SAP SE
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You should have received a copy of the License along with this
+* program. If not, you may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*******************************************************************************/
 package discovery
 
 import (
@@ -17,30 +35,32 @@ import (
 	internalClients "github.com/sapcc/ipmi_sd/pkg/clients"
 )
 
+//TODO: use errgroup.Group
+
 type labels struct {
 	computeClient *clients.ComputeClient
 	serviceClient *gophercloud.ServiceClient
 	logger        log.Logger
 }
 
-func NewLabels(p *gophercloud.ProviderClient, logger log.Logger) (*labels, error) {
+func NewLabels(p *gophercloud.ProviderClient, l log.Logger) (*labels, error) {
 	cc, err := internalClients.NewComputeClient(p)
 	if err != nil {
-		level.Error(log.With(logger, "component", "NewComputeClient")).Log("err", err)
+		level.Error(log.With(l, "component", "NewComputeClient")).Log("err", err)
 		return nil, err
 	}
 	sc, err := openstack.NewIdentityV3(p, gophercloud.EndpointOpts{
 		Region: os.Getenv("OS_REGION_NAME"),
 	})
 	if err != nil {
-		level.Error(log.With(logger, "component", "NewIdentityV3")).Log("err", err)
+		level.Error(log.With(l, "component", "NewIdentityV3")).Log("err", err)
 		return nil, err
 	}
 
 	return &labels{
 		computeClient: cc,
 		serviceClient: sc,
-		logger:        logger,
+		logger:        l,
 	}, nil
 }
 
