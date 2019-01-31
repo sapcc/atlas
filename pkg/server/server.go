@@ -12,12 +12,12 @@ import (
 )
 
 type Server struct {
-	adapter   *adapter.Adapter
-	discovery *discovery.Discovery
+	adapter   []*adapter.Adapter
+	discovery []discovery.Discovery
 	logger    log.Logger
 }
 
-func New(a *adapter.Adapter, d *discovery.Discovery, l log.Logger) *Server {
+func New(a []*adapter.Adapter, d []discovery.Discovery, l log.Logger) *Server {
 	return &Server{
 		adapter:   a,
 		discovery: d,
@@ -34,17 +34,40 @@ func (s *Server) Start() {
 }
 
 func (s *Server) health(w http.ResponseWriter, r *http.Request) {
-	s.discovery.Status.Lock()
-	s.adapter.Status.Lock()
+	for _, d := range s.discovery {
+		d.Lock()
+	}
+	for _, a := range s.adapter {
+		a.Status.Lock()
+	}
 	defer func() {
-		s.discovery.Status.Unlock()
-		s.adapter.Status.Unlock()
+		for _, d := range s.discovery {
+			d.Unlock()
+		}
+		for _, a := range s.adapter {
+			a.Status.Unlock()
+		}
 	}()
-	if s.discovery.Status.Up && s.adapter.Status.Up {
+
+	if s.Up() {
 		level.Debug(log.With(s.logger, "component", "health")).Log("debug", "health probe OK")
 		w.WriteHeader(http.StatusOK)
 		return
 	}
-	level.Debug(log.With(s.logger, "component", "health")).Log("debug", fmt.Sprintf("health probe NOK! discovery: %t, adapter: %t", s.discovery.Status.Up, s.adapter.Status.Up))
+	level.Debug(log.With(s.logger, "component", "health")).Log("debug", fmt.Sprintf("health probe NOK!"))
 	w.WriteHeader(http.StatusServiceUnavailable)
+}
+
+func (s *Server) Up() bool {
+	for _, d := range s.discovery {
+		if !d.Up() {
+			return false
+		}
+	}
+	for _, a := range s.adapter {
+		if !a.Status.Up {
+			return false
+		}
+	}
+	return true
 }

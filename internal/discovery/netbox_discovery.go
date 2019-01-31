@@ -3,11 +3,12 @@ package discovery
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"time"
+
 	"github.com/go-kit/kit/log/level"
 	"github.com/prometheus/common/model"
 	"github.com/sapcc/ipmi_sd/pkg/netbox"
-	"strconv"
-	"time"
 
 	"github.com/go-kit/kit/log"
 	"github.com/prometheus/prometheus/discovery/targetgroup"
@@ -18,18 +19,18 @@ type NetboxDiscovery struct {
 	region          string
 	refreshInterval int
 	logger          log.Logger
-	Status          *Status
+	status          *Status
 }
 
 //NewDiscovery creates a new NetboxDiscovery
-func NewNetboxDiscovery(n *netbox.Netbox, region string, refreshInterval int, logger log.Logger) *NetboxDiscovery {
+func NewNetboxDiscovery(n *netbox.Netbox, region string, refreshInterval int, logger log.Logger) Discovery {
 
 	return &NetboxDiscovery{
 		netbox:          n,
 		region:          region,
 		refreshInterval: refreshInterval,
 		logger:          logger,
-		Status:          &Status{Up: false},
+		status:          &Status{Up: false},
 	}
 }
 
@@ -37,14 +38,14 @@ func (nd *NetboxDiscovery) Run(ctx context.Context, ch chan<- []*targetgroup.Gro
 	for c := time.Tick(time.Duration(nd.refreshInterval) * time.Second); ; {
 		tgs, err := nd.getNodes()
 		if err == nil {
-			nd.Status.Lock()
-			nd.Status.Up = true
-			nd.Status.Unlock()
+			nd.status.Lock()
+			nd.status.Up = true
+			nd.status.Unlock()
 			ch <- tgs
 		} else {
-			nd.Status.Lock()
-			nd.Status.Up = false
-			nd.Status.Unlock()
+			nd.status.Lock()
+			nd.status.Up = false
+			nd.status.Unlock()
 			continue
 		}
 		// Wait for ticker or exit when ctx is closed.
@@ -55,6 +56,18 @@ func (nd *NetboxDiscovery) Run(ctx context.Context, ch chan<- []*targetgroup.Gro
 			return
 		}
 	}
+}
+
+func (d *NetboxDiscovery) Up() bool {
+	return d.status.Up
+
+}
+func (d *NetboxDiscovery) Lock() {
+	d.status.Lock()
+
+}
+func (d *NetboxDiscovery) Unlock() {
+	d.status.Unlock()
 }
 
 func (nd *NetboxDiscovery) getNodes() ([]*targetgroup.Group, error) {

@@ -28,7 +28,7 @@ import (
 type MetricsCollector struct {
 	upGauge   *prometheus.Desc
 	adapter   *adapter.Adapter
-	discovery *discovery.Discovery
+	discovery discovery.Discovery
 }
 
 func (c *MetricsCollector) Describe(ch chan<- *prometheus.Desc) {
@@ -36,14 +36,14 @@ func (c *MetricsCollector) Describe(ch chan<- *prometheus.Desc) {
 }
 
 func (c *MetricsCollector) Collect(ch chan<- prometheus.Metric) {
-	c.discovery.Status.Lock()
+	c.discovery.Lock()
 	c.adapter.Status.Lock()
 	defer func() {
-		c.discovery.Status.Unlock()
+		c.discovery.Unlock()
 		c.adapter.Status.Unlock()
 	}()
 	up := 0
-	if c.discovery.Status.Up && c.adapter.Status.Up {
+	if c.discovery.Up() && c.adapter.Status.Up {
 		up = 1
 	}
 	ch <- prometheus.MustNewConstMetric(
@@ -53,9 +53,9 @@ func (c *MetricsCollector) Collect(ch chan<- prometheus.Metric) {
 	)
 }
 
-func NewMetricsCollector(a *adapter.Adapter, d *discovery.Discovery, v string) *MetricsCollector {
+func NewMetricsCollector(name string, help string, a *adapter.Adapter, d discovery.Discovery, v string) *MetricsCollector {
 	return &MetricsCollector{
-		upGauge:   prometheus.NewDesc("ipmi_sd_up", "Shows if service can load ironic nodes", nil, prometheus.Labels{"version": v}),
+		upGauge:   prometheus.NewDesc(name, help, nil, prometheus.Labels{"version": v}),
 		adapter:   a,
 		discovery: d,
 	}
