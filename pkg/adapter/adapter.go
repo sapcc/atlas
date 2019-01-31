@@ -51,6 +51,7 @@ type Adapter struct {
 	Status    *Status
 }
 
+// Status shows the status of the adapter.
 type Status struct {
 	sync.Mutex
 	Up bool
@@ -127,7 +128,7 @@ func (a *Adapter) writeOutput() error {
 	}
 	configMap.Data[a.output] = string(b)
 
-	level.Debug(log.With(a.logger, "component", "sd-adapter")).Log("debug", fmt.Sprintf("writing targets to configmap: %s, in namespace: %s", a.configMap, a.namespace))
+	level.Info(log.With(a.logger, "component", "sd-adapter")).Log("debug", fmt.Sprintf("writing targets to configmap: %s, in namespace: %s", a.configMap, a.namespace))
 	configMap, err = a.cs.CoreV1().ConfigMaps(a.namespace).Update(configMap)
 	if err != nil {
 		return err
@@ -172,8 +173,8 @@ func (a *Adapter) Run() {
 	go a.runCustomSD(a.ctx)
 }
 
-// NewAdapter creates a new instance of Adapter.
-func NewAdapter(ctx context.Context, fileName string, name string, d discovery.Discoverer, configMap string, namespace string, logger log.Logger) (*Adapter, error) {
+// New creates a new instance of Adapter.
+func New(ctx context.Context, fileName string, name string, d discovery.Discoverer, configMap string, namespace string, logger log.Logger) (*Adapter, error) {
 	config, err := rest.InClusterConfig()
 	if err != nil {
 		return nil, err

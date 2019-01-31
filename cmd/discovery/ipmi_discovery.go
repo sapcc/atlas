@@ -21,28 +21,27 @@ package main
 
 import (
 	"context"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
-	"github.com/gophercloud/gophercloud"
 	"github.com/namsral/flag"
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sapcc/ipmi_sd/internal/discovery"
 	"github.com/sapcc/ipmi_sd/pkg/adapter"
 	"github.com/sapcc/ipmi_sd/pkg/auth"
 	"github.com/sapcc/ipmi_sd/pkg/config"
 	"github.com/sapcc/ipmi_sd/pkg/metrics"
+	"github.com/sapcc/ipmi_sd/pkg/server"
 )
 
 var (
-	logger  log.Logger
-	opts    config.Options
-	pClient *gophercloud.ProviderClient
+	logger log.Logger
+	opts   config.Options
+	adpt   *adapter.Adapter
+	disc   *discovery.Discovery
 )
 
 func init() {
@@ -80,28 +79,28 @@ func main() {
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 
-	pClient, err := auth.NewProviderClient(opts)
+	client, err := auth.NewProviderClient(opts)
 	if err != nil {
 		level.Error(log.With(logger, "component", "AuthenticatedClient")).Log("err", err)
 		os.Exit(2)
 	}
 
-	disc, err := discovery.NewDiscovery(pClient, opts.RefreshInterval, logger)
+	disc, err = discovery.New(client, opts.RefreshInterval, logger)
 	if err != nil {
 		level.Error(log.With(logger, "component", "NewDiscovery")).Log("err", err)
 		os.Exit(2)
 	}
 
-	sdAdapter, err := adapter.NewAdapter(ctx, opts.OutputFile, "ipmiDiscovery", disc, opts.ConfigmapName, "kube-monitoring", logger)
+	adpt, err = adapter.New(ctx, opts.OutputFile, "ipmiDiscovery", disc, opts.ConfigmapName, "kube-monitoring", logger)
 	if err != nil {
 		level.Error(log.With(logger, "component", "NewAdapter")).Log("err", err)
 		os.Exit(2)
 	}
 
-	prometheus.MustRegister(metrics.NewMetricsCollector(sdAdapter, disc, opts.Version))
+	prometheus.MustRegister(metrics.NewMetricsCollector(adpt, disc, opts.Version))
+	go server.New(adpt, disc, logger).Start()
 
-	go startPrometheus()
-	sdAdapter.Run()
+	adpt.Run()
 
 	defer func() {
 		signal.Stop(c)
@@ -112,12 +111,5 @@ func main() {
 	case <-c:
 		cancel()
 	case <-ctx.Done():
-	}
-}
-
-func startPrometheus() {
-	http.Handle("/metrics", promhttp.Handler())
-	if err := http.ListenAndServe(":8080", nil); err != nil {
-		panic(err)
 	}
 }
