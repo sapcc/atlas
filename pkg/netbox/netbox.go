@@ -8,7 +8,6 @@ import (
 	"github.com/hosting-de-labs/go-netbox/netbox/client/dcim"
 	"github.com/hosting-de-labs/go-netbox/netbox/client/ipam"
 	"github.com/hosting-de-labs/go-netbox/netbox/models"
-	"log"
 	"net"
 )
 
@@ -232,7 +231,7 @@ func (nb *Netbox) RacksByRegion(role string, region string) ([]models.Rack, erro
 
 	siteResults, err := nb.Sites(region)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	result := make([]models.Rack, 0)
@@ -251,7 +250,7 @@ func (nb *Netbox) RacksByRegion(role string, region string) ([]models.Rack, erro
 func (nb *Netbox) ServersByRegion(rackRole string, region string) ([]models.Device, error) {
 	racks, err := nb.RacksByRegion(rackRole, region)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	results := make([]models.Device, 0)

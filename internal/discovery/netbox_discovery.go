@@ -83,14 +83,14 @@ func (nd *NetboxDiscovery) getNodes() ([]*targetgroup.Group, error) {
 	for _, server := range servers {
 
 		if *server.Status.Value != 1 {
-			level.Warn(log.With(nd.logger, "component", "NetboxDiscovery")).Log("warn", fmt.Sprintf("Status value is not 1 for server: %s", server.Name))
+			level.Warn(log.With(nd.logger, "component", "NetboxDiscovery")).Log("warn", fmt.Sprintf("Status value is not 1 for server: %s. Skipping the server!", server.Name))
 			continue
 		}
 
 		ip, err := nd.netbox.ManagementIP(server.ID)
 		if err != nil {
-			level.Error(log.With(nd.logger, "component", "NetboxDiscovery")).Log("err", err)
-			return nil, err
+			level.Warn(log.With(nd.logger, "component", "NetboxDiscovery")).Log("warn", fmt.Sprintf("Error during getting management IP for server %s: %v. Skipping the server!", server.Name, err))
+			continue
 		}
 
 		nodeName := ""
