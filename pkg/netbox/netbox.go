@@ -60,6 +60,7 @@ func (nb *Netbox) Sites(region string) ([]models.Site, error) {
 
 	return result, nil
 }
+
 // Racks retrieves all the racks with the specified role in the site
 func (nb *Netbox) Racks(role string, siteID int64) ([]models.Rack, error) {
 	result := make([]models.Rack, 0)
@@ -94,6 +95,7 @@ func (nb *Netbox) Racks(role string, siteID int64) ([]models.Rack, error) {
 	return result, nil
 
 }
+
 // Servers retrieves all the servers in the rack
 func (nb *Netbox) Servers(rackID int64) ([]models.Device, error) {
 	result := make([]models.Device, 0)
@@ -134,7 +136,7 @@ func (nb *Netbox) ManagementIP(serverID int64) (string, error) {
 		return "", err
 	}
 
-	managementIPAddress, err := nb.IPAddress(serverID, managementInterface.ID)
+	managementIPAddress, err := nb.IPAddressByDeviceAndIntefrace(serverID, managementInterface.ID)
 	if err != nil {
 		return "", err
 	}
@@ -176,8 +178,8 @@ func (nb *Netbox) Interface(deviceID int64, interfaceName string) (*models.Inter
 
 }
 
-// IPAddress retrieves the interface of the device
-func (nb *Netbox) IPAddress(deviceID int64, interfaceID int64) (*models.IPAddress, error) {
+// IPAddress retrieves the IP address by device and interface
+func (nb *Netbox) IPAddressByDeviceAndIntefrace(deviceID int64, interfaceID int64) (*models.IPAddress, error) {
 
 	params := ipam.NewIPAMIPAddressesListParams()
 	params.DeviceID = &deviceID
@@ -195,6 +197,30 @@ func (nb *Netbox) IPAddress(deviceID int64, interfaceID int64) (*models.IPAddres
 	}
 	if *list.Payload.Count > 1 {
 		return nil, errors.New(fmt.Sprintf("more than 1 ip found for device %d and interface %d", deviceID, interfaceID))
+	}
+
+	return list.Payload.Results[0], nil
+
+}
+
+// IPAddress retrieves the IPAddress by its ID
+func (nb *Netbox) IPAddress(id int64) (*models.IPAddress, error) {
+
+	params := ipam.NewIPAMIPAddressesListParams()
+	ids := fmt.Sprintf("%d", id)
+	params.IDIn = &ids
+	limit := int64(1)
+	params.Limit = &limit
+
+	list, err := nb.client.IPAM.IPAMIPAddressesList(params, nil)
+	if err != nil {
+		return nil, err
+	}
+	if *list.Payload.Count < 1 {
+		return nil, errors.New(fmt.Sprintf("no ip found with id %d", id))
+	}
+	if *list.Payload.Count > 1 {
+		return nil, errors.New(fmt.Sprintf("more than 1 ip found for id %d", id))
 	}
 
 	return list.Payload.Results[0], nil

@@ -93,6 +93,20 @@ func (nd *NetboxDiscovery) getNodes() ([]*targetgroup.Group, error) {
 			return nil, err
 		}
 
+		nodeName := ""
+		if server.PrimaryIP != nil {
+			primaryIP, err := nd.netbox.IPAddress(server.PrimaryIP.ID)
+
+			if err != nil {
+				level.Warn(log.With(nd.logger, "component", "NetboxDiscovery")).Log("warn", err)
+			} else {
+				nodeName = primaryIP.Description
+			}
+
+		} else {
+			level.Warn(log.With(nd.logger, "component", "NetboxDiscovery")).Log("warn", fmt.Sprintf("Primary IP is not set for server: %s", server.Name))
+		}
+
 		tgroup := targetgroup.Group{
 			Source:  ip,
 			Labels:  make(model.LabelSet),
@@ -112,6 +126,10 @@ func (nd *NetboxDiscovery) getNodes() ([]*targetgroup.Group, error) {
 
 		if server.Serial != "" {
 			labels[model.LabelName("serial")] = model.LabelValue(server.Serial)
+		}
+
+		if nodeName != "" {
+			labels[model.LabelName("node_name")] = model.LabelValue(nodeName)
 		}
 
 		tgroup.Labels = labels
