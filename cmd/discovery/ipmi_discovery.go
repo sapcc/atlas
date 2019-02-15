@@ -41,12 +41,13 @@ import (
 var (
 	logger log.Logger
 	opts   config.Options
-	adpt   *adapter.Adapter
-	disc   discovery.Discovery
 )
 
 func init() {
 	flag.StringVar(&opts.AppEnv, "APP_ENV", "development", "To set Log Level: development or production")
+
+	// Ironic SD flags
+	flag.BoolVar(&opts.IronicServiceDiscovery, "IRONIC", false, "Use Ironic for discovery")
 	flag.StringVar(&opts.OutputFile, "output.file", "ipmi_targets.json", "Output file for file_sd compatible file.")
 	flag.IntVar(&opts.RefreshInterval, "REFRESH_INTERVAL", 600, "refreshInterval for fetching ironic nodes")
 	flag.StringVar(&opts.IdentityEndpoint, "OS_AUTH_URL", "", "Openstack identity endpoint")
@@ -57,6 +58,7 @@ func init() {
 	flag.StringVar(&opts.Version, "OS_VERSION", "v0.3.0", "IPMI SD Version")
 	flag.StringVar(&opts.ProjectDomainName, "OS_PROJECT_DOMAIN_NAME", "", "Openstack project domain name")
 
+	// Netbox SD flags
 	flag.BoolVar(&opts.NetboxDiscovery, "NETBOX", false, "Use Netbox for discovery")
 	flag.StringVar(&opts.NetboxHost, "NETBOX_HOST", "netbox.global.cloud.sap", "Netbox host address")
 	flag.StringVar(&opts.NetboxAPIToken, "NETBOX_API_TOKEN", "", "Netbox API token")
@@ -105,30 +107,37 @@ func main() {
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 
-	client, err := auth.NewProviderClient(opts)
-	if err != nil {
-		level.Error(log.With(logger, "component", "AuthenticatedClient")).Log("err", err)
-		os.Exit(2)
+	adapterList := make([]*adapter.Adapter, 0)
+	discoveryList := make([]discovery.Discovery, 0)
+
+	var ironicAdapter *adapter.Adapter
+	if opts.IronicServiceDiscovery {
+
+		client, err := auth.NewProviderClient(opts)
+		if err != nil {
+			level.Error(log.With(logger, "component", "AuthenticatedClient")).Log("err", err)
+			os.Exit(2)
+		}
+
+		disc, err := discovery.NewIronicDiscovery(client, opts.RefreshInterval, logger)
+		if err != nil {
+			level.Error(log.With(logger, "component", "NewDiscovery")).Log("err", err)
+			os.Exit(2)
+		}
+
+		ironicAdapter, err = adapter.New(ctx, opts.OutputFile, "ipmiDiscovery", disc, opts.ConfigmapName, "kube-monitoring", logger)
+		if err != nil {
+			level.Error(log.With(logger, "component", "NewAdapter")).Log("err", err)
+			os.Exit(2)
+		}
+
+		prometheus.MustRegister(metrics.NewMetricsCollector("ipmi_sd_up", "Shows if service can load ironic nodes", ironicAdapter, disc, opts.Version))
+
+		adapterList = append(adapterList, ironicAdapter)
+		discoveryList = append(discoveryList, disc)
 	}
 
-	disc, err = discovery.NewIronicDiscovery(client, opts.RefreshInterval, logger)
-	if err != nil {
-		level.Error(log.With(logger, "component", "NewDiscovery")).Log("err", err)
-		os.Exit(2)
-	}
-
-	adpt, err = adapter.New(ctx, opts.OutputFile, "ipmiDiscovery", disc, opts.ConfigmapName, "kube-monitoring", logger)
-	if err != nil {
-		level.Error(log.With(logger, "component", "NewAdapter")).Log("err", err)
-		os.Exit(2)
-	}
-
-	prometheus.MustRegister(metrics.NewMetricsCollector("ipmi_sd_up", "Shows if service can load ironic nodes", adpt, disc, opts.Version))
-
-	adapterList := []*adapter.Adapter{adpt}
-	discoveryList := []discovery.Discovery{disc}
-
-	var nAdapter *adapter.Adapter
+	var netboxAdapter *adapter.Adapter
 	if opts.NetboxDiscovery {
 		nClient, err := netbox.New(opts.NetboxHost, opts.NetboxAPIToken)
 		if err != nil {
@@ -137,22 +146,25 @@ func main() {
 		}
 		nDisc := discovery.NewNetboxDiscovery(nClient, opts.Region, opts.RefreshInterval, logger)
 
-		nAdapter, err = adapter.New(ctx, opts.NetboxOutputFile, "netboxDiscovery", nDisc, opts.ConfigmapName, "kube-monitoring", logger)
+		netboxAdapter, err = adapter.New(ctx, opts.NetboxOutputFile, "netboxDiscovery", nDisc, opts.ConfigmapName, "kube-monitoring", logger)
 		if err != nil {
 			level.Error(log.With(logger, "component", "NewAdapter")).Log("err", err)
 			os.Exit(2)
 		}
 
-		prometheus.MustRegister(metrics.NewMetricsCollector("ipmi_netbox_sd_up", "Shows if service can load netbox nodes", nAdapter, nDisc, opts.Version))
-		adapterList = append(adapterList, nAdapter)
+		prometheus.MustRegister(metrics.NewMetricsCollector("ipmi_netbox_sd_up", "Shows if service can load netbox nodes", netboxAdapter, nDisc, opts.Version))
+		adapterList = append(adapterList, netboxAdapter)
 		discoveryList = append(discoveryList, nDisc)
 	}
 
 	go server.New(adapterList, discoveryList, logger).Start()
 
-	adpt.Run()
+	if opts.IronicServiceDiscovery {
+		ironicAdapter.Run()
+	}
+
 	if opts.NetboxDiscovery {
-		nAdapter.Run()
+		netboxAdapter.Run()
 	}
 
 	defer func() {

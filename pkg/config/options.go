@@ -21,17 +21,19 @@ package config
 
 // Options passed via cmd line
 type Options struct {
-	AppEnv            string
-	OutputFile        string
-	RefreshInterval   int
-	IdentityEndpoint  string
-	Username          string
-	Password          string
-	DomainName        string
-	ProjectName       string
-	ProjectDomainName string
-	ConfigmapName     string
-	Version           string
+	AppEnv string
+
+	IronicServiceDiscovery bool
+	OutputFile             string
+	RefreshInterval        int
+	IdentityEndpoint       string
+	Username               string
+	Password               string
+	DomainName             string
+	ProjectName            string
+	ProjectDomainName      string
+	ConfigmapName          string
+	Version                string
 
 	NetboxDiscovery  bool
 	NetboxHost       string
