@@ -17,18 +17,17 @@
 *
 *******************************************************************************/
 
-package metrics
+package discovery
 
 import (
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/sapcc/ipmi_sd/internal/discovery"
 	"github.com/sapcc/ipmi_sd/pkg/adapter"
 )
 
 type MetricsCollector struct {
 	upGauge   *prometheus.Desc
-	adapter   *adapter.Adapter
-	discovery discovery.Discovery
+	adapter   adapter.Adapter
+	discovery Discovery
 }
 
 func (c *MetricsCollector) Describe(ch chan<- *prometheus.Desc) {
@@ -37,13 +36,13 @@ func (c *MetricsCollector) Describe(ch chan<- *prometheus.Desc) {
 
 func (c *MetricsCollector) Collect(ch chan<- prometheus.Metric) {
 	c.discovery.Lock()
-	c.adapter.Status.Lock()
+	c.adapter.GetStatus().Lock()
 	defer func() {
 		c.discovery.Unlock()
-		c.adapter.Status.Unlock()
+		c.adapter.GetStatus().Unlock()
 	}()
 	up := 0
-	if c.discovery.Up() && c.adapter.Status.Up {
+	if c.discovery.Up() && c.adapter.GetStatus().Up {
 		up = 1
 	}
 	ch <- prometheus.MustNewConstMetric(
@@ -53,7 +52,7 @@ func (c *MetricsCollector) Collect(ch chan<- prometheus.Metric) {
 	)
 }
 
-func NewMetricsCollector(name string, help string, a *adapter.Adapter, d discovery.Discovery, v string) *MetricsCollector {
+func NewMetricsCollector(name string, help string, a adapter.Adapter, d Discovery, v string) *MetricsCollector {
 	return &MetricsCollector{
 		upGauge:   prometheus.NewDesc(name, help, nil, prometheus.Labels{"version": v}),
 		adapter:   a,

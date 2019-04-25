@@ -8,30 +8,67 @@ import (
 
 	"github.com/go-kit/kit/log/level"
 	"github.com/prometheus/common/model"
+	"github.com/sapcc/ipmi_sd/pkg/adapter"
+	"github.com/sapcc/ipmi_sd/pkg/config"
 	"github.com/sapcc/ipmi_sd/pkg/netbox"
+	"github.com/sapcc/ipmi_sd/pkg/writer"
 
 	"github.com/go-kit/kit/log"
+	promDiscovery "github.com/prometheus/prometheus/discovery"
 	"github.com/prometheus/prometheus/discovery/targetgroup"
 )
 
-type NetboxDiscovery struct {
-	netbox          *netbox.Netbox
-	region          string
-	refreshInterval int
-	logger          log.Logger
-	status          *Status
+type (
+	NetboxDiscovery struct {
+		manager         *promDiscovery.Manager
+		adapter         adapter.Adapter
+		netbox          *netbox.Netbox
+		region          string
+		refreshInterval int
+		logger          log.Logger
+		status          *Status
+		outputFile      string
+	}
+	netboxConfig struct {
+		RefreshInterval int    `yaml:"refresh_interval"`
+		NetboxHost      string `yaml:"netbox_host"`
+		NetboxAPIToken  string `yaml:"netbox_api_token"`
+		Region          string `yaml:"region"`
+		TargetsFileName string `yaml:"targets_file_name"`
+	}
+)
+
+func init() {
+	Register("control_plane", NewNetboxDiscovery)
 }
 
 //NewDiscovery creates a new NetboxDiscovery
-func NewNetboxDiscovery(n *netbox.Netbox, region string, refreshInterval int, logger log.Logger) Discovery {
+func NewNetboxDiscovery(disc interface{}, ctx context.Context, m *promDiscovery.Manager, opts config.Options, l log.Logger) (d Discovery, err error) {
+	var cfg netboxConfig
+	if err := UnmarshalHandler(disc, &cfg); err != nil {
+		return nil, err
+	}
+	nClient, err := netbox.New(cfg.NetboxHost, cfg.NetboxAPIToken)
+	if err != nil {
+		return nil, err
+	}
+	w, err := writer.NewConfigMap(opts.ConfigmapName, opts.NameSpace, cfg.TargetsFileName, l)
+	if err != nil {
+		return d, err
+	}
+
+	a := adapter.NewPrometheus(ctx, m, w, l)
 
 	return &NetboxDiscovery{
-		netbox:          n,
-		region:          region,
-		refreshInterval: refreshInterval,
-		logger:          logger,
+		adapter:         a,
+		manager:         m,
+		netbox:          nClient,
+		region:          cfg.Region,
+		refreshInterval: cfg.RefreshInterval,
+		logger:          l,
 		status:          &Status{Up: false},
-	}
+		outputFile:      cfg.TargetsFileName,
+	}, err
 }
 
 func (nd *NetboxDiscovery) Run(ctx context.Context, ch chan<- []*targetgroup.Group) {
@@ -68,6 +105,22 @@ func (d *NetboxDiscovery) Lock() {
 }
 func (d *NetboxDiscovery) Unlock() {
 	d.status.Unlock()
+}
+
+func (d *NetboxDiscovery) GetOutputFile() string {
+	return d.outputFile
+}
+
+func (d *NetboxDiscovery) StartAdapter() {
+	d.adapter.Run()
+}
+
+func (d *NetboxDiscovery) GetAdapter() adapter.Adapter {
+	return d.adapter
+}
+
+func (d *NetboxDiscovery) GetManager() *promDiscovery.Manager {
+	return d.manager
 }
 
 func (nd *NetboxDiscovery) getNodes() ([]*targetgroup.Group, error) {

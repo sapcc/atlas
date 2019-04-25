@@ -1,4 +1,4 @@
-package server
+package discovery
 
 import (
 	"fmt"
@@ -7,17 +7,16 @@ import (
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/sapcc/ipmi_sd/internal/discovery"
 	"github.com/sapcc/ipmi_sd/pkg/adapter"
 )
 
 type Server struct {
-	adapter   []*adapter.Adapter
-	discovery []discovery.Discovery
+	adapter   []adapter.Adapter
+	discovery []Discovery
 	logger    log.Logger
 }
 
-func New(a []*adapter.Adapter, d []discovery.Discovery, l log.Logger) *Server {
+func NewServer(a []adapter.Adapter, d []Discovery, l log.Logger) *Server {
 	return &Server{
 		adapter:   a,
 		discovery: d,
@@ -38,14 +37,14 @@ func (s *Server) health(w http.ResponseWriter, r *http.Request) {
 		d.Lock()
 	}
 	for _, a := range s.adapter {
-		a.Status.Lock()
+		a.GetStatus().Lock()
 	}
 	defer func() {
 		for _, d := range s.discovery {
 			d.Unlock()
 		}
 		for _, a := range s.adapter {
-			a.Status.Unlock()
+			a.GetStatus().Unlock()
 		}
 	}()
 
@@ -65,7 +64,7 @@ func (s *Server) Up() bool {
 		}
 	}
 	for _, a := range s.adapter {
-		if !a.Status.Up {
+		if !a.GetStatus().Up {
 			return false
 		}
 	}

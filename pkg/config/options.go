@@ -23,21 +23,12 @@ package config
 type Options struct {
 	AppEnv string
 
-	IronicServiceDiscovery bool
-	OutputFile             string
-	RefreshInterval        int
-	IdentityEndpoint       string
-	Username               string
-	Password               string
-	DomainName             string
-	ProjectName            string
-	ProjectDomainName      string
-	ConfigmapName          string
-	Version                string
-
-	NetboxDiscovery  bool
-	NetboxHost       string
-	NetboxAPIToken   string
-	NetboxOutputFile string
-	Region           string
+	IdentityEndpoint  string
+	DomainName        string
+	ProjectName       string
+	ProjectDomainName string
+	ConfigmapName     string
+	Version           string
+	ConfigFilePath    string
+	NameSpace         string
 }

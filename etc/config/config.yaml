@@ -1,0 +1,13 @@
+discoveries:
+  baremetal:
+    refresh_interval: 1000
+    targets_file_name: 
+    user: "Test"
+    password: "some_password"
+    auth_url: "https://identity-3.qa-de-1.cloud.sap/v3"
+  control_plane:
+    refresh_interval: 1000
+    targets_file_name:
+    netbox_host:
+    netbox_api_token:
+    netbox_output_file:

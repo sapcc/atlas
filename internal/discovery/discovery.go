@@ -1,190 +1,104 @@
-/*******************************************************************************
-*
-* Copyright 2018 SAP SE
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You should have received a copy of the License along with this
-* program. If not, you may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*
-*******************************************************************************/
 package discovery
 
 import (
 	"context"
-	"strconv"
+	"fmt"
+	"strings"
 	"sync"
-	"time"
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
-	"github.com/gophercloud/gophercloud"
-	"github.com/prometheus/common/model"
-	"github.com/prometheus/prometheus/discovery/targetgroup"
-	"github.com/sapcc/ipmi_sd/pkg/clients"
-	internalClients "github.com/sapcc/ipmi_sd/pkg/clients"
+	"github.com/prometheus/client_golang/prometheus"
+	promDiscovery "github.com/prometheus/prometheus/discovery"
+	"github.com/sapcc/ipmi_sd/pkg/adapter"
+	"github.com/sapcc/ipmi_sd/pkg/config"
+	"gopkg.in/yaml.v2"
 )
 
-type Discovery interface {
-	Up() bool
-	Lock()
-	Unlock()
-	Run(ctx context.Context, ch chan<- []*targetgroup.Group)
+var discoveryFactories = make(map[string]DiscoveryFactory)
+
+type discovery struct {
+	opts config.Options
+	ctx  context.Context
+	log  log.Logger
 }
 
-type IronicDiscovery struct {
-	providerClient  *gophercloud.ProviderClient
-	ironicClient    *clients.IronicClient
-	refreshInterval int
-	logger          log.Logger
-	status          *Status
-}
-
-type Status struct {
-	sync.Mutex
-	Up bool
-}
-
-//NewIronicDiscovery creates a new Ironic Discovery
-func NewIronicDiscovery(p *gophercloud.ProviderClient, r int, l log.Logger) (Discovery, error) {
-	i, err := internalClients.NewIronicClient(p)
-	if err != nil {
-		level.Error(log.With(l, "component", "NewIronicClient")).Log("err", err)
-		return nil, err
+func New(ctx context.Context, o config.Options, l log.Logger) *discovery {
+	discovery := &discovery{
+		o,
+		ctx,
+		l,
 	}
 
-	return &IronicDiscovery{
-		providerClient:  p,
-		ironicClient:    i,
-		refreshInterval: r,
-		logger:          l,
-		status:          &Status{Up: false},
-	}, nil
+	return discovery
 }
 
-func (d *IronicDiscovery) Run(ctx context.Context, ch chan<- []*targetgroup.Group) {
-	for c := time.Tick(time.Duration(d.refreshInterval) * time.Second); ; {
-		tgs, err := d.parseServiceNodes()
-		d.setAdditionalLabels(tgs)
-		if err == nil {
-			d.status.Lock()
-			d.status.Up = true
-			d.status.Unlock()
-			ch <- tgs
-		} else {
-			d.status.Lock()
-			d.status.Up = false
-			d.status.Unlock()
-			continue
-		}
-		// Wait for ticker or exit when ctx is closed.
-		select {
-		case <-c:
-			continue
-		case <-ctx.Done():
-			return
-		}
+func Register(name string, factory DiscoveryFactory) (err error) {
+	if factory == nil {
+		return fmt.Errorf("Handler factory %s does not exist.", name)
 	}
+	_, registered := discoveryFactories[name]
+	if registered {
+		//log.Errorf("Handler factory %s already registered. Ignoring.", name)
+	}
+	discoveryFactories[name] = factory
+	return
 }
 
-func (d *IronicDiscovery) Up() bool {
-	return d.status.Up
+func (d discovery) createDiscovery(name string, config interface{}) (Discovery, error) {
 
-}
-func (d *IronicDiscovery) Lock() {
-	d.status.Lock()
-
-}
-func (d *IronicDiscovery) Unlock() {
-	d.status.Unlock()
-}
-
-func (d *IronicDiscovery) parseServiceNodes() ([]*targetgroup.Group, error) {
-	nodes, err := d.ironicClient.GetNodes()
-	if err != nil {
-		level.Error(log.With(d.logger, "component", "ironicClient")).Log("err", err)
-		return nil, err
+	discoveryFactory, ok := discoveryFactories[name]
+	if !ok {
+		availableDiscoveries := d.getDiscoveries()
+		return nil, fmt.Errorf(fmt.Sprintf("Invalid Handler name. Must be one of: %s", strings.Join(availableDiscoveries, ", ")))
 	}
 
-	if len(nodes) == 0 {
-		level.Info(log.With(d.logger, "component", "discovery")).Log("info", "no ironic nodes found")
+	m := promDiscovery.NewManager(d.ctx, d.log)
+	// Run the factory with the configuration.
+	return discoveryFactory(config, d.ctx, m, d.opts, d.log)
+}
+
+func (d discovery) getDiscoveries() []string {
+	availableHandlers := make([]string, len(discoveryFactories))
+	for k := range discoveryFactories {
+		availableHandlers = append(availableHandlers, k)
 	}
+	return availableHandlers
+}
 
-	var tgroups []*targetgroup.Group
+// Start is running all enabled discovery services
+func (d discovery) Start(ctx context.Context, wg *sync.WaitGroup, cfg config.Config, opts config.Options) {
+	defer wg.Done()
+	wg.Add(1)
+	adapterList := make([]adapter.Adapter, 0)
+	discoveryList := make([]Discovery, 0)
 
-	for _, node := range nodes {
-		if node.ProvisionStateEnroll() {
+	for name, discovery := range cfg.Discoveries {
+		level.Info(log.With(d.log, "component", "discovery")).Log("loading discovery: ", name)
+		disc, err := d.createDiscovery(name, discovery)
+
+		if err != nil {
+			level.Error(log.With(d.log, "component", "discovery")).Log("err", err)
 			continue
 		}
 
-		tgroup := targetgroup.Group{
-			Source:  node.DriverInfo.IpmiAddress,
-			Labels:  make(model.LabelSet),
-			Targets: make([]model.LabelSet, 0, 1),
-		}
+		go disc.GetManager().Run()
+		disc.GetManager().StartCustomProvider(ctx, name, disc)
+		go disc.StartAdapter()
 
-		target := model.LabelSet{model.AddressLabel: model.LabelValue(node.DriverInfo.IpmiAddress)}
-		labels := model.LabelSet{
-			model.LabelName("job"):             "baremetal/ironic",
-			model.LabelName("server_name"):     model.LabelValue(node.Name),
-			model.LabelName("provision_state"): model.LabelValue(node.ProvisionState),
-			model.LabelName("maintenance"):     model.LabelValue(strconv.FormatBool(node.Maintenance)),
-			model.LabelName("serial"):          model.LabelValue(node.Properties.SerialNumber),
-			model.LabelName("manufacturer"):    model.LabelValue(node.Properties.Manufacturer),
-			model.LabelName("model"):           model.LabelValue(node.Properties.Model),
-		}
+		adapterList = append(adapterList, disc.GetAdapter())
+		discoveryList = append(discoveryList, disc)
+		prometheus.MustRegister(NewMetricsCollector(name+"_sd_up", "Shows if discovery is running", disc.GetAdapter(), disc, opts.Version))
 
-		if len(node.InstanceUuID) > 0 {
-			labels[model.LabelName("server_id")] = model.LabelValue(node.InstanceUuID)
-		}
-
-		tgroup.Labels = labels
-		tgroup.Targets = append(tgroup.Targets, target)
-		tgroups = append(tgroups, &tgroup)
 	}
-
-	return tgroups, nil
+	go NewServer(adapterList, discoveryList, d.log).Start()
 }
 
-func (d *IronicDiscovery) setAdditionalLabels(tgroups []*targetgroup.Group) {
-	labels, err := NewLabels(d.providerClient, d.logger)
+func UnmarshalHandler(DiscIn, DiscOut interface{}) error {
+
+	h, err := yaml.Marshal(DiscIn)
 	if err != nil {
-		level.Error(log.With(d.logger, "component", "nodeLabels")).Log("err", err)
-		return
+		return err
 	}
-
-	serverLabels, err := labels.getComputeLabels(tgroups)
-	if err != nil {
-		level.Error(log.With(d.logger, "component", "nodeLabels")).Log("err", err)
-		return
-	}
-
-	projectLabels, err := labels.getProjectLabels(serverLabels)
-	if err != nil {
-		level.Error(log.With(d.logger, "component", "nodeLabels")).Log("err", err)
-	}
-
-	for _, group := range tgroups {
-		id := string(group.Labels[model.LabelName("server_id")])
-		if len(id) == 0 {
-			continue
-		}
-		server := serverLabels[id]
-		if server != nil {
-			group.Labels[model.LabelName("project_id")] = model.LabelValue(server.TenantID)
-			project := projectLabels[server.TenantID]
-			if project != nil {
-				group.Labels[model.LabelName("domain_id")] = model.LabelValue(project.DomainID)
-			}
-		}
-
-	}
+	return yaml.Unmarshal(h, DiscOut)
 }
