@@ -35,7 +35,7 @@ func New(ctx context.Context, o config.Options, l log.Logger) *discovery {
 
 func Register(name string, factory DiscoveryFactory) (err error) {
 	if factory == nil {
-		return fmt.Errorf("Handler factory %s does not exist.", name)
+		return fmt.Errorf("Handler factory %s does not exist", name)
 	}
 	_, registered := discoveryFactories[name]
 	if registered {
@@ -74,9 +74,8 @@ func (d discovery) Start(ctx context.Context, wg *sync.WaitGroup, cfg config.Con
 	discoveryList := make([]Discovery, 0)
 
 	for name, discovery := range cfg.Discoveries {
-		level.Info(log.With(d.log, "component", "discovery")).Log("loading discovery: ", name)
+		level.Info(log.With(d.log, "component", "discovery")).Log("info", fmt.Sprintf("=============> Loading discovery: %s", name))
 		disc, err := d.createDiscovery(name, discovery)
-
 		if err != nil {
 			level.Error(log.With(d.log, "component", "discovery")).Log("err", err)
 			continue

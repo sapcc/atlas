@@ -71,12 +71,12 @@ func NewIronicDiscovery(disc interface{}, ctx context.Context, m *promDiscovery.
 
 	p, err := auth.NewProviderClient(cfg.User, cfg.Password)
 	if err != nil {
-		level.Error(log.With(l, "component", "AuthenticatedClient")).Log("err", err)
+		level.Error(log.With(l, "component", "IronicDiscovery")).Log("err", err)
 		return d, err
 	}
 	i, err := internalClients.NewIronicClient(p)
 	if err != nil {
-		level.Error(log.With(l, "component", "NewIronicClient")).Log("err", err)
+		level.Error(log.With(l, "component", "IronicDiscovery")).Log("err", err)
 		return d, err
 	}
 
@@ -155,12 +155,12 @@ func (d *IronicDiscovery) GetManager() *promDiscovery.Manager {
 func (d *IronicDiscovery) parseServiceNodes() ([]*targetgroup.Group, error) {
 	nodes, err := d.ironicClient.GetNodes()
 	if err != nil {
-		level.Error(log.With(d.logger, "component", "ironicClient")).Log("err", err)
+		level.Error(log.With(d.logger, "component", "IronicDiscovery")).Log("err", err)
 		return nil, err
 	}
 
 	if len(nodes) == 0 {
-		level.Info(log.With(d.logger, "component", "discovery")).Log("info", "no ironic nodes found")
+		level.Info(log.With(d.logger, "component", "IronicDiscovery")).Log("info", "no ironic nodes found")
 	}
 
 	var tgroups []*targetgroup.Group
@@ -202,19 +202,19 @@ func (d *IronicDiscovery) parseServiceNodes() ([]*targetgroup.Group, error) {
 func (d *IronicDiscovery) setAdditionalLabels(tgroups []*targetgroup.Group) {
 	labels, err := NewLabels(d.providerClient, d.logger)
 	if err != nil {
-		level.Error(log.With(d.logger, "component", "nodeLabels")).Log("err", err)
+		level.Error(log.With(d.logger, "component", "IronicDiscovery")).Log("err", err)
 		return
 	}
 
 	serverLabels, err := labels.getComputeLabels(tgroups)
 	if err != nil {
-		level.Error(log.With(d.logger, "component", "nodeLabels")).Log("err", err)
+		level.Error(log.With(d.logger, "component", "IronicDiscovery")).Log("err", err)
 		return
 	}
 
 	projectLabels, err := labels.getProjectLabels(serverLabels)
 	if err != nil {
-		level.Error(log.With(d.logger, "component", "nodeLabels")).Log("err", err)
+		level.Error(log.With(d.logger, "component", "IronicDiscovery")).Log("err", err)
 	}
 
 	for _, group := range tgroups {

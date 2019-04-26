@@ -58,6 +58,10 @@ func (s *Server) health(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) Up() bool {
+	if len(s.discovery) == 0 || len(s.adapter) == 0 {
+		return false
+	}
+
 	for _, d := range s.discovery {
 		if !d.Up() {
 			return false

@@ -1,7 +1,7 @@
 discoveries:
-  baremetal:
+  ironic:
     refresh_interval: 1000
-    targets_file_name: 
+    targets_file_name: "target"
     user: "Test"
     password: "some_password"
     auth_url: "https://identity-3.qa-de-1.cloud.sap/v3"

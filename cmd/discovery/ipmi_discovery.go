@@ -47,6 +47,9 @@ func init() {
 	flag.StringVar(&opts.ProjectName, "OS_PROJECT_NAME", "", "Openstack project")
 	flag.StringVar(&opts.Version, "OS_VERSION", "v0.3.0", "IPMI SD Version")
 	flag.StringVar(&opts.ProjectDomainName, "OS_PROJECT_DOMAIN_NAME", "", "Openstack project domain name")
+	flag.StringVar(&opts.NameSpace, "K8S_NAMESPACE", "kube-monitoring", "k8s Namespace the service is running in")
+
+	flag.StringVar(&opts.ConfigFilePath, "CONFIG_FILE", "/etc/config/config.yaml", "Path to the config file")
 
 	logger = log.NewLogfmtLogger(log.NewSyncWriter(os.Stderr))
 	logger = log.With(logger, "ts", log.DefaultTimestampUTC)
