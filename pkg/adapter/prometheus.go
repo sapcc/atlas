@@ -34,23 +34,26 @@ type customSD struct {
 // Adapter runs service discovery implementation and converts its target groups
 // to JSON and writes to a k8s configmap.
 type Prom struct {
-	writer  writer.Writer
-	ctx     context.Context
-	groups  map[string]*customSD
-	manager *promDiscovery.Manager
-	logger  log.Logger
-	Status  *Status
+	writer         writer.Writer
+	ctx            context.Context
+	groups         map[string]*customSD
+	manager        *promDiscovery.Manager
+	outputFileName string
+	logger         log.Logger
+	Status         *Status
 }
 
 // New creates a new instance of Adapter.
-func NewPrometheus(ctx context.Context, m *promDiscovery.Manager, w writer.Writer, logger log.Logger) Adapter {
+func NewPrometheus(ctx context.Context, m *promDiscovery.Manager, outputFileName string, w writer.Writer, logger log.Logger) Adapter {
 
 	return &Prom{
-		ctx:     ctx,
-		groups:  make(map[string]*customSD),
-		manager: m,
-		Status:  &Status{Up: false},
-		logger:  logger,
+		ctx:            ctx,
+		groups:         make(map[string]*customSD),
+		manager:        m,
+		writer:         w,
+		outputFileName: outputFileName,
+		Status:         &Status{Up: false},
+		logger:         logger,
 	}
 }
 
@@ -105,7 +108,7 @@ func (p *Prom) writeOutput() error {
 	arr := mapToArray(p.groups)
 	b, _ := json.MarshalIndent(arr, "", "    ")
 
-	return p.writer.Write(string(b))
+	return p.writer.Write(p.outputFileName, string(b))
 }
 
 func (p *Prom) GetStatus() *Status {
@@ -113,7 +116,7 @@ func (p *Prom) GetStatus() *Status {
 }
 
 func (p *Prom) Run() {
-	data, err := p.writer.GetData()
+	data, err := p.writer.GetData(p.outputFileName)
 	if err != nil {
 		level.Error(log.With(p.logger, "component", "sd-adapter")).Log("err", err)
 		return

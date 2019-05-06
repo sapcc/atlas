@@ -21,14 +21,10 @@ package config
 
 // Options passed via cmd line
 type Options struct {
-	AppEnv string
-
-	IdentityEndpoint  string
-	DomainName        string
-	ProjectName       string
-	ProjectDomainName string
-	ConfigmapName     string
-	Version           string
-	ConfigFilePath    string
-	NameSpace         string
+	AppEnv         string
+	ConfigmapName  string
+	Version        string
+	ConfigFilePath string
+	NameSpace      string
+	Region         string
 }

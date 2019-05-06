@@ -25,21 +25,33 @@ import (
 	"github.com/gophercloud/gophercloud/openstack"
 )
 
-func NewProviderClient(user, password string) (p *gophercloud.ProviderClient, err error) {
-	os.Setenv("OS_USERNAME", user)
-	os.Setenv("OS_PASSWORD", password)
+type OSProvider struct {
+	AuthURL           string `yaml:"os_auth_url"`
+	User              string `yaml:"os_user"`
+	Password          string `yaml:"os_password"`
+	DomainName        string `yaml:"os_user_domain_name"`
+	ProjectName       string `yaml:"os_project_name"`
+	ProjectDomainName string `yaml:"os_domain_name"`
+}
+
+func NewProviderClient(pr OSProvider) (pc *gophercloud.ProviderClient, err error) {
+	os.Setenv("OS_USERNAME", pr.User)
+	os.Setenv("OS_PASSWORD", pr.Password)
+	os.Setenv("OS_PROJECT_NAME", pr.ProjectName)
+	os.Setenv("OS_PROJECT_DOMAIN_NAME", pr.ProjectDomainName)
+	os.Setenv("OS_AUTH_URL", pr.AuthURL)
 	opts, err := openstack.AuthOptionsFromEnv()
 	opts.AllowReauth = true
 	opts.Scope = &gophercloud.AuthScope{
 		ProjectName: opts.TenantName,
 		DomainName:  os.Getenv("OS_PROJECT_DOMAIN_NAME"),
 	}
-	p, err = openstack.AuthenticatedClient(opts)
+	pc, err = openstack.AuthenticatedClient(opts)
 	if err != nil {
-		return p, err
+		return pc, err
 	}
 
-	p.UseTokenLock()
+	pc.UseTokenLock()
 
-	return p, nil
+	return pc, nil
 }

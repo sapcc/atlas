@@ -17,6 +17,8 @@
 *
 *******************************************************************************/
 
+// custom prometheus discovery
+
 package main
 
 import (
@@ -31,38 +33,44 @@ import (
 	"github.com/namsral/flag"
 	"github.com/sapcc/ipmi_sd/internal/discovery"
 	"github.com/sapcc/ipmi_sd/pkg/config"
+	"github.com/sapcc/ipmi_sd/pkg/writer"
 )
 
 var (
 	logger log.Logger
 	opts   config.Options
 	cfg    config.Config
+	w      writer.Writer
+	err    error
 )
 
 func init() {
 	flag.StringVar(&opts.AppEnv, "APP_ENV", "development", "To set Log Level: development or production")
 
-	flag.StringVar(&opts.IdentityEndpoint, "OS_AUTH_URL", "", "Openstack identity endpoint")
-	flag.StringVar(&opts.DomainName, "OS_USER_DOMAIN_NAME", "", "Openstack domain name")
-	flag.StringVar(&opts.ProjectName, "OS_PROJECT_NAME", "", "Openstack project")
 	flag.StringVar(&opts.Version, "OS_VERSION", "v0.3.0", "IPMI SD Version")
-	flag.StringVar(&opts.ProjectDomainName, "OS_PROJECT_DOMAIN_NAME", "", "Openstack project domain name")
 	flag.StringVar(&opts.NameSpace, "K8S_NAMESPACE", "kube-monitoring", "k8s Namespace the service is running in")
+	flag.StringVar(&opts.Region, "K8S_REGION", "qa-de-1", "k8s Region the service is running in")
 
-	flag.StringVar(&opts.ConfigFilePath, "CONFIG_FILE", "/etc/config/config.yaml", "Path to the config file")
+	flag.StringVar(&opts.ConfigFilePath, "CONFIG_FILE", "./etc/config/config.yaml", "Path to the config file")
+	if val, ok := os.LookupEnv("PROM_CONFIGMAP_NAME"); ok {
+		opts.ConfigmapName = val
+	} else {
+		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", "no configmap name given")
+		os.Exit(2)
+	}
 
 	logger = log.NewLogfmtLogger(log.NewSyncWriter(os.Stderr))
 	logger = log.With(logger, "ts", log.DefaultTimestampUTC)
 	if opts.AppEnv == "production" {
 		logger = level.NewFilter(logger, level.AllowInfo())
+		w, err = writer.NewConfigMap(opts.ConfigmapName, opts.NameSpace, logger)
 	} else {
 		logger = level.NewFilter(logger, level.AllowDebug())
+		w, err = writer.NewFile(opts.ConfigmapName, logger)
 	}
 
-	if val, ok := os.LookupEnv("OS_PROM_CONFIGMAP_NAME"); ok {
-		opts.ConfigmapName = val
-	} else {
-		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", "no configmap name given")
+	if err != nil {
+		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", err)
 		os.Exit(2)
 	}
 }
@@ -81,7 +89,7 @@ func main() {
 
 	wg := &sync.WaitGroup{}
 
-	discovery := discovery.New(ctx, opts, logger)
+	discovery := discovery.New(ctx, opts, w, logger)
 
 	go discovery.Start(ctx, wg, cfg, opts)
 

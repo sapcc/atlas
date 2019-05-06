@@ -23,8 +23,9 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/sapcc/ipmi_sd/pkg/config"
 	"github.com/sapcc/ipmi_sd/pkg/writer"
+
+	"github.com/sapcc/ipmi_sd/pkg/config"
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
@@ -50,11 +51,9 @@ type (
 		outputFile      string
 	}
 	ironicConfig struct {
-		RefreshInterval int    `yaml:"refresh_interval"`
-		TargetsFileName string `yaml:"targets_file_name"`
-		AuthURL         string `yaml:"auth_url"`
-		User            string `yaml:"user"`
-		Password        string `yaml:"password"`
+		RefreshInterval int             `yaml:"refresh_interval"`
+		TargetsFileName string          `yaml:"targets_file_name"`
+		OpenstackAuth   auth.OSProvider `yaml:"os_auth"`
 	}
 )
 
@@ -63,13 +62,13 @@ func init() {
 }
 
 //NewIronicDiscovery creates a new Ironic Discovery
-func NewIronicDiscovery(disc interface{}, ctx context.Context, m *promDiscovery.Manager, opts config.Options, l log.Logger) (d Discovery, err error) {
+func NewIronicDiscovery(disc interface{}, ctx context.Context, m *promDiscovery.Manager, opts config.Options, w writer.Writer, l log.Logger) (d Discovery, err error) {
 	var cfg ironicConfig
 	if err := UnmarshalHandler(disc, &cfg); err != nil {
 		return d, err
 	}
 
-	p, err := auth.NewProviderClient(cfg.User, cfg.Password)
+	p, err := auth.NewProviderClient(cfg.OpenstackAuth)
 	if err != nil {
 		level.Error(log.With(l, "component", "IronicDiscovery")).Log("err", err)
 		return d, err
@@ -80,12 +79,7 @@ func NewIronicDiscovery(disc interface{}, ctx context.Context, m *promDiscovery.
 		return d, err
 	}
 
-	w, err := writer.NewConfigMap(opts.ConfigmapName, opts.NameSpace, cfg.TargetsFileName, l)
-	if err != nil {
-		return d, err
-	}
-
-	a := adapter.NewPrometheus(ctx, m, w, l)
+	a := adapter.NewPrometheus(ctx, m, cfg.TargetsFileName, w, l)
 
 	return &IronicDiscovery{
 		manager:         m,

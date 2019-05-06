@@ -3,12 +3,13 @@ package netbox
 import (
 	"errors"
 	"fmt"
+	"net"
+
 	runtimeclient "github.com/go-openapi/runtime/client"
 	netboxclient "github.com/hosting-de-labs/go-netbox/netbox/client"
 	"github.com/hosting-de-labs/go-netbox/netbox/client/dcim"
 	"github.com/hosting-de-labs/go-netbox/netbox/client/ipam"
 	"github.com/hosting-de-labs/go-netbox/netbox/models"
-	"net"
 )
 
 const netboxDefaultHost = "netbox.global.cloud.sap"
@@ -127,6 +128,35 @@ func (nb *Netbox) Servers(rackID int64) ([]models.Device, error) {
 
 }
 
+func (nb *Netbox) DevicesByRegion(query, manufacturer, region string) (res []models.Device, err error) {
+	//q=f5&manufacturer=f5&region=qa-de-1
+	res = make([]models.Device, 0)
+	params := dcim.NewDcimDevicesListParams()
+	params.Q = &query
+	params.Region = &region
+	params.Manufacturer = &manufacturer
+	limit := int64(100)
+	params.Limit = &limit
+	for {
+		offset := int64(0)
+		if params.Offset != nil {
+			offset = *params.Offset + limit
+		}
+		params.Offset = &offset
+		list, err := nb.client.Dcim.DcimDevicesList(params, nil)
+		if err != nil {
+			return res, err
+		}
+		for _, device := range list.Payload.Results {
+			res = append(res, *device)
+		}
+		if list.Payload.Next == nil {
+			break
+		}
+	}
+	return res, err
+}
+
 // ManagementIP retrieves the IP of the management interface for server
 func (nb *Netbox) ManagementIP(serverID int64) (string, error) {
 
@@ -192,10 +222,10 @@ func (nb *Netbox) IPAddressByDeviceAndIntefrace(deviceID int64, interfaceID int6
 		return nil, err
 	}
 	if *list.Payload.Count < 1 {
-		return nil, errors.New(fmt.Sprintf("no ip found for device %d and interface %d", deviceID, interfaceID))
+		return nil, fmt.Errorf(fmt.Sprintf("no ip found for device %d and interface %d", deviceID, interfaceID))
 	}
 	if *list.Payload.Count > 1 {
-		return nil, errors.New(fmt.Sprintf("more than 1 ip found for device %d and interface %d", deviceID, interfaceID))
+		return nil, fmt.Errorf(fmt.Sprintf("more than 1 ip found for device %d and interface %d", deviceID, interfaceID))
 	}
 
 	return list.Payload.Results[0], nil
@@ -204,22 +234,21 @@ func (nb *Netbox) IPAddressByDeviceAndIntefrace(deviceID int64, interfaceID int6
 
 // IPAddress retrieves the IPAddress by its ID
 func (nb *Netbox) IPAddress(id int64) (*models.IPAddress, error) {
-
 	params := ipam.NewIPAMIPAddressesListParams()
 	ids := fmt.Sprintf("%d", id)
 	params.IDIn = &ids
 	limit := int64(1)
 	params.Limit = &limit
-
 	list, err := nb.client.IPAM.IPAMIPAddressesList(params, nil)
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println("_____________________", list)
 	if *list.Payload.Count < 1 {
-		return nil, errors.New(fmt.Sprintf("no ip found with id %d", id))
+		return nil, fmt.Errorf("no ip found with id %d", id)
 	}
 	if *list.Payload.Count > 1 {
-		return nil, errors.New(fmt.Sprintf("more than 1 ip found for id %d", id))
+		return nil, fmt.Errorf("more than 1 ip found for id %d", id)
 	}
 
 	return list.Payload.Results[0], nil

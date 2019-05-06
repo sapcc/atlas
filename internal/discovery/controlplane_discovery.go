@@ -19,7 +19,7 @@ import (
 )
 
 type (
-	NetboxDiscovery struct {
+	ControlPlaneDiscovery struct {
 		manager         *promDiscovery.Manager
 		adapter         adapter.Adapter
 		netbox          *netbox.Netbox
@@ -33,17 +33,16 @@ type (
 		RefreshInterval int    `yaml:"refresh_interval"`
 		NetboxHost      string `yaml:"netbox_host"`
 		NetboxAPIToken  string `yaml:"netbox_api_token"`
-		Region          string `yaml:"region"`
 		TargetsFileName string `yaml:"targets_file_name"`
 	}
 )
 
 func init() {
-	Register("control_plane", NewNetboxDiscovery)
+	Register("control_plane", NewControlPlaneDiscovery)
 }
 
-//NewDiscovery creates a new NetboxDiscovery
-func NewNetboxDiscovery(disc interface{}, ctx context.Context, m *promDiscovery.Manager, opts config.Options, l log.Logger) (d Discovery, err error) {
+//NewControlPlaneDiscovery creates a new ControlPlaneDiscovery
+func NewControlPlaneDiscovery(disc interface{}, ctx context.Context, m *promDiscovery.Manager, opts config.Options, w writer.Writer, l log.Logger) (d Discovery, err error) {
 	var cfg netboxConfig
 	if err := UnmarshalHandler(disc, &cfg); err != nil {
 		return nil, err
@@ -52,18 +51,18 @@ func NewNetboxDiscovery(disc interface{}, ctx context.Context, m *promDiscovery.
 	if err != nil {
 		return nil, err
 	}
-	w, err := writer.NewConfigMap(opts.ConfigmapName, opts.NameSpace, cfg.TargetsFileName, l)
+
 	if err != nil {
 		return d, err
 	}
 
-	a := adapter.NewPrometheus(ctx, m, w, l)
+	a := adapter.NewPrometheus(ctx, m, opts.ConfigmapName, w, l)
 
-	return &NetboxDiscovery{
+	return &ControlPlaneDiscovery{
 		adapter:         a,
 		manager:         m,
 		netbox:          nClient,
-		region:          cfg.Region,
+		region:          opts.Region,
 		refreshInterval: cfg.RefreshInterval,
 		logger:          l,
 		status:          &Status{Up: false},
@@ -71,7 +70,7 @@ func NewNetboxDiscovery(disc interface{}, ctx context.Context, m *promDiscovery.
 	}, err
 }
 
-func (nd *NetboxDiscovery) Run(ctx context.Context, ch chan<- []*targetgroup.Group) {
+func (nd *ControlPlaneDiscovery) Run(ctx context.Context, ch chan<- []*targetgroup.Group) {
 	for c := time.Tick(time.Duration(nd.refreshInterval) * time.Second); ; {
 		tgs, err := nd.getNodes()
 		if err == nil {
@@ -95,39 +94,39 @@ func (nd *NetboxDiscovery) Run(ctx context.Context, ch chan<- []*targetgroup.Gro
 	}
 }
 
-func (d *NetboxDiscovery) Up() bool {
+func (d *ControlPlaneDiscovery) Up() bool {
 	return d.status.Up
 
 }
-func (d *NetboxDiscovery) Lock() {
+func (d *ControlPlaneDiscovery) Lock() {
 	d.status.Lock()
 
 }
-func (d *NetboxDiscovery) Unlock() {
+func (d *ControlPlaneDiscovery) Unlock() {
 	d.status.Unlock()
 }
 
-func (d *NetboxDiscovery) GetOutputFile() string {
+func (d *ControlPlaneDiscovery) GetOutputFile() string {
 	return d.outputFile
 }
 
-func (d *NetboxDiscovery) StartAdapter() {
+func (d *ControlPlaneDiscovery) StartAdapter() {
 	d.adapter.Run()
 }
 
-func (d *NetboxDiscovery) GetAdapter() adapter.Adapter {
+func (d *ControlPlaneDiscovery) GetAdapter() adapter.Adapter {
 	return d.adapter
 }
 
-func (d *NetboxDiscovery) GetManager() *promDiscovery.Manager {
+func (d *ControlPlaneDiscovery) GetManager() *promDiscovery.Manager {
 	return d.manager
 }
 
-func (nd *NetboxDiscovery) getNodes() ([]*targetgroup.Group, error) {
+func (nd *ControlPlaneDiscovery) getNodes() ([]*targetgroup.Group, error) {
 
 	servers, err := nd.netbox.ServersByRegion("cp", nd.region)
 	if err != nil {
-		level.Error(log.With(nd.logger, "component", "NetboxDiscovery")).Log("err", err)
+		level.Error(log.With(nd.logger, "component", "ControlPlaneDiscovery")).Log("err", err)
 		return nil, err
 	}
 
@@ -136,13 +135,13 @@ func (nd *NetboxDiscovery) getNodes() ([]*targetgroup.Group, error) {
 	for _, server := range servers {
 
 		if *server.Status.Value != 1 {
-			level.Warn(log.With(nd.logger, "component", "NetboxDiscovery")).Log("warn", fmt.Sprintf("Status value is not 1 for server: %s. Skipping the server!", server.Name))
+			level.Warn(log.With(nd.logger, "component", "ControlPlaneDiscovery")).Log("warn", fmt.Sprintf("Status value is not 1 for server: %s. Skipping the server!", server.Name))
 			continue
 		}
 
 		ip, err := nd.netbox.ManagementIP(server.ID)
 		if err != nil {
-			level.Warn(log.With(nd.logger, "component", "NetboxDiscovery")).Log("warn", fmt.Sprintf("Error during getting management IP for server %s: %v. Skipping the server!", server.Name, err))
+			level.Warn(log.With(nd.logger, "component", "ControlPlaneDiscovery")).Log("warn", fmt.Sprintf("Error during getting management IP for server %s: %v. Skipping the server!", server.Name, err))
 			continue
 		}
 
@@ -151,13 +150,13 @@ func (nd *NetboxDiscovery) getNodes() ([]*targetgroup.Group, error) {
 			primaryIP, err := nd.netbox.IPAddress(server.PrimaryIP.ID)
 
 			if err != nil {
-				level.Warn(log.With(nd.logger, "component", "NetboxDiscovery")).Log("warn", err)
+				level.Warn(log.With(nd.logger, "component", "ControlPlaneDiscovery")).Log("warn", err)
 			} else {
 				nodeName = primaryIP.Description
 			}
 
 		} else {
-			level.Warn(log.With(nd.logger, "component", "NetboxDiscovery")).Log("warn", fmt.Sprintf("Primary IP is not set for server: %s", server.Name))
+			level.Warn(log.With(nd.logger, "component", "ControlPlaneDiscovery")).Log("warn", fmt.Sprintf("Primary IP is not set for server: %s", server.Name))
 		}
 
 		tgroup := targetgroup.Group{

@@ -1,6 +1,6 @@
 package writer
 
 type Writer interface {
-	GetData() (string, error)
-	Write(string) error
+	GetData(string) (string, error)
+	Write(name, data string) error
 }

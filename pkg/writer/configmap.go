@@ -15,12 +15,11 @@ import (
 type ConfigMap struct {
 	client    *kubernetes.Clientset
 	configMap string
-	fileName  string
 	logger    log.Logger
 	ns        string
 }
 
-func NewConfigMap(cmName, fileName, namespace string, logger log.Logger) (cw *ConfigMap, err error) {
+func NewConfigMap(cmName, namespace string, logger log.Logger) (cw *ConfigMap, err error) {
 	config, err := rest.InClusterConfig()
 	if err != nil {
 		return cw, err
@@ -34,7 +33,6 @@ func NewConfigMap(cmName, fileName, namespace string, logger log.Logger) (cw *Co
 		ns:        namespace,
 		client:    clientset,
 		configMap: cmName,
-		fileName:  fileName,
 		logger:    logger,
 	}, err
 }
@@ -52,22 +50,22 @@ func (c *ConfigMap) getConfigMap() (*v1.ConfigMap, error) {
 
 }
 
-func (c *ConfigMap) GetData() (data string, err error) {
+func (c *ConfigMap) GetData(name string) (data string, err error) {
 	configMap, err := c.getConfigMap()
 	if err != nil {
 		return data, level.Error(log.With(c.logger, "component", "sd-adapter")).Log("err", err)
 	}
-	return configMap.Data[c.fileName], err
+	return configMap.Data[name], err
 }
 
 // Writes string data to configmap.
-func (c *ConfigMap) Write(data string) (err error) {
+func (c *ConfigMap) Write(name, data string) (err error) {
 	err = util.RetryOnConflict(util.DefaultBackoff, func() (err error) {
 		configMap, err := c.getConfigMap()
 		if err != nil {
 			return err
 		}
-		configMap.Data[c.fileName] = string(data)
+		configMap.Data[name] = string(data)
 
 		level.Debug(log.With(c.logger, "component", "sd-adapter")).Log("debug", fmt.Sprintf("writing targets to configmap: %s, in namespace: %s", c.configMap, c.ns))
 		configMap, err = c.client.CoreV1().ConfigMaps(c.ns).Update(configMap)
