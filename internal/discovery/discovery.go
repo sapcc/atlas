@@ -28,9 +28,6 @@ type (
 		writer writer.Writer
 		log    log.Logger
 	}
-	configTemplateValues struct {
-		Region string
-	}
 )
 
 func New(ctx context.Context, o config.Options, w writer.Writer, l log.Logger) *discovery {
