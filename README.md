@@ -1,13 +1,13 @@
 # atlas
 
-Atlas, brother to Prometheus.
+Atlas, brother of Prometheus.
 
 This is a standalone custom Prometheus service discovery application. It consists of a growing number of discoveries which can be enabled/disabled and configured via a yaml file.
 
 Available Discoveries:
 1. Ironic nodes
 2. Servers from netbox
-3. Swithces from netbox
+3. Switches from netbox
 
 ## Architecture overview
 
