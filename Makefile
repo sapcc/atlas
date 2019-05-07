@@ -10,7 +10,7 @@ GOFLAGS := -ldflags "$(LDFLAGS)"
 all: bin/$(GOOS)/$(BINARY)
 
 bin/%/$(BINARY): $(GOFILES) Makefile
-	GOOS=$* GOARCH=amd64 go build $(GOFLAGS) -v -i -o bin/$*/$(BINARY) ./cmd/discovery
+	GOOS=$* GOARCH=amd64 go build $(GOFLAGS) -v -i -o bin/$*/$(BINARY) ./cmd/atlas
 
 build: 
 	docker build -t $(IMAGE):$(VERSION) .
