@@ -2,7 +2,7 @@
 
 Atlas, brother to Prometheus.
 
-This is a standalone custom Prometheus service discovery application. It consists of a growing number ofdiscoveries which can be enabled/disabled and configured via a yaml file.
+This is a standalone custom Prometheus service discovery application. It consists of a growing number of discoveries which can be enabled/disabled and configured via a yaml file.
 
 Available Discoveries:
 1. Ironic nodes
