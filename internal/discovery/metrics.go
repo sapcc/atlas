@@ -21,7 +21,7 @@ package discovery
 
 import (
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/sapcc/ipmi_sd/pkg/adapter"
+	"github.com/sapcc/atlas/pkg/adapter"
 )
 
 type MetricsCollector struct {

@@ -6,14 +6,14 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/sapcc/ipmi_sd/pkg/writer"
+	"github.com/sapcc/atlas/pkg/writer"
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	"github.com/prometheus/client_golang/prometheus"
 	promDiscovery "github.com/prometheus/prometheus/discovery"
-	"github.com/sapcc/ipmi_sd/pkg/adapter"
-	"github.com/sapcc/ipmi_sd/pkg/config"
+	"github.com/sapcc/atlas/pkg/adapter"
+	"github.com/sapcc/atlas/pkg/config"
 	"gopkg.in/yaml.v2"
 )
 

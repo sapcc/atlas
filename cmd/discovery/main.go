@@ -31,9 +31,9 @@ import (
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	"github.com/namsral/flag"
-	"github.com/sapcc/ipmi_sd/internal/discovery"
-	"github.com/sapcc/ipmi_sd/pkg/config"
-	"github.com/sapcc/ipmi_sd/pkg/writer"
+	"github.com/sapcc/atlas/internal/discovery"
+	"github.com/sapcc/atlas/pkg/config"
+	"github.com/sapcc/atlas/pkg/writer"
 )
 
 var (

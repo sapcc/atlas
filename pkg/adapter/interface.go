@@ -6,7 +6,7 @@ import (
 
 	"github.com/go-kit/kit/log"
 	promDiscovery "github.com/prometheus/prometheus/discovery"
-	"github.com/sapcc/ipmi_sd/pkg/writer"
+	"github.com/sapcc/atlas/pkg/writer"
 )
 
 type Status struct {

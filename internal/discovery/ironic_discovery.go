@@ -23,9 +23,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/sapcc/ipmi_sd/pkg/writer"
-
-	"github.com/sapcc/ipmi_sd/pkg/config"
+	"github.com/sapcc/atlas/pkg/config"
+	"github.com/sapcc/atlas/pkg/writer"
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
@@ -33,10 +32,10 @@ import (
 	"github.com/prometheus/common/model"
 	promDiscovery "github.com/prometheus/prometheus/discovery"
 	"github.com/prometheus/prometheus/discovery/targetgroup"
-	"github.com/sapcc/ipmi_sd/pkg/adapter"
-	"github.com/sapcc/ipmi_sd/pkg/auth"
-	"github.com/sapcc/ipmi_sd/pkg/clients"
-	internalClients "github.com/sapcc/ipmi_sd/pkg/clients"
+	"github.com/sapcc/atlas/pkg/adapter"
+	"github.com/sapcc/atlas/pkg/auth"
+	"github.com/sapcc/atlas/pkg/clients"
+	internalClients "github.com/sapcc/atlas/pkg/clients"
 )
 
 type (

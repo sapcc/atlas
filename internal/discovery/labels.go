@@ -31,8 +31,8 @@ import (
 	"github.com/gophercloud/gophercloud/openstack/identity/v3/projects"
 	"github.com/prometheus/common/model"
 	"github.com/prometheus/prometheus/discovery/targetgroup"
-	"github.com/sapcc/ipmi_sd/pkg/clients"
-	internalClients "github.com/sapcc/ipmi_sd/pkg/clients"
+	"github.com/sapcc/atlas/pkg/clients"
+	internalClients "github.com/sapcc/atlas/pkg/clients"
 )
 
 //TODO: use errgroup.Group

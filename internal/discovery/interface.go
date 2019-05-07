@@ -4,13 +4,13 @@ import (
 	"context"
 	"sync"
 
-	"github.com/sapcc/ipmi_sd/pkg/writer"
+	"github.com/sapcc/atlas/pkg/writer"
 
 	"github.com/go-kit/kit/log"
 	promDiscovery "github.com/prometheus/prometheus/discovery"
 	"github.com/prometheus/prometheus/discovery/targetgroup"
-	"github.com/sapcc/ipmi_sd/pkg/adapter"
-	"github.com/sapcc/ipmi_sd/pkg/config"
+	"github.com/sapcc/atlas/pkg/adapter"
+	"github.com/sapcc/atlas/pkg/config"
 )
 
 type Discovery interface {

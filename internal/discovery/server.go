@@ -7,7 +7,7 @@ import (
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/sapcc/ipmi_sd/pkg/adapter"
+	"github.com/sapcc/atlas/pkg/adapter"
 )
 
 type Server struct {

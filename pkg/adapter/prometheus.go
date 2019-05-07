@@ -23,7 +23,7 @@ import (
 	"github.com/go-kit/kit/log/level"
 	promDiscovery "github.com/prometheus/prometheus/discovery"
 	"github.com/prometheus/prometheus/discovery/targetgroup"
-	"github.com/sapcc/ipmi_sd/pkg/writer"
+	"github.com/sapcc/atlas/pkg/writer"
 )
 
 type customSD struct {

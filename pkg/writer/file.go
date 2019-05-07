@@ -7,7 +7,7 @@ import (
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
-	"github.com/sapcc/ipmi_sd/pkg/util"
+	"github.com/sapcc/atlas/pkg/util"
 )
 
 type File struct {

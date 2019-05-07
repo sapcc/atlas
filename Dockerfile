@@ -1,15 +1,17 @@
-FROM golang:1.10.0 AS build-env
-ADD vendor $GOPATH/src/
-ADD cmd $GOPATH/src/github.com/sapcc/ipmi_sd/cmd/
-ADD internal $GOPATH/src/github.com/sapcc/ipmi_sd/internal/
-ADD pkg $GOPATH/src/github.com/sapcc/ipmi_sd/pkg/
+FROM golang:1.12.0-alpine3.9 as builder
+WORKDIR /go/src/github.com/sapcc/atlas
+RUN apk add --no-cache make
+COPY . .
+ARG VERSION
+RUN make all
 
-WORKDIR /src
+FROM alpine:3.9
+LABEL maintainer="Stefan Hipfel <stefan.hipfel@sap.com>"
 
-RUN CGO_ENABLED=0 GOOS=linux go build -a -tags netgo -ldflags '-w' -o ipmi_sd github.com/sapcc/ipmi_sd/cmd/discovery
-
-FROM quay.io/prometheus/busybox:latest
-LABEL maintainer "sapcc <stefan.hipfel@sap.com>"
-WORKDIR /app
-COPY --from=build-env /src/ipmi_sd /app/
-ENTRYPOINT ["./ipmi_sd"]
+RUN apk add --no-cache curl
+RUN curl -Lo /bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64 \
+	&& chmod +x /bin/dumb-init \
+	&& dumb-init -V
+COPY --from=builder /go/src/github.com/sapcc/atlas/bin/linux/atlas /usr/local/bin/
+ENTRYPOINT ["dumb-init", "--"]
+CMD ["atlas"]
