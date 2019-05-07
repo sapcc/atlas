@@ -1,7 +1,13 @@
-# ipmi service discovery
+# atlas
 
-This is a standalone custom Prometheus service discovery applicationto for ironic nodes.
-Discovery service gets ipmi addresses of all nodes via ironic and writes those targets into a configmap every x seconds.
+Atlas, brother to Prometheus.
+
+This is a standalone custom Prometheus service discovery application. It consists of a growing number ofdiscoveries which can be enabled/disabled and configured via a yaml file.
+
+Available Discoveries:
+1. Ironic nodes
+2. Servers from netbox
+3. Swithces from netbox
 
 ## Architecture overview
 
