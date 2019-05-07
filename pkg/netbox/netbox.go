@@ -128,15 +128,16 @@ func (nb *Netbox) Servers(rackID int64) ([]models.Device, error) {
 
 }
 
-func (nb *Netbox) DevicesByRegion(query, manufacturer, region string) (res []models.Device, err error) {
-	//q=f5&manufacturer=f5&region=qa-de-1
+//DevicesByRegion retrieves devices by region, manufacturer and status
+func (nb *Netbox) DevicesByRegion(query, manufacturer, region, status string) (res []models.Device, err error) {
 	res = make([]models.Device, 0)
 	params := dcim.NewDcimDevicesListParams()
-	params.Q = &query
-	params.Region = &region
-	params.Manufacturer = &manufacturer
+	params.WithQ(&query)
+	params.WithRegion(&region)
+	params.WithManufacturer(&manufacturer)
+	params.WithStatus(&status)
 	limit := int64(100)
-	params.Limit = &limit
+	params.WithLimit(&limit)
 	for {
 		offset := int64(0)
 		if params.Offset != nil {
@@ -207,7 +208,7 @@ func (nb *Netbox) Interface(deviceID int64, interfaceName string) (*models.Inter
 
 }
 
-// IPAddress retrieves the IP address by device and interface
+// IPAddressByDeviceAndIntefrace retrieves the IP address by device and interface
 func (nb *Netbox) IPAddressByDeviceAndIntefrace(deviceID int64, interfaceID int64) (*models.IPAddress, error) {
 
 	params := ipam.NewIPAMIPAddressesListParams()
@@ -243,7 +244,7 @@ func (nb *Netbox) IPAddress(id int64) (*models.IPAddress, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("_____________________", list)
+
 	if *list.Payload.Count < 1 {
 		return nil, fmt.Errorf("no ip found with id %d", id)
 	}

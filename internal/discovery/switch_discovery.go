@@ -41,6 +41,9 @@ type (
 		Name         string `yaml:"name"`
 		Manufacturer string `yaml:"manufacturer"`
 	}
+	configValues struct {
+		Region string
+	}
 )
 
 func init() {
@@ -49,10 +52,11 @@ func init() {
 
 func NewSwitchDiscovery(disc interface{}, ctx context.Context, m *promDiscovery.Manager, opts config.Options, w writer.Writer, l log.Logger) (d Discovery, err error) {
 	var cfg switchConfig
-	if err := UnmarshalHandler(disc, &cfg); err != nil {
+	configValues := configValues{Region: opts.Region}
+	if err := UnmarshalHandler(disc, &cfg, configValues); err != nil {
 		return nil, err
 	}
-	fmt.Println(cfg)
+
 	nClient, err := netbox.New(cfg.NetboxHost, cfg.NetboxAPIToken)
 	if err != nil {
 		return nil, err
@@ -109,15 +113,14 @@ func (sd *SwitchDiscovery) getSwitches() (tgroups []*targetgroup.Group, err erro
 		tg, err := sd.loadSwitches(device)
 		if err != nil {
 			return tgroups, err
-		} else {
-			tgroups = append(tgroups, tg...)
 		}
+		tgroups = append(tgroups, tg...)
 	}
 	return tgroups, err
 }
 
 func (sd *SwitchDiscovery) loadSwitches(d device) (tgroups []*targetgroup.Group, err error) {
-	devices, err := sd.netbox.DevicesByRegion(d.Name, d.Manufacturer, sd.region)
+	devices, err := sd.netbox.DevicesByRegion(d.Name, d.Manufacturer, sd.region, "1")
 	if err != nil {
 		return tgroups, err
 	}
@@ -125,13 +128,13 @@ func (sd *SwitchDiscovery) loadSwitches(d device) (tgroups []*targetgroup.Group,
 	for _, device := range devices {
 		if device.PrimaryIP != nil {
 			if err != nil {
-				level.Error(log.With(sd.logger, "component", "SwitchDiscovery")).Log("cannot find ip address of switch %d. Error: %s", device.ID, err)
+				level.Error(log.With(sd.logger, "component", "SwitchDiscovery")).Log("debug", fmt.Sprintf("cannot find ip address of switch %d. Error: %s", device.ID, err))
 				continue
 			}
 		}
 
 		if strings.ToUpper(*device.Status.Label) != "ACTIVE" {
-			level.Debug(log.With(sd.logger, "component", "SwitchDiscovery")).Log("Ignoring device: %s. Status: %s", device.ID, *device.Status.Label)
+			level.Debug(log.With(sd.logger, "component", "SwitchDiscovery")).Log("debug", fmt.Sprintf("Ignoring device: %d. Status: %s", device.ID, *device.Status.Label))
 			continue
 		}
 

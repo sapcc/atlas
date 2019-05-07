@@ -1,8 +1,10 @@
 package discovery
 
 import (
+	"bytes"
 	"context"
 	"fmt"
+	"html/template"
 	"strings"
 	"sync"
 
@@ -19,12 +21,17 @@ import (
 
 var discoveryFactories = make(map[string]DiscoveryFactory)
 
-type discovery struct {
-	opts   config.Options
-	ctx    context.Context
-	writer writer.Writer
-	log    log.Logger
-}
+type (
+	discovery struct {
+		opts   config.Options
+		ctx    context.Context
+		writer writer.Writer
+		log    log.Logger
+	}
+	configTemplateValues struct {
+		Region string
+	}
+)
 
 func New(ctx context.Context, o config.Options, w writer.Writer, l log.Logger) *discovery {
 	discovery := &discovery{
@@ -97,11 +104,15 @@ func (d discovery) Start(ctx context.Context, wg *sync.WaitGroup, cfg config.Con
 	go NewServer(adapterList, discoveryList, d.log).Start()
 }
 
-func UnmarshalHandler(DiscIn, DiscOut interface{}) error {
-
-	h, err := yaml.Marshal(DiscIn)
+func UnmarshalHandler(discIn, discOut, values interface{}) error {
+	var tpl bytes.Buffer
+	h, err := yaml.Marshal(discIn)
 	if err != nil {
 		return err
 	}
-	return yaml.Unmarshal(h, DiscOut)
+
+	t, err := template.New("config").Parse(string(h))
+	err = t.Execute(&tpl, values)
+
+	return yaml.Unmarshal(tpl.Bytes(), discOut)
 }

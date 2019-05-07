@@ -44,7 +44,7 @@ func init() {
 //NewControlPlaneDiscovery creates a new ControlPlaneDiscovery
 func NewControlPlaneDiscovery(disc interface{}, ctx context.Context, m *promDiscovery.Manager, opts config.Options, w writer.Writer, l log.Logger) (d Discovery, err error) {
 	var cfg netboxConfig
-	if err := UnmarshalHandler(disc, &cfg); err != nil {
+	if err := UnmarshalHandler(disc, &cfg, nil); err != nil {
 		return nil, err
 	}
 	nClient, err := netbox.New(cfg.NetboxHost, cfg.NetboxAPIToken)

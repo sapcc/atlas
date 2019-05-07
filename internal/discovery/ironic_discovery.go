@@ -63,7 +63,7 @@ func init() {
 //NewIronicDiscovery creates a new Ironic Discovery
 func NewIronicDiscovery(disc interface{}, ctx context.Context, m *promDiscovery.Manager, opts config.Options, w writer.Writer, l log.Logger) (d Discovery, err error) {
 	var cfg ironicConfig
-	if err := UnmarshalHandler(disc, &cfg); err != nil {
+	if err := UnmarshalHandler(disc, &cfg, nil); err != nil {
 		return d, err
 	}
 
