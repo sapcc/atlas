@@ -32,7 +32,7 @@ func (c *File) GetData(name string) (data string, err error) {
 func (c *File) Write(name, data string) (err error) {
 	err = util.RetryOnConflict(util.DefaultBackoff, func() (err error) {
 
-		c.data[c.fileName] = string(data)
+		c.data[name] = string(data)
 		b := new(bytes.Buffer)
 		for key, value := range c.data {
 			fmt.Fprintf(b, "%s=\"%s\"\n", key, value)

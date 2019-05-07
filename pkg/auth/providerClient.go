@@ -19,6 +19,7 @@
 package auth
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/gophercloud/gophercloud"
@@ -26,18 +27,20 @@ import (
 )
 
 type OSProvider struct {
-	AuthURL           string `yaml:"os_auth_url"`
-	User              string `yaml:"os_user"`
-	Password          string `yaml:"os_password"`
-	DomainName        string `yaml:"os_user_domain_name"`
-	ProjectName       string `yaml:"os_project_name"`
-	ProjectDomainName string `yaml:"os_domain_name"`
+	AuthURL           string `yaml:"auth_url"`
+	User              string `yaml:"user"`
+	Password          string `yaml:"password"`
+	DomainName        string `yaml:"user_domain_name"`
+	ProjectName       string `yaml:"project_name"`
+	ProjectDomainName string `yaml:"domain_name"`
 }
 
 func NewProviderClient(pr OSProvider) (pc *gophercloud.ProviderClient, err error) {
+	fmt.Println(pr)
 	os.Setenv("OS_USERNAME", pr.User)
 	os.Setenv("OS_PASSWORD", pr.Password)
 	os.Setenv("OS_PROJECT_NAME", pr.ProjectName)
+	os.Setenv("OS_DOMAIN_NAME", pr.DomainName)
 	os.Setenv("OS_PROJECT_DOMAIN_NAME", pr.ProjectDomainName)
 	os.Setenv("OS_AUTH_URL", pr.AuthURL)
 	opts, err := openstack.AuthOptionsFromEnv()
