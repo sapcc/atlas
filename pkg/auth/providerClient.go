@@ -19,7 +19,6 @@
 package auth
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/gophercloud/gophercloud"
@@ -36,7 +35,6 @@ type OSProvider struct {
 }
 
 func NewProviderClient(pr OSProvider) (pc *gophercloud.ProviderClient, err error) {
-	fmt.Println(pr)
 	os.Setenv("OS_USERNAME", pr.User)
 	os.Setenv("OS_PASSWORD", pr.Password)
 	os.Setenv("OS_PROJECT_NAME", pr.ProjectName)
