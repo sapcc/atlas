@@ -25,6 +25,7 @@ import (
 	"context"
 	"os"
 	"os/signal"
+	"strings"
 	"sync"
 	"syscall"
 
@@ -45,11 +46,12 @@ var (
 )
 
 func init() {
-	flag.StringVar(&opts.AppEnv, "APP_ENV", "development", "To set Log Level: development or production")
+	flag.StringVar(&opts.LogLevel, "LOG_LEVEL", "debug", "To set Log Level")
 
 	flag.StringVar(&opts.Version, "OS_VERSION", "v0.3.0", "IPMI SD Version")
 	flag.StringVar(&opts.NameSpace, "K8S_NAMESPACE", "kube-monitoring", "k8s Namespace the service is running in")
 	flag.StringVar(&opts.Region, "K8S_REGION", "qa-de-1", "k8s Region the service is running in")
+	flag.StringVar(&opts.WriterName, "WRITER_NAME", "qa-de-1", "k8s Region the service is running in")
 
 	flag.StringVar(&opts.ConfigFilePath, "CONFIG_FILE", "/etc/config/config.yaml", "Path to the config file")
 	if val, ok := os.LookupEnv("PROM_CONFIGMAP_NAME"); ok {
@@ -61,11 +63,21 @@ func init() {
 
 	logger = log.NewLogfmtLogger(log.NewSyncWriter(os.Stderr))
 	logger = log.With(logger, "ts", log.DefaultTimestampUTC)
-	if opts.AppEnv == "production" {
+	switch strings.ToLower(opts.LogLevel) {
+	case "info":
 		logger = level.NewFilter(logger, level.AllowInfo())
-		w, err = writer.NewConfigMap(opts.ConfigmapName, opts.NameSpace, logger)
-	} else {
+	case "debug":
 		logger = level.NewFilter(logger, level.AllowDebug())
+	case "warn":
+		logger = level.NewFilter(logger, level.AllowWarn())
+	case "error":
+		logger = level.NewFilter(logger, level.AllowError())
+	}
+
+	switch strings.ToLower(opts.WriterName) {
+	case "configmap":
+		w, err = writer.NewConfigMap(opts.ConfigmapName, opts.NameSpace, logger)
+	case "file":
 		w, err = writer.NewFile(opts.ConfigmapName, logger)
 	}
 

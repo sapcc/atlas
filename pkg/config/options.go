@@ -21,7 +21,8 @@ package config
 
 // Options passed via cmd line
 type Options struct {
-	AppEnv         string
+	LogLevel       string
+	WriterName     string
 	ConfigmapName  string
 	Version        string
 	ConfigFilePath string
