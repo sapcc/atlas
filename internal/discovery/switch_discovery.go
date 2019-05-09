@@ -3,6 +3,7 @@ package discovery
 import (
 	"context"
 	"fmt"
+	"net"
 	"strconv"
 	"strings"
 	"time"
@@ -121,6 +122,7 @@ func (sd *SwitchDiscovery) getSwitches() (tgroups []*targetgroup.Group, err erro
 
 func (sd *SwitchDiscovery) loadSwitches(d device) (tgroups []*targetgroup.Group, err error) {
 	devices, err := sd.netbox.DevicesByRegion(d.Name, d.Manufacturer, sd.region, "1")
+	var deviceIP net.IP
 	if err != nil {
 		return tgroups, err
 	}
@@ -137,14 +139,17 @@ func (sd *SwitchDiscovery) loadSwitches(d device) (tgroups []*targetgroup.Group,
 			level.Debug(log.With(sd.logger, "component", "SwitchDiscovery")).Log("debug", fmt.Sprintf("Ignoring device: %d. Status: %s", device.ID, *device.Status.Label))
 			continue
 		}
-
+		deviceIP, _, err = net.ParseCIDR(*device.PrimaryIP.Address)
+		if err != nil {
+			deviceIP = net.ParseIP(*device.PrimaryIP.Address)
+		}
 		tgroup := targetgroup.Group{
-			Source:  *device.PrimaryIP.Address,
+			Source:  deviceIP.String(),
 			Labels:  make(model.LabelSet),
 			Targets: make([]model.LabelSet, 0, 1),
 		}
 
-		target := model.LabelSet{model.AddressLabel: model.LabelValue(*device.PrimaryIP.Address)}
+		target := model.LabelSet{model.AddressLabel: model.LabelValue(deviceIP.String())}
 		labels := model.LabelSet{
 			model.LabelName("job"):          model.LabelValue(fmt.Sprintf("switch_%s/netbox", d.Name)),
 			model.LabelName("server_name"):  model.LabelValue(device.Name),

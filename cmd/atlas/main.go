@@ -46,6 +46,8 @@ var (
 )
 
 func init() {
+	logger = log.NewLogfmtLogger(log.NewSyncWriter(os.Stderr))
+	logger = log.With(logger, "ts", log.DefaultTimestampUTC)
 	flag.StringVar(&opts.LogLevel, "LOG_LEVEL", "debug", "To set Log Level")
 
 	flag.StringVar(&opts.Version, "OS_VERSION", "v0.3.0", "IPMI SD Version")
@@ -63,8 +65,6 @@ func init() {
 
 	flag.Parse()
 
-	logger = log.NewLogfmtLogger(log.NewSyncWriter(os.Stderr))
-	logger = log.With(logger, "ts", log.DefaultTimestampUTC)
 	switch strings.ToLower(opts.LogLevel) {
 	case "info":
 		logger = level.NewFilter(logger, level.AllowInfo())
