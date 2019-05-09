@@ -51,13 +51,13 @@ func init() {
 	flag.StringVar(&opts.Version, "OS_VERSION", "v0.3.0", "IPMI SD Version")
 	flag.StringVar(&opts.NameSpace, "K8S_NAMESPACE", "kube-monitoring", "k8s Namespace the service is running in")
 	flag.StringVar(&opts.Region, "K8S_REGION", "qa-de-1", "k8s Region the service is running in")
-	flag.StringVar(&opts.WriterName, "WRITER_NAME", "qa-de-1", "k8s Region the service is running in")
+	flag.StringVar(&opts.WriteTo, "WRITE_TO", "file", "k8s Region the service is running in")
 
 	flag.StringVar(&opts.ConfigFilePath, "CONFIG_FILE", "/etc/config/config.yaml", "Path to the config file")
 	if val, ok := os.LookupEnv("PROM_CONFIGMAP_NAME"); ok {
 		opts.ConfigmapName = val
 	} else {
-		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", "no configmap name given")
+		level.Error(log.With(logger, "component", "atlas")).Log("err", "no configmap name given")
 		os.Exit(2)
 	}
 
@@ -74,7 +74,7 @@ func init() {
 		logger = level.NewFilter(logger, level.AllowError())
 	}
 
-	switch strings.ToLower(opts.WriterName) {
+	switch strings.ToLower(opts.WriteTo) {
 	case "configmap":
 		w, err = writer.NewConfigMap(opts.ConfigmapName, opts.NameSpace, logger)
 	case "file":
@@ -82,15 +82,17 @@ func init() {
 	}
 
 	if err != nil {
-		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", err)
+		level.Error(log.With(logger, "component", "atlas")).Log("err", err)
 		os.Exit(2)
 	}
+
+	level.Debug(log.With(logger, "component", "atlas")).Log("info", opts.ConfigFilePath)
 }
 
 func main() {
 	cfg, err := config.GetConfig(opts)
 	if err != nil {
-		level.Error(log.With(logger, "component", "ipmi_discovery")).Log("err", err)
+		level.Error(log.With(logger, "component", "atlas")).Log("err", err)
 		os.Exit(2)
 	}
 
