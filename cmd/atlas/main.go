@@ -61,6 +61,8 @@ func init() {
 		os.Exit(2)
 	}
 
+	flag.Parse()
+
 	logger = log.NewLogfmtLogger(log.NewSyncWriter(os.Stderr))
 	logger = log.With(logger, "ts", log.DefaultTimestampUTC)
 	switch strings.ToLower(opts.LogLevel) {
