@@ -128,11 +128,9 @@ func (sd *SwitchDiscovery) loadSwitches(d device) (tgroups []*targetgroup.Group,
 	}
 
 	for _, device := range devices {
-		if device.PrimaryIP != nil {
-			if err != nil {
-				level.Error(log.With(sd.logger, "component", "SwitchDiscovery")).Log("debug", fmt.Sprintf("cannot find ip address of switch %d. Error: %s", device.ID, err))
-				continue
-			}
+		if device.PrimaryIP == nil {
+			level.Error(log.With(sd.logger, "component", "SwitchDiscovery")).Log("debug", fmt.Sprintf("cannot find ip address of switch %d. Error: %s", device.ID, err))
+			continue
 		}
 
 		if strings.ToUpper(*device.Status.Label) != "ACTIVE" {
