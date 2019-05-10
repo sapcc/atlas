@@ -171,7 +171,6 @@ func (d *IronicDiscovery) parseServiceNodes() ([]*targetgroup.Group, error) {
 
 		target := model.LabelSet{model.AddressLabel: model.LabelValue(node.DriverInfo.IpmiAddress)}
 		labels := model.LabelSet{
-			model.LabelName("job"):             "baremetal/ironic",
 			model.LabelName("server_name"):     model.LabelValue(node.Name),
 			model.LabelName("provision_state"): model.LabelValue(node.ProvisionState),
 			model.LabelName("maintenance"):     model.LabelValue(strconv.FormatBool(node.Maintenance)),

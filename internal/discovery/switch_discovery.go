@@ -122,51 +122,63 @@ func (sd *SwitchDiscovery) getSwitches() (tgroups []*targetgroup.Group, err erro
 
 func (sd *SwitchDiscovery) loadSwitches(d device) (tgroups []*targetgroup.Group, err error) {
 	devices, err := sd.netbox.DevicesByRegion(d.Name, d.Manufacturer, sd.region, "1")
-	var deviceIP net.IP
-	if err != nil {
-		return tgroups, err
-	}
-
-	for _, device := range devices {
-		if device.PrimaryIP == nil {
-			level.Error(log.With(sd.logger, "component", "SwitchDiscovery")).Log("debug", fmt.Sprintf("cannot find ip address of switch %d. Error: %s", device.ID, err))
+	for _, dv := range devices {
+		if dv.PrimaryIP == nil {
+			level.Error(log.With(sd.logger, "component", "SwitchDiscovery")).Log("error", fmt.Sprintf("cannot find ip address of switch %d. Error: %s", dv.ID, err))
 			continue
 		}
-
-		if strings.ToUpper(*device.Status.Label) != "ACTIVE" {
-			level.Debug(log.With(sd.logger, "component", "SwitchDiscovery")).Log("debug", fmt.Sprintf("Ignoring device: %d. Status: %s", device.ID, *device.Status.Label))
-			continue
-		}
-		deviceIP, _, err = net.ParseCIDR(*device.PrimaryIP.Address)
+		tgroup, err := sd.createGroup(d.Name, dv.Name, *dv.PrimaryIP.Address, *dv.Status.Label, *dv.DeviceType.Manufacturer.Name, *dv.DeviceType.Model, strconv.Itoa(int(dv.ID)))
 		if err != nil {
-			deviceIP = net.ParseIP(*device.PrimaryIP.Address)
+			level.Error(log.With(sd.logger, "component", "SwitchDiscovery")).Log("error", err)
+			continue
 		}
-		tgroup := targetgroup.Group{
-			Source:  deviceIP.String(),
-			Labels:  make(model.LabelSet),
-			Targets: make([]model.LabelSet, 0, 1),
-		}
-
-		target := model.LabelSet{model.AddressLabel: model.LabelValue(deviceIP.String())}
-		labels := model.LabelSet{
-			model.LabelName("job"):          model.LabelValue(fmt.Sprintf("switch_%s/netbox", d.Name)),
-			model.LabelName("module"):       model.LabelValue(strings.Replace(d.Name, sd.region+"-", "", 1)),
-			model.LabelName("server_name"):  model.LabelValue(device.Name),
-			model.LabelName("state"):        model.LabelValue(*device.Status.Label),
-			model.LabelName("manufacturer"): model.LabelValue(*device.DeviceType.Manufacturer.Name),
-			model.LabelName("model"):        model.LabelValue(*device.DeviceType.Model),
-			model.LabelName("server_id"):    model.LabelValue(strconv.Itoa(int(device.ID))),
-		}
-
-		if device.Serial != "" {
-			labels[model.LabelName("serial")] = model.LabelValue(device.Serial)
-		}
-
-		tgroup.Labels = labels
-		tgroup.Targets = append(tgroup.Targets, target)
-		tgroups = append(tgroups, &tgroup)
+		tgroups = append(tgroups, tgroup)
 	}
+	vms, err := sd.netbox.VMsByRegion(d.Name, sd.region, "1")
+	for _, vm := range vms {
+		if vm.PrimaryIP == nil {
+			level.Error(log.With(sd.logger, "component", "SwitchDiscovery")).Log("error", fmt.Sprintf("cannot find ip address of switch %d. Error: %s", vm.ID, err))
+			continue
+		}
+		tgroup, err := sd.createGroup(d.Name, *vm.Name, *vm.PrimaryIP.Address, *vm.Status.Label, "", "", strconv.Itoa(int(vm.ID)))
+		if err != nil {
+			level.Error(log.With(sd.logger, "component", "SwitchDiscovery")).Log("error", err)
+			continue
+		}
+		tgroups = append(tgroups, tgroup)
+	}
+
 	return tgroups, err
+}
+
+func (sd *SwitchDiscovery) createGroup(name, deviceName, ip, status, manufacturer, modelName, id string) (tgroup *targetgroup.Group, err error) {
+	var deviceIP net.IP
+	if strings.ToUpper(status) != "ACTIVE" {
+		return tgroup, fmt.Errorf("Ignoring device: %s. Status: %s", id, status)
+	}
+	deviceIP, _, err = net.ParseCIDR(ip)
+	if err != nil {
+		deviceIP = net.ParseIP(ip)
+	}
+	tgroup = &targetgroup.Group{
+		Source:  deviceIP.String(),
+		Labels:  make(model.LabelSet),
+		Targets: make([]model.LabelSet, 0, 1),
+	}
+
+	target := model.LabelSet{model.AddressLabel: model.LabelValue(deviceIP.String())}
+	labels := model.LabelSet{
+		model.LabelName("module"):       model.LabelValue(strings.Replace(name, sd.region+"-", "", 1)),
+		model.LabelName("server_name"):  model.LabelValue(deviceName),
+		model.LabelName("state"):        model.LabelValue(status),
+		model.LabelName("manufacturer"): model.LabelValue(manufacturer),
+		model.LabelName("model"):        model.LabelValue(modelName),
+		model.LabelName("server_id"):    model.LabelValue(id),
+	}
+
+	tgroup.Labels = labels
+	tgroup.Targets = append(tgroup.Targets, target)
+	return tgroup, err
 }
 
 func (sd *SwitchDiscovery) Up() bool {

@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net"
 
+	"github.com/hosting-de-labs/go-netbox/netbox/client/virtualization"
+
 	runtimeclient "github.com/go-openapi/runtime/client"
 	netboxclient "github.com/hosting-de-labs/go-netbox/netbox/client"
 	"github.com/hosting-de-labs/go-netbox/netbox/client/dcim"
@@ -150,6 +152,35 @@ func (nb *Netbox) DevicesByRegion(query, manufacturer, region, status string) (r
 		}
 		for _, device := range list.Payload.Results {
 			res = append(res, *device)
+		}
+		if list.Payload.Next == nil {
+			break
+		}
+	}
+	return res, err
+}
+
+//VMsByRegion retrieves devices by region, manufacturer and status
+func (nb *Netbox) VMsByRegion(query, region, status string) (res []models.VirtualMachine, err error) {
+	res = make([]models.VirtualMachine, 0)
+	params := virtualization.NewVirtualizationVirtualMachinesListParams()
+	params.WithQ(&query)
+	params.WithRegion(&region)
+	params.WithStatus(&status)
+	limit := int64(100)
+	params.WithLimit(&limit)
+	for {
+		offset := int64(0)
+		if params.Offset != nil {
+			offset = *params.Offset + limit
+		}
+		params.Offset = &offset
+		list, err := nb.client.Virtualization.VirtualizationVirtualMachinesList(params, nil)
+		if err != nil {
+			return res, err
+		}
+		for _, vm := range list.Payload.Results {
+			res = append(res, *vm)
 		}
 		if list.Payload.Next == nil {
 			break
