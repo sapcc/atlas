@@ -152,6 +152,7 @@ func (sd *SwitchDiscovery) loadSwitches(d device) (tgroups []*targetgroup.Group,
 		target := model.LabelSet{model.AddressLabel: model.LabelValue(deviceIP.String())}
 		labels := model.LabelSet{
 			model.LabelName("job"):          model.LabelValue(fmt.Sprintf("switch_%s/netbox", d.Name)),
+			model.LabelName("module"):       model.LabelValue(strings.Replace(d.Name, sd.region+"-", "", 1)),
 			model.LabelName("server_name"):  model.LabelValue(device.Name),
 			model.LabelName("state"):        model.LabelValue(*device.Status.Label),
 			model.LabelName("manufacturer"): model.LabelValue(*device.DeviceType.Manufacturer.Name),
