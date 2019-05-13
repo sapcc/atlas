@@ -160,13 +160,13 @@ func (nb *Netbox) DevicesByRegion(query, manufacturer, region, status string) (r
 	return res, err
 }
 
-//VMsByRegion retrieves devices by region, manufacturer and status
-func (nb *Netbox) VMsByRegion(query, region, status string) (res []models.VirtualMachine, err error) {
+//VMsByTag retrieves devices by region, manufacturer and status
+func (nb *Netbox) VMsByTag(query, status, tag string) (res []models.VirtualMachine, err error) {
 	res = make([]models.VirtualMachine, 0)
 	params := virtualization.NewVirtualizationVirtualMachinesListParams()
 	params.WithQ(&query)
-	params.WithRegion(&region)
 	params.WithStatus(&status)
+	params.WithTag(&tag)
 	limit := int64(100)
 	params.WithLimit(&limit)
 	for {

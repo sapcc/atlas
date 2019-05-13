@@ -41,6 +41,7 @@ type (
 	device struct {
 		Name         string `yaml:"name"`
 		Manufacturer string `yaml:"manufacturer"`
+		API          string `yaml:"api"`
 	}
 	configValues struct {
 		Region string
@@ -109,9 +110,15 @@ func (sd *SwitchDiscovery) Run(ctx context.Context, ch chan<- []*targetgroup.Gro
 }
 
 func (sd *SwitchDiscovery) getSwitches() (tgroups []*targetgroup.Group, err error) {
+	var tg []*targetgroup.Group
 
 	for _, device := range sd.cfg.Switches {
-		tg, err := sd.loadSwitches(device)
+		switch device.API {
+		case "dcim":
+			tg, err = sd.loadSDCIMSwitches(device)
+		case "vm":
+			tg, err = sd.loadVMSwitches(device)
+		}
 		if err != nil {
 			return tgroups, err
 		}
@@ -120,9 +127,12 @@ func (sd *SwitchDiscovery) getSwitches() (tgroups []*targetgroup.Group, err erro
 	return tgroups, err
 }
 
-func (sd *SwitchDiscovery) loadSwitches(d device) (tgroups []*targetgroup.Group, err error) {
-	devices, err := sd.netbox.DevicesByRegion(d.Name, d.Manufacturer, sd.region, "1")
-	for _, dv := range devices {
+func (sd *SwitchDiscovery) loadSDCIMSwitches(d device) (tgroups []*targetgroup.Group, err error) {
+	dcims, err := sd.netbox.DevicesByRegion(d.Name, d.Manufacturer, sd.region, "1")
+	if err != nil {
+		return tgroups, level.Error(log.With(sd.logger, "component", "SwitchDiscovery")).Log("error", err)
+	}
+	for _, dv := range dcims {
 		if dv.PrimaryIP == nil {
 			level.Error(log.With(sd.logger, "component", "SwitchDiscovery")).Log("error", fmt.Sprintf("cannot find ip address of switch %d. Error: %s", dv.ID, err))
 			continue
@@ -134,7 +144,15 @@ func (sd *SwitchDiscovery) loadSwitches(d device) (tgroups []*targetgroup.Group,
 		}
 		tgroups = append(tgroups, tgroup)
 	}
-	vms, err := sd.netbox.VMsByRegion(d.Name, sd.region, "1")
+
+	return tgroups, err
+}
+
+func (sd *SwitchDiscovery) loadVMSwitches(d device) (tgroups []*targetgroup.Group, err error) {
+	vms, err := sd.netbox.VMsByTag(sd.region, "1", "admin-context")
+	if err != nil {
+		return tgroups, level.Error(log.With(sd.logger, "component", "SwitchDiscovery")).Log("error", err)
+	}
 	for _, vm := range vms {
 		if vm.PrimaryIP == nil {
 			level.Error(log.With(sd.logger, "component", "SwitchDiscovery")).Log("error", fmt.Sprintf("cannot find ip address of switch %d. Error: %s", vm.ID, err))
