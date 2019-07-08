@@ -9,3 +9,5 @@ discoveries:
         manufacturer: "f5"
       - name: "asr04"
         manufacturer: "cisco"
+      - name: "asr01"
+        manufacturer: "cisco"
