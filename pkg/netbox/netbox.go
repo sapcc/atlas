@@ -297,11 +297,12 @@ func (nb *Netbox) ServersByRegion(rackRole string, region string) ([]models.Devi
 	return results, nil
 }
 
-// AcitveDevicesByCustomParameters retrievs all active devices with custom parameters
-func (nb *Netbox) ActiveDevicesByCustomParameters(query string, params *dcim.DcimDevicesListParams) ([]models.Device, error) {
+// AcitveDevicesByParams retrievs all active devices with custom parameters
+func (nb *Netbox) ActiveDevicesByParams(query string, params *dcim.DcimDevicesListParams) ([]models.Device, error) {
 	res := make([]models.Device, 0)
 	activeStatus := "1"
 	limit := int64(100)
+	params.WithQ(&query)
 	params.WithStatus(&activeStatus)
 	params.WithLimit(&limit)
 	for {
