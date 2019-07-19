@@ -12,7 +12,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 	v1 "k8s.io/client-go/pkg/api/v1"
 	"k8s.io/client-go/rest"
-	"k8s.io/kubernetes/staging/src/k8s.io/client-go/tools/clientcmd"
+	"k8s.io/client-go/tools/clientcmd"
 )
 
 type ConfigMap struct {
