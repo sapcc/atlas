@@ -215,7 +215,7 @@ func (nb *Netbox) ManagementIP(serverID int64) (string, error) {
 }
 
 // Interface retrieves the interface on the device
-func (nb *Netbox) Interface(deviceID int64, interfaceName string) (*models.Interface, error) {
+func (nb *Netbox) Interface(deviceID int64, interfaceName string) (*models.DeviceInterface, error) {
 
 	params := dcim.NewDcimInterfacesListParams()
 	params.DeviceID = &deviceID

@@ -137,7 +137,7 @@ func (sd *SwitchDiscovery) loadSDCIMSwitches(d device) (tgroups []*targetgroup.G
 			level.Error(log.With(sd.logger, "component", "SwitchDiscovery")).Log("error", fmt.Sprintf("cannot find ip address of switch %d. Error: %s", dv.ID, err))
 			continue
 		}
-		tgroup, err := sd.createGroup(d.Name, dv.Name, *dv.PrimaryIP.Address, *dv.Status.Label, *dv.DeviceType.Manufacturer.Name, *dv.DeviceType.Model, strconv.Itoa(int(dv.ID)))
+		tgroup, err := sd.createGroup(d.Name, *dv.Name, *dv.PrimaryIP.Address, *dv.Status.Label, *dv.DeviceType.Manufacturer.Name, *dv.DeviceType.Model, strconv.Itoa(int(dv.ID)))
 		if err != nil {
 			level.Error(log.With(sd.logger, "component", "SwitchDiscovery")).Log("error", err)
 			continue

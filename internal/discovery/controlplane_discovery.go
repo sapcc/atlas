@@ -168,7 +168,7 @@ func (nd *ControlPlaneDiscovery) getNodes() ([]*targetgroup.Group, error) {
 		target := model.LabelSet{model.AddressLabel: model.LabelValue(ip)}
 		labels := model.LabelSet{
 			model.LabelName("job"):             "cp/netbox",
-			model.LabelName("server_name"):     model.LabelValue(server.Name),
+			model.LabelName("server_name"):     model.LabelValue(*server.Name),
 			model.LabelName("provision_state"): model.LabelValue(*server.Status.Label),
 			//model.LabelName("maintenance"):     model.LabelValue(*server.Status.Label),
 			model.LabelName("manufacturer"): model.LabelValue(*server.DeviceType.Manufacturer.Name),
