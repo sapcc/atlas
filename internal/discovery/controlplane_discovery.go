@@ -47,7 +47,7 @@ func NewControlPlaneDiscovery(disc interface{}, ctx context.Context, m *promDisc
 	if err := UnmarshalHandler(disc, &cfg, nil); err != nil {
 		return nil, err
 	}
-	fmt.Println("Control_plane", cfg.TargetsFileName, cfg.NetboxHost)
+
 	nClient, err := netbox.New(cfg.NetboxHost, cfg.NetboxAPIToken)
 	if err != nil {
 		return nil, err
@@ -57,7 +57,7 @@ func NewControlPlaneDiscovery(disc interface{}, ctx context.Context, m *promDisc
 		return d, err
 	}
 
-	a := adapter.NewPrometheus(ctx, m, opts.ConfigmapName, w, l)
+	a := adapter.NewPrometheus(ctx, m, cfg.TargetsFileName, w, l)
 
 	return &ControlPlaneDiscovery{
 		adapter:         a,
