@@ -344,7 +344,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:465572a3a60929321ab7eafc19e3b9794c98d6a8a56faf81563627c96549c561"
+  digest = "1:be2862c0d3ade4df436187ce3d8b900dc691ea33638bb2b74c6145b67dd4edba"
   name = "github.com/hosting-de-labs/go-netbox"
   packages = [
     "netbox/client",
@@ -358,7 +358,7 @@
     "netbox/models",
   ]
   pruneopts = "UT"
-  revision = "cc20d09bb8e0e7f584299d32fd4dfbf6d8ec487b"
+  revision = "b9f8022a4cde72cbfffb12a1a56226722801f801"
 
 [[projects]]
   digest = "1:777a19f55da89883fe86477b3ffcaaebece9a20efa6e9d161c08beb4b3bd83be"
@@ -381,22 +381,6 @@
   packages = ["."]
   pruneopts = "UT"
   revision = "b84e30acd515aadc4b783ad4ff83aff3299bdfe0"
-
-[[projects]]
-  digest = "1:ca955a9cd5b50b0f43d2cc3aeb35c951473eeca41b34eb67507f1dbcc0542394"
-  name = "github.com/kr/pretty"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "73f6ac0b30a98e433b289500d779f50c1a6f0712"
-  version = "v0.1.0"
-
-[[projects]]
-  digest = "1:15b5cc79aad436d47019f814fde81a10221c740dc8ddf769221a65097fb6c2e9"
-  name = "github.com/kr/text"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "e2ffdb16a802fe2bb95e2e35ff34f0e53aeef34f"
-  version = "v0.1.0"
 
 [[projects]]
   branch = "master"
@@ -820,15 +804,18 @@
     "github.com/hosting-de-labs/go-netbox/netbox/client",
     "github.com/hosting-de-labs/go-netbox/netbox/client/dcim",
     "github.com/hosting-de-labs/go-netbox/netbox/client/ipam",
+    "github.com/hosting-de-labs/go-netbox/netbox/client/virtualization",
     "github.com/hosting-de-labs/go-netbox/netbox/models",
-    "github.com/kr/pretty",
     "github.com/namsral/flag",
     "github.com/prometheus/client_golang/prometheus",
     "github.com/prometheus/client_golang/prometheus/promhttp",
     "github.com/prometheus/common/model",
     "github.com/prometheus/prometheus/discovery",
     "github.com/prometheus/prometheus/discovery/targetgroup",
+    "gopkg.in/yaml.v2",
+    "k8s.io/apimachinery/pkg/api/errors",
     "k8s.io/apimachinery/pkg/apis/meta/v1",
+    "k8s.io/apimachinery/pkg/util/wait",
     "k8s.io/client-go/kubernetes",
     "k8s.io/client-go/pkg/api/v1",
     "k8s.io/client-go/rest",
