@@ -64,7 +64,7 @@ type WritableVirtualMachine struct {
 	LastUpdated strfmt.DateTime `json:"last_updated,omitempty"`
 
 	// Local context data
-	LocalContextData string `json:"local_context_data,omitempty"`
+	LocalContextData *string `json:"local_context_data,omitempty"`
 
 	// Memory (MB)
 	// Maximum: 2.147483647e+09
@@ -78,20 +78,20 @@ type WritableVirtualMachine struct {
 	Name *string `json:"name"`
 
 	// Platform
-	Platform int64 `json:"platform,omitempty"`
+	Platform *int64 `json:"platform,omitempty"`
 
 	// Primary ip
 	// Read Only: true
 	PrimaryIP string `json:"primary_ip,omitempty"`
 
 	// Primary IPv4
-	PrimaryIp4 int64 `json:"primary_ip4,omitempty"`
+	PrimaryIp4 *int64 `json:"primary_ip4,omitempty"`
 
 	// Primary IPv6
-	PrimaryIp6 int64 `json:"primary_ip6,omitempty"`
+	PrimaryIp6 *int64 `json:"primary_ip6,omitempty"`
 
 	// Role
-	Role int64 `json:"role,omitempty"`
+	Role *int64 `json:"role,omitempty"`
 
 	// Site
 	// Read Only: true
@@ -105,7 +105,7 @@ type WritableVirtualMachine struct {
 	Tags []string `json:"tags"`
 
 	// Tenant
-	Tenant int64 `json:"tenant,omitempty"`
+	Tenant *int64 `json:"tenant,omitempty"`
 
 	// VCPUs
 	// Maximum: 32767

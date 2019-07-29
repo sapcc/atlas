@@ -36,7 +36,7 @@ type Site struct {
 	// ASN
 	// Maximum: 4.294967295e+09
 	// Minimum: 1
-	Asn int64 `json:"asn,omitempty"`
+	Asn *int64 `json:"asn,omitempty"`
 
 	// Comments
 	Comments string `json:"comments,omitempty"`
@@ -100,10 +100,10 @@ type Site struct {
 	LastUpdated strfmt.DateTime `json:"last_updated,omitempty"`
 
 	// Latitude
-	Latitude string `json:"latitude,omitempty"`
+	Latitude *string `json:"latitude,omitempty"`
 
 	// Longitude
-	Longitude string `json:"longitude,omitempty"`
+	Longitude *string `json:"longitude,omitempty"`
 
 	// Name
 	// Required: true
@@ -222,11 +222,11 @@ func (m *Site) validateAsn(formats strfmt.Registry) error {
 		return nil
 	}
 
-	if err := validate.MinimumInt("asn", "body", int64(m.Asn), 1, false); err != nil {
+	if err := validate.MinimumInt("asn", "body", int64(*m.Asn), 1, false); err != nil {
 		return err
 	}
 
-	if err := validate.MaximumInt("asn", "body", int64(m.Asn), 4.294967295e+09, false); err != nil {
+	if err := validate.MaximumInt("asn", "body", int64(*m.Asn), 4.294967295e+09, false); err != nil {
 		return err
 	}
 

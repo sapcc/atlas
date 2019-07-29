@@ -61,7 +61,7 @@ type WritableIPAddress struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Interface
-	Interface int64 `json:"interface,omitempty"`
+	Interface *int64 `json:"interface,omitempty"`
 
 	// Last updated
 	// Read Only: true
@@ -71,7 +71,7 @@ type WritableIPAddress struct {
 	// NAT (Inside)
 	//
 	// The IP for which this address is the "outside" IP
-	NatInside int64 `json:"nat_inside,omitempty"`
+	NatInside *int64 `json:"nat_inside,omitempty"`
 
 	// Nat outside
 	// Required: true
@@ -81,7 +81,7 @@ type WritableIPAddress struct {
 	//
 	// The functional role of this IP
 	// Enum: [10 20 30 40 41 42 43 44]
-	Role int64 `json:"role,omitempty"`
+	Role *int64 `json:"role,omitempty"`
 
 	// Status
 	//
@@ -93,10 +93,10 @@ type WritableIPAddress struct {
 	Tags []string `json:"tags"`
 
 	// Tenant
-	Tenant int64 `json:"tenant,omitempty"`
+	Tenant *int64 `json:"tenant,omitempty"`
 
 	// VRF
-	Vrf int64 `json:"vrf,omitempty"`
+	Vrf *int64 `json:"vrf,omitempty"`
 }
 
 // Validate validates this writable IP address
@@ -225,7 +225,7 @@ func (m *WritableIPAddress) validateRole(formats strfmt.Registry) error {
 	}
 
 	// value enum
-	if err := m.validateRoleEnum("role", "body", m.Role); err != nil {
+	if err := m.validateRoleEnum("role", "body", *m.Role); err != nil {
 		return err
 	}
 

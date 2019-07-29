@@ -100,6 +100,8 @@ type IPAMPrefixesListParams struct {
 
 	*/
 	Offset *int64
+	/*Prefix*/
+	Prefix *string
 	/*Q*/
 	Q *string
 	/*Role*/
@@ -244,6 +246,17 @@ func (o *IPAMPrefixesListParams) WithOffset(offset *int64) *IPAMPrefixesListPara
 // SetOffset adds the offset to the ipam prefixes list params
 func (o *IPAMPrefixesListParams) SetOffset(offset *int64) {
 	o.Offset = offset
+}
+
+// WithPrefix adds the prefix to the ipam prefixes list params
+func (o *IPAMPrefixesListParams) WithPrefix(prefix *string) *IPAMPrefixesListParams {
+	o.SetPrefix(prefix)
+	return o
+}
+
+// SetPrefix adds the prefix to the ipam prefixes list params
+func (o *IPAMPrefixesListParams) SetPrefix(prefix *string) {
+	o.Prefix = prefix
 }
 
 // WithQ adds the q to the ipam prefixes list params
@@ -525,6 +538,22 @@ func (o *IPAMPrefixesListParams) WriteToRequest(r runtime.ClientRequest, reg str
 		qOffset := swag.FormatInt64(qrOffset)
 		if qOffset != "" {
 			if err := r.SetQueryParam("offset", qOffset); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Prefix != nil {
+
+		// query param prefix
+		var qrPrefix string
+		if o.Prefix != nil {
+			qrPrefix = *o.Prefix
+		}
+		qPrefix := qrPrefix
+		if qPrefix != "" {
+			if err := r.SetQueryParam("prefix", qPrefix); err != nil {
 				return err
 			}
 		}

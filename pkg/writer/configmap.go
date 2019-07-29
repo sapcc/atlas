@@ -67,7 +67,7 @@ func (c *ConfigMap) Write(name, data string) (err error) {
 		}
 		configMap.Data[name] = string(data)
 
-		level.Debug(log.With(c.logger, "component", "sd-adapter")).Log("debug", fmt.Sprintf("writing targets to configmap: %s, in namespace: %s", c.configMap, c.ns))
+		level.Debug(log.With(c.logger, "component", "sd-adapter")).Log("debug", fmt.Sprintf("writing targets to configmap: %s, file_name: %s, in namespace: %s", c.configMap, name, c.ns))
 		configMap, err = c.client.CoreV1().ConfigMaps(c.ns).Update(configMap)
 		return err
 	})

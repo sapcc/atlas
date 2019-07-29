@@ -46,7 +46,7 @@ type WritableService struct {
 	Description string `json:"description,omitempty"`
 
 	// Device
-	Device int64 `json:"device,omitempty"`
+	Device *int64 `json:"device,omitempty"`
 
 	// ID
 	// Read Only: true
@@ -79,7 +79,7 @@ type WritableService struct {
 	Protocol *int64 `json:"protocol"`
 
 	// Virtual machine
-	VirtualMachine int64 `json:"virtual_machine,omitempty"`
+	VirtualMachine *int64 `json:"virtual_machine,omitempty"`
 }
 
 // Validate validates this writable service

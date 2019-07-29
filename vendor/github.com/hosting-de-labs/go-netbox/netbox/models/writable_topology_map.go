@@ -53,7 +53,7 @@ type WritableTopologyMap struct {
 	Name *string `json:"name"`
 
 	// Site
-	Site int64 `json:"site,omitempty"`
+	Site *int64 `json:"site,omitempty"`
 
 	// Slug
 	// Required: true

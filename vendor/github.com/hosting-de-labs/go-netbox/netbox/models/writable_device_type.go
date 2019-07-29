@@ -45,6 +45,10 @@ type WritableDeviceType struct {
 	// Custom fields
 	CustomFields interface{} `json:"custom_fields,omitempty"`
 
+	// Display name
+	// Read Only: true
+	DisplayName string `json:"display_name,omitempty"`
+
 	// ID
 	// Read Only: true
 	ID int64 `json:"id,omitempty"`
@@ -53,29 +57,10 @@ type WritableDeviceType struct {
 	// Read Only: true
 	InstanceCount int64 `json:"instance_count,omitempty"`
 
-	// Interface ordering
-	// Enum: [1 2]
-	InterfaceOrdering int64 `json:"interface_ordering,omitempty"`
-
-	// Is a console server
-	//
-	// This type of device has console server ports
-	IsConsoleServer bool `json:"is_console_server,omitempty"`
-
 	// Is full depth
 	//
 	// Device consumes both front and rear rack faces
 	IsFullDepth bool `json:"is_full_depth,omitempty"`
-
-	// Is a network device
-	//
-	// This type of device has network interfaces
-	IsNetworkDevice bool `json:"is_network_device,omitempty"`
-
-	// Is a PDU
-	//
-	// This type of device has power outlets
-	IsPdu bool `json:"is_pdu,omitempty"`
 
 	// Last updated
 	// Read Only: true
@@ -128,10 +113,6 @@ func (m *WritableDeviceType) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateInterfaceOrdering(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateLastUpdated(formats); err != nil {
 		res = append(res, err)
 	}
@@ -177,40 +158,6 @@ func (m *WritableDeviceType) validateCreated(formats strfmt.Registry) error {
 	}
 
 	if err := validate.FormatOf("created", "body", "date", m.Created.String(), formats); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-var writableDeviceTypeTypeInterfaceOrderingPropEnum []interface{}
-
-func init() {
-	var res []int64
-	if err := json.Unmarshal([]byte(`[1,2]`), &res); err != nil {
-		panic(err)
-	}
-	for _, v := range res {
-		writableDeviceTypeTypeInterfaceOrderingPropEnum = append(writableDeviceTypeTypeInterfaceOrderingPropEnum, v)
-	}
-}
-
-// prop value enum
-func (m *WritableDeviceType) validateInterfaceOrderingEnum(path, location string, value int64) error {
-	if err := validate.Enum(path, location, value, writableDeviceTypeTypeInterfaceOrderingPropEnum); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (m *WritableDeviceType) validateInterfaceOrdering(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.InterfaceOrdering) { // not required
-		return nil
-	}
-
-	// value enum
-	if err := m.validateInterfaceOrderingEnum("interface_ordering", "body", m.InterfaceOrdering); err != nil {
 		return err
 	}
 

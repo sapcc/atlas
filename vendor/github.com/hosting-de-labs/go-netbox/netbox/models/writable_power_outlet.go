@@ -20,6 +20,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"strconv"
 
 	strfmt "github.com/go-openapi/strfmt"
@@ -33,9 +34,20 @@ import (
 // swagger:model WritablePowerOutlet
 type WritablePowerOutlet struct {
 
-	// Connected port
+	// cable
+	Cable *NestedCable `json:"cable,omitempty"`
+
+	// Connected endpoint
 	// Read Only: true
-	ConnectedPort string `json:"connected_port,omitempty"`
+	ConnectedEndpoint interface{} `json:"connected_endpoint,omitempty"`
+
+	// Connected endpoint type
+	// Read Only: true
+	ConnectedEndpointType string `json:"connected_endpoint_type,omitempty"`
+
+	// Connection status
+	// Enum: [false true]
+	ConnectionStatus bool `json:"connection_status,omitempty"`
 
 	// Device
 	// Required: true
@@ -59,6 +71,14 @@ type WritablePowerOutlet struct {
 func (m *WritablePowerOutlet) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateCable(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateConnectionStatus(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateDevice(formats); err != nil {
 		res = append(res, err)
 	}
@@ -74,6 +94,58 @@ func (m *WritablePowerOutlet) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *WritablePowerOutlet) validateCable(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Cable) { // not required
+		return nil
+	}
+
+	if m.Cable != nil {
+		if err := m.Cable.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("cable")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+var writablePowerOutletTypeConnectionStatusPropEnum []interface{}
+
+func init() {
+	var res []bool
+	if err := json.Unmarshal([]byte(`[false,true]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		writablePowerOutletTypeConnectionStatusPropEnum = append(writablePowerOutletTypeConnectionStatusPropEnum, v)
+	}
+}
+
+// prop value enum
+func (m *WritablePowerOutlet) validateConnectionStatusEnum(path, location string, value bool) error {
+	if err := validate.Enum(path, location, value, writablePowerOutletTypeConnectionStatusPropEnum); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *WritablePowerOutlet) validateConnectionStatus(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.ConnectionStatus) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateConnectionStatusEnum("connection_status", "body", m.ConnectionStatus); err != nil {
+		return err
+	}
+
 	return nil
 }
 

@@ -80,7 +80,7 @@ for the extras export templates update operation typically these are written to 
 type ExtrasExportTemplatesUpdateParams struct {
 
 	/*Data*/
-	Data *models.ExportTemplate
+	Data *models.WritableExportTemplate
 	/*ID
 	  A unique integer value identifying this export template.
 
@@ -126,13 +126,13 @@ func (o *ExtrasExportTemplatesUpdateParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithData adds the data to the extras export templates update params
-func (o *ExtrasExportTemplatesUpdateParams) WithData(data *models.ExportTemplate) *ExtrasExportTemplatesUpdateParams {
+func (o *ExtrasExportTemplatesUpdateParams) WithData(data *models.WritableExportTemplate) *ExtrasExportTemplatesUpdateParams {
 	o.SetData(data)
 	return o
 }
 
 // SetData adds the data to the extras export templates update params
-func (o *ExtrasExportTemplatesUpdateParams) SetData(data *models.ExportTemplate) {
+func (o *ExtrasExportTemplatesUpdateParams) SetData(data *models.WritableExportTemplate) {
 	o.Data = data
 }
 

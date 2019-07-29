@@ -53,7 +53,7 @@ type WritableRackReservation struct {
 	Rack *int64 `json:"rack"`
 
 	// Tenant
-	Tenant int64 `json:"tenant,omitempty"`
+	Tenant *int64 `json:"tenant,omitempty"`
 
 	// units
 	// Required: true

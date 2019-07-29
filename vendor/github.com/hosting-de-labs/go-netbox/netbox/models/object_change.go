@@ -20,8 +20,6 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"encoding/json"
-
 	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
@@ -33,18 +31,16 @@ import (
 // swagger:model ObjectChange
 type ObjectChange struct {
 
-	// Action
-	// Required: true
-	// Enum: [1 2 3]
-	Action *int64 `json:"action"`
+	// action
+	Action *ObjectChangeAction `json:"action,omitempty"`
 
 	// Changed object
 	// Read Only: true
 	ChangedObject string `json:"changed_object,omitempty"`
 
-	// Content type
+	// Changed object type
 	// Read Only: true
-	ContentType string `json:"content_type,omitempty"`
+	ChangedObjectType string `json:"changed_object_type,omitempty"`
 
 	// ID
 	// Read Only: true
@@ -103,35 +99,19 @@ func (m *ObjectChange) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-var objectChangeTypeActionPropEnum []interface{}
-
-func init() {
-	var res []int64
-	if err := json.Unmarshal([]byte(`[1,2,3]`), &res); err != nil {
-		panic(err)
-	}
-	for _, v := range res {
-		objectChangeTypeActionPropEnum = append(objectChangeTypeActionPropEnum, v)
-	}
-}
-
-// prop value enum
-func (m *ObjectChange) validateActionEnum(path, location string, value int64) error {
-	if err := validate.Enum(path, location, value, objectChangeTypeActionPropEnum); err != nil {
-		return err
-	}
-	return nil
-}
-
 func (m *ObjectChange) validateAction(formats strfmt.Registry) error {
 
-	if err := validate.Required("action", "body", m.Action); err != nil {
-		return err
+	if swag.IsZero(m.Action) { // not required
+		return nil
 	}
 
-	// value enum
-	if err := m.validateActionEnum("action", "body", *m.Action); err != nil {
-		return err
+	if m.Action != nil {
+		if err := m.Action.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("action")
+			}
+			return err
+		}
 	}
 
 	return nil
@@ -205,6 +185,73 @@ func (m *ObjectChange) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *ObjectChange) UnmarshalBinary(b []byte) error {
 	var res ObjectChange
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// ObjectChangeAction Action
+// swagger:model ObjectChangeAction
+type ObjectChangeAction struct {
+
+	// label
+	// Required: true
+	Label *string `json:"label"`
+
+	// value
+	// Required: true
+	Value *int64 `json:"value"`
+}
+
+// Validate validates this object change action
+func (m *ObjectChangeAction) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateLabel(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateValue(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ObjectChangeAction) validateLabel(formats strfmt.Registry) error {
+
+	if err := validate.Required("action"+"."+"label", "body", m.Label); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *ObjectChangeAction) validateValue(formats strfmt.Registry) error {
+
+	if err := validate.Required("action"+"."+"value", "body", m.Value); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *ObjectChangeAction) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *ObjectChangeAction) UnmarshalBinary(b []byte) error {
+	var res ObjectChangeAction
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

@@ -37,7 +37,7 @@ type InventoryItem struct {
 	//
 	// A unique tag used to identify this item
 	// Max Length: 50
-	AssetTag string `json:"asset_tag,omitempty"`
+	AssetTag *string `json:"asset_tag,omitempty"`
 
 	// Description
 	// Max Length: 100
@@ -64,7 +64,7 @@ type InventoryItem struct {
 	Name *string `json:"name"`
 
 	// Parent
-	Parent int64 `json:"parent,omitempty"`
+	Parent *int64 `json:"parent,omitempty"`
 
 	// Part ID
 	// Max Length: 50
@@ -126,7 +126,7 @@ func (m *InventoryItem) validateAssetTag(formats strfmt.Registry) error {
 		return nil
 	}
 
-	if err := validate.MaxLength("asset_tag", "body", string(m.AssetTag), 50); err != nil {
+	if err := validate.MaxLength("asset_tag", "body", string(*m.AssetTag), 50); err != nil {
 		return err
 	}
 

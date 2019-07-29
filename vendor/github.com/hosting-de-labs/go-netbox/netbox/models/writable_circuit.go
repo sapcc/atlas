@@ -66,7 +66,7 @@ type WritableCircuit struct {
 
 	// Date installed
 	// Format: date
-	InstallDate strfmt.Date `json:"install_date,omitempty"`
+	InstallDate *strfmt.Date `json:"install_date,omitempty"`
 
 	// Last updated
 	// Read Only: true
@@ -85,7 +85,7 @@ type WritableCircuit struct {
 	Tags []string `json:"tags"`
 
 	// Tenant
-	Tenant int64 `json:"tenant,omitempty"`
+	Tenant *int64 `json:"tenant,omitempty"`
 
 	// Type
 	// Required: true

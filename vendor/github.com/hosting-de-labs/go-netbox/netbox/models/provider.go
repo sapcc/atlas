@@ -43,7 +43,7 @@ type Provider struct {
 	// ASN
 	// Maximum: 4.294967295e+09
 	// Minimum: 1
-	Asn int64 `json:"asn,omitempty"`
+	Asn *int64 `json:"asn,omitempty"`
 
 	// Comments
 	Comments string `json:"comments,omitempty"`
@@ -151,11 +151,11 @@ func (m *Provider) validateAsn(formats strfmt.Registry) error {
 		return nil
 	}
 
-	if err := validate.MinimumInt("asn", "body", int64(m.Asn), 1, false); err != nil {
+	if err := validate.MinimumInt("asn", "body", int64(*m.Asn), 1, false); err != nil {
 		return err
 	}
 
-	if err := validate.MaximumInt("asn", "body", int64(m.Asn), 4.294967295e+09, false); err != nil {
+	if err := validate.MaximumInt("asn", "body", int64(*m.Asn), 4.294967295e+09, false); err != nil {
 		return err
 	}
 

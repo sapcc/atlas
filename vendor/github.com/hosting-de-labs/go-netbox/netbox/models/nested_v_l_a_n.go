@@ -27,7 +27,7 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// NestedVLAN Vlan
+// NestedVLAN Untagged vlan
 // swagger:model NestedVLAN
 type NestedVLAN struct {
 

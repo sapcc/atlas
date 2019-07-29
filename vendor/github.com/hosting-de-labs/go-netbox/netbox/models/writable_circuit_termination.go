@@ -33,16 +33,32 @@ import (
 // swagger:model WritableCircuitTermination
 type WritableCircuitTermination struct {
 
+	// cable
+	Cable *NestedCable `json:"cable,omitempty"`
+
 	// Circuit
 	// Required: true
 	Circuit *int64 `json:"circuit"`
 
+	// Connected endpoint
+	// Read Only: true
+	ConnectedEndpoint interface{} `json:"connected_endpoint,omitempty"`
+
+	// Connected endpoint type
+	// Read Only: true
+	ConnectedEndpointType string `json:"connected_endpoint_type,omitempty"`
+
+	// Connection status
+	// Enum: [false true]
+	ConnectionStatus bool `json:"connection_status,omitempty"`
+
+	// Description
+	// Max Length: 100
+	Description string `json:"description,omitempty"`
+
 	// ID
 	// Read Only: true
 	ID int64 `json:"id,omitempty"`
-
-	// Interface
-	Interface int64 `json:"interface,omitempty"`
 
 	// Port speed (Kbps)
 	// Required: true
@@ -79,7 +95,19 @@ type WritableCircuitTermination struct {
 func (m *WritableCircuitTermination) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateCable(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateCircuit(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateConnectionStatus(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateDescription(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -113,9 +141,74 @@ func (m *WritableCircuitTermination) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *WritableCircuitTermination) validateCable(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Cable) { // not required
+		return nil
+	}
+
+	if m.Cable != nil {
+		if err := m.Cable.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("cable")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *WritableCircuitTermination) validateCircuit(formats strfmt.Registry) error {
 
 	if err := validate.Required("circuit", "body", m.Circuit); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var writableCircuitTerminationTypeConnectionStatusPropEnum []interface{}
+
+func init() {
+	var res []bool
+	if err := json.Unmarshal([]byte(`[false,true]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		writableCircuitTerminationTypeConnectionStatusPropEnum = append(writableCircuitTerminationTypeConnectionStatusPropEnum, v)
+	}
+}
+
+// prop value enum
+func (m *WritableCircuitTermination) validateConnectionStatusEnum(path, location string, value bool) error {
+	if err := validate.Enum(path, location, value, writableCircuitTerminationTypeConnectionStatusPropEnum); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *WritableCircuitTermination) validateConnectionStatus(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.ConnectionStatus) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateConnectionStatusEnum("connection_status", "body", m.ConnectionStatus); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *WritableCircuitTermination) validateDescription(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Description) { // not required
+		return nil
+	}
+
+	if err := validate.MaxLength("description", "body", string(m.Description), 100); err != nil {
 		return err
 	}
 

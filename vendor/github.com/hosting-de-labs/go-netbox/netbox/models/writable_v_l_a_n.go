@@ -51,7 +51,7 @@ type WritableVLAN struct {
 	DisplayName string `json:"display_name,omitempty"`
 
 	// Group
-	Group int64 `json:"group,omitempty"`
+	Group *int64 `json:"group,omitempty"`
 
 	// ID
 	// Read Only: true
@@ -69,10 +69,10 @@ type WritableVLAN struct {
 	Name *string `json:"name"`
 
 	// Role
-	Role int64 `json:"role,omitempty"`
+	Role *int64 `json:"role,omitempty"`
 
 	// Site
-	Site int64 `json:"site,omitempty"`
+	Site *int64 `json:"site,omitempty"`
 
 	// Status
 	// Enum: [1 2 3]
@@ -82,7 +82,7 @@ type WritableVLAN struct {
 	Tags []string `json:"tags"`
 
 	// Tenant
-	Tenant int64 `json:"tenant,omitempty"`
+	Tenant *int64 `json:"tenant,omitempty"`
 
 	// ID
 	// Required: true

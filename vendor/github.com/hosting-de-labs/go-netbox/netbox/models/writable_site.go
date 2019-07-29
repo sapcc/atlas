@@ -37,7 +37,7 @@ type WritableSite struct {
 	// ASN
 	// Maximum: 4.294967295e+09
 	// Minimum: 1
-	Asn int64 `json:"asn,omitempty"`
+	Asn *int64 `json:"asn,omitempty"`
 
 	// Comments
 	Comments string `json:"comments,omitempty"`
@@ -101,10 +101,10 @@ type WritableSite struct {
 	LastUpdated strfmt.DateTime `json:"last_updated,omitempty"`
 
 	// Latitude
-	Latitude string `json:"latitude,omitempty"`
+	Latitude *string `json:"latitude,omitempty"`
 
 	// Longitude
-	Longitude string `json:"longitude,omitempty"`
+	Longitude *string `json:"longitude,omitempty"`
 
 	// Name
 	// Required: true
@@ -117,7 +117,7 @@ type WritableSite struct {
 	PhysicalAddress string `json:"physical_address,omitempty"`
 
 	// Region
-	Region int64 `json:"region,omitempty"`
+	Region *int64 `json:"region,omitempty"`
 
 	// Shipping address
 	// Max Length: 200
@@ -138,7 +138,7 @@ type WritableSite struct {
 	Tags []string `json:"tags"`
 
 	// Tenant
-	Tenant int64 `json:"tenant,omitempty"`
+	Tenant *int64 `json:"tenant,omitempty"`
 
 	// Time zone
 	TimeZone string `json:"time_zone,omitempty"`
@@ -216,11 +216,11 @@ func (m *WritableSite) validateAsn(formats strfmt.Registry) error {
 		return nil
 	}
 
-	if err := validate.MinimumInt("asn", "body", int64(m.Asn), 1, false); err != nil {
+	if err := validate.MinimumInt("asn", "body", int64(*m.Asn), 1, false); err != nil {
 		return err
 	}
 
-	if err := validate.MaximumInt("asn", "body", int64(m.Asn), 4.294967295e+09, false); err != nil {
+	if err := validate.MaximumInt("asn", "body", int64(*m.Asn), 4.294967295e+09, false); err != nil {
 		return err
 	}
 

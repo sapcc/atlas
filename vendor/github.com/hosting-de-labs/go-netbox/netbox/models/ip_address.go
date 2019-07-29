@@ -51,9 +51,8 @@ type IPAddress struct {
 	// Max Length: 100
 	Description string `json:"description,omitempty"`
 
-	// Family
-	// Read Only: true
-	Family int64 `json:"family,omitempty"`
+	// family
+	Family *IPAddressFamily `json:"family,omitempty"`
 
 	// ID
 	// Read Only: true
@@ -102,6 +101,10 @@ func (m *IPAddress) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateDescription(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateFamily(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -177,6 +180,24 @@ func (m *IPAddress) validateDescription(formats strfmt.Registry) error {
 
 	if err := validate.MaxLength("description", "body", string(m.Description), 100); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (m *IPAddress) validateFamily(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Family) { // not required
+		return nil
+	}
+
+	if m.Family != nil {
+		if err := m.Family.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("family")
+			}
+			return err
+		}
 	}
 
 	return nil
@@ -349,6 +370,73 @@ func (m *IPAddress) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *IPAddress) UnmarshalBinary(b []byte) error {
 	var res IPAddress
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// IPAddressFamily Family
+// swagger:model IPAddressFamily
+type IPAddressFamily struct {
+
+	// label
+	// Required: true
+	Label *string `json:"label"`
+
+	// value
+	// Required: true
+	Value *int64 `json:"value"`
+}
+
+// Validate validates this IP address family
+func (m *IPAddressFamily) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateLabel(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateValue(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *IPAddressFamily) validateLabel(formats strfmt.Registry) error {
+
+	if err := validate.Required("family"+"."+"label", "body", m.Label); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *IPAddressFamily) validateValue(formats strfmt.Registry) error {
+
+	if err := validate.Required("family"+"."+"value", "body", m.Value); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *IPAddressFamily) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *IPAddressFamily) UnmarshalBinary(b []byte) error {
+	var res IPAddressFamily
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

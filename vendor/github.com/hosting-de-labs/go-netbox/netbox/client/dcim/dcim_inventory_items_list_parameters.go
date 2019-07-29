@@ -106,7 +106,7 @@ type DcimInventoryItemsListParams struct {
 	/*PartID*/
 	PartID *string
 	/*Q*/
-	Q *string
+	Q *int64
 	/*Serial*/
 	Serial *string
 	/*Tag*/
@@ -272,13 +272,13 @@ func (o *DcimInventoryItemsListParams) SetPartID(partID *string) {
 }
 
 // WithQ adds the q to the dcim inventory items list params
-func (o *DcimInventoryItemsListParams) WithQ(q *string) *DcimInventoryItemsListParams {
+func (o *DcimInventoryItemsListParams) WithQ(q *int64) *DcimInventoryItemsListParams {
 	o.SetQ(q)
 	return o
 }
 
 // SetQ adds the q to the dcim inventory items list params
-func (o *DcimInventoryItemsListParams) SetQ(q *string) {
+func (o *DcimInventoryItemsListParams) SetQ(q *int64) {
 	o.Q = q
 }
 
@@ -491,11 +491,11 @@ func (o *DcimInventoryItemsListParams) WriteToRequest(r runtime.ClientRequest, r
 	if o.Q != nil {
 
 		// query param q
-		var qrQ string
+		var qrQ int64
 		if o.Q != nil {
 			qrQ = *o.Q
 		}
-		qQ := qrQ
+		qQ := swag.FormatInt64(qrQ)
 		if qQ != "" {
 			if err := r.SetQueryParam("q", qQ); err != nil {
 				return err

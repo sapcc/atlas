@@ -89,6 +89,8 @@ type VirtualizationClusterGroupsListParams struct {
 
 	*/
 	Offset *int64
+	/*Q*/
+	Q *string
 	/*Slug*/
 	Slug *string
 
@@ -163,6 +165,17 @@ func (o *VirtualizationClusterGroupsListParams) SetOffset(offset *int64) {
 	o.Offset = offset
 }
 
+// WithQ adds the q to the virtualization cluster groups list params
+func (o *VirtualizationClusterGroupsListParams) WithQ(q *string) *VirtualizationClusterGroupsListParams {
+	o.SetQ(q)
+	return o
+}
+
+// SetQ adds the q to the virtualization cluster groups list params
+func (o *VirtualizationClusterGroupsListParams) SetQ(q *string) {
+	o.Q = q
+}
+
 // WithSlug adds the slug to the virtualization cluster groups list params
 func (o *VirtualizationClusterGroupsListParams) WithSlug(slug *string) *VirtualizationClusterGroupsListParams {
 	o.SetSlug(slug)
@@ -224,6 +237,22 @@ func (o *VirtualizationClusterGroupsListParams) WriteToRequest(r runtime.ClientR
 		qOffset := swag.FormatInt64(qrOffset)
 		if qOffset != "" {
 			if err := r.SetQueryParam("offset", qOffset); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Q != nil {
+
+		// query param q
+		var qrQ string
+		if o.Q != nil {
+			qrQ = *o.Q
+		}
+		qQ := qrQ
+		if qQ != "" {
+			if err := r.SetQueryParam("q", qQ); err != nil {
 				return err
 			}
 		}

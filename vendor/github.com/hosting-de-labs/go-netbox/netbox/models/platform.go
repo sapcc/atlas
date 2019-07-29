@@ -20,8 +20,6 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"encoding/json"
-
 	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
@@ -49,17 +47,13 @@ type Platform struct {
 	// NAPALM arguments
 	//
 	// Additional arguments to pass when initiating the NAPALM driver (JSON format)
-	NapalmArgs string `json:"napalm_args,omitempty"`
+	NapalmArgs *string `json:"napalm_args,omitempty"`
 
 	// NAPALM driver
 	//
 	// The name of the NAPALM driver to use when interacting with devices
 	// Max Length: 50
 	NapalmDriver string `json:"napalm_driver,omitempty"`
-
-	// Legacy RPC client
-	// Enum: [juniper-junos cisco-ios opengear]
-	RPCClient string `json:"rpc_client,omitempty"`
 
 	// Slug
 	// Required: true
@@ -82,10 +76,6 @@ func (m *Platform) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateNapalmDriver(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateRPCClient(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -141,52 +131,6 @@ func (m *Platform) validateNapalmDriver(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MaxLength("napalm_driver", "body", string(m.NapalmDriver), 50); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-var platformTypeRPCClientPropEnum []interface{}
-
-func init() {
-	var res []string
-	if err := json.Unmarshal([]byte(`["juniper-junos","cisco-ios","opengear"]`), &res); err != nil {
-		panic(err)
-	}
-	for _, v := range res {
-		platformTypeRPCClientPropEnum = append(platformTypeRPCClientPropEnum, v)
-	}
-}
-
-const (
-
-	// PlatformRPCClientJuniperJunos captures enum value "juniper-junos"
-	PlatformRPCClientJuniperJunos string = "juniper-junos"
-
-	// PlatformRPCClientCiscoIos captures enum value "cisco-ios"
-	PlatformRPCClientCiscoIos string = "cisco-ios"
-
-	// PlatformRPCClientOpengear captures enum value "opengear"
-	PlatformRPCClientOpengear string = "opengear"
-)
-
-// prop value enum
-func (m *Platform) validateRPCClientEnum(path, location string, value string) error {
-	if err := validate.Enum(path, location, value, platformTypeRPCClientPropEnum); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (m *Platform) validateRPCClient(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.RPCClient) { // not required
-		return nil
-	}
-
-	// value enum
-	if err := m.validateRPCClientEnum("rpc_client", "body", m.RPCClient); err != nil {
 		return err
 	}
 

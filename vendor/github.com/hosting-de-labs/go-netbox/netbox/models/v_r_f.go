@@ -70,10 +70,8 @@ type VRF struct {
 	Name *string `json:"name"`
 
 	// Route distinguisher
-	// Required: true
 	// Max Length: 21
-	// Min Length: 1
-	Rd *string `json:"rd"`
+	Rd *string `json:"rd,omitempty"`
 
 	// tags
 	Tags []string `json:"tags"`
@@ -178,12 +176,8 @@ func (m *VRF) validateName(formats strfmt.Registry) error {
 
 func (m *VRF) validateRd(formats strfmt.Registry) error {
 
-	if err := validate.Required("rd", "body", m.Rd); err != nil {
-		return err
-	}
-
-	if err := validate.MinLength("rd", "body", string(*m.Rd), 1); err != nil {
-		return err
+	if swag.IsZero(m.Rd) { // not required
+		return nil
 	}
 
 	if err := validate.MaxLength("rd", "body", string(*m.Rd), 21); err != nil {

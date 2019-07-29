@@ -34,6 +34,17 @@ import (
 // swagger:model WritablePowerPort
 type WritablePowerPort struct {
 
+	// cable
+	Cable *NestedCable `json:"cable,omitempty"`
+
+	// Connected endpoint
+	// Read Only: true
+	ConnectedEndpoint interface{} `json:"connected_endpoint,omitempty"`
+
+	// Connected endpoint type
+	// Read Only: true
+	ConnectedEndpointType string `json:"connected_endpoint_type,omitempty"`
+
 	// Connection status
 	// Enum: [false true]
 	ConnectionStatus bool `json:"connection_status,omitempty"`
@@ -52,9 +63,6 @@ type WritablePowerPort struct {
 	// Min Length: 1
 	Name *string `json:"name"`
 
-	// Power outlet
-	PowerOutlet int64 `json:"power_outlet,omitempty"`
-
 	// tags
 	Tags []string `json:"tags"`
 }
@@ -62,6 +70,10 @@ type WritablePowerPort struct {
 // Validate validates this writable power port
 func (m *WritablePowerPort) Validate(formats strfmt.Registry) error {
 	var res []error
+
+	if err := m.validateCable(formats); err != nil {
+		res = append(res, err)
+	}
 
 	if err := m.validateConnectionStatus(formats); err != nil {
 		res = append(res, err)
@@ -82,6 +94,24 @@ func (m *WritablePowerPort) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *WritablePowerPort) validateCable(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Cable) { // not required
+		return nil
+	}
+
+	if m.Cable != nil {
+		if err := m.Cable.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("cable")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 

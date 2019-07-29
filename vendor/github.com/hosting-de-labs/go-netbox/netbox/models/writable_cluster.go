@@ -45,7 +45,7 @@ type WritableCluster struct {
 	CustomFields interface{} `json:"custom_fields,omitempty"`
 
 	// Group
-	Group int64 `json:"group,omitempty"`
+	Group *int64 `json:"group,omitempty"`
 
 	// ID
 	// Read Only: true
@@ -63,7 +63,7 @@ type WritableCluster struct {
 	Name *string `json:"name"`
 
 	// Site
-	Site int64 `json:"site,omitempty"`
+	Site *int64 `json:"site,omitempty"`
 
 	// tags
 	Tags []string `json:"tags"`

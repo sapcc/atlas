@@ -51,7 +51,7 @@ type WritableTenant struct {
 	Description string `json:"description,omitempty"`
 
 	// Group
-	Group int64 `json:"group,omitempty"`
+	Group *int64 `json:"group,omitempty"`
 
 	// ID
 	// Read Only: true

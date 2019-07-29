@@ -89,6 +89,8 @@ type IPAMVlanGroupsListParams struct {
 
 	*/
 	Offset *int64
+	/*Q*/
+	Q *string
 	/*Site*/
 	Site *string
 	/*SiteID*/
@@ -165,6 +167,17 @@ func (o *IPAMVlanGroupsListParams) WithOffset(offset *int64) *IPAMVlanGroupsList
 // SetOffset adds the offset to the ipam vlan groups list params
 func (o *IPAMVlanGroupsListParams) SetOffset(offset *int64) {
 	o.Offset = offset
+}
+
+// WithQ adds the q to the ipam vlan groups list params
+func (o *IPAMVlanGroupsListParams) WithQ(q *string) *IPAMVlanGroupsListParams {
+	o.SetQ(q)
+	return o
+}
+
+// SetQ adds the q to the ipam vlan groups list params
+func (o *IPAMVlanGroupsListParams) SetQ(q *string) {
+	o.Q = q
 }
 
 // WithSite adds the site to the ipam vlan groups list params
@@ -250,6 +263,22 @@ func (o *IPAMVlanGroupsListParams) WriteToRequest(r runtime.ClientRequest, reg s
 		qOffset := swag.FormatInt64(qrOffset)
 		if qOffset != "" {
 			if err := r.SetQueryParam("offset", qOffset); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Q != nil {
+
+		// query param q
+		var qrQ string
+		if o.Q != nil {
+			qrQ = *o.Q
+		}
+		qQ := qrQ
+		if qQ != "" {
+			if err := r.SetQueryParam("q", qQ); err != nil {
 				return err
 			}
 		}

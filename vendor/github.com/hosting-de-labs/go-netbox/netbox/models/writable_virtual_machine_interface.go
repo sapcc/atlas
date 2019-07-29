@@ -38,21 +38,28 @@ type WritableVirtualMachineInterface struct {
 	// Max Length: 100
 	Description string `json:"description,omitempty"`
 
+	// Enabled
+	Enabled bool `json:"enabled,omitempty"`
+
+	// Form factor
+	// Enum: [0 200 800 1000 1150 1170 1050 1100 1200 1300 1310 1320 1350 1400 1420 1500 1510 1650 1520 1550 1600 1700 1750 2600 2610 2620 2630 2640 2810 2820 2830 6100 6200 6300 6400 6500 6600 6700 3010 3020 3040 3080 3160 3320 3400 4000 4010 4040 4050 5000 5050 5100 5150 5200 5300 5310 5320 5330 32767]
+	FormFactor int64 `json:"form_factor,omitempty"`
+
 	// ID
 	// Read Only: true
 	ID int64 `json:"id,omitempty"`
 
 	// MAC Address
-	MacAddress string `json:"mac_address,omitempty"`
+	MacAddress *string `json:"mac_address,omitempty"`
 
 	// Mode
 	// Enum: [100 200 300]
-	Mode int64 `json:"mode,omitempty"`
+	Mode *int64 `json:"mode,omitempty"`
 
 	// MTU
 	// Maximum: 65536
 	// Minimum: 1
-	Mtu int64 `json:"mtu,omitempty"`
+	Mtu *int64 `json:"mtu,omitempty"`
 
 	// Name
 	// Required: true
@@ -68,11 +75,10 @@ type WritableVirtualMachineInterface struct {
 	Tags []string `json:"tags"`
 
 	// Untagged VLAN
-	UntaggedVlan int64 `json:"untagged_vlan,omitempty"`
+	UntaggedVlan *int64 `json:"untagged_vlan,omitempty"`
 
 	// Virtual machine
-	// Required: true
-	VirtualMachine *int64 `json:"virtual_machine"`
+	VirtualMachine *int64 `json:"virtual_machine,omitempty"`
 }
 
 // Validate validates this writable virtual machine interface
@@ -80,6 +86,10 @@ func (m *WritableVirtualMachineInterface) Validate(formats strfmt.Registry) erro
 	var res []error
 
 	if err := m.validateDescription(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateFormFactor(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -103,10 +113,6 @@ func (m *WritableVirtualMachineInterface) Validate(formats strfmt.Registry) erro
 		res = append(res, err)
 	}
 
-	if err := m.validateVirtualMachine(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -120,6 +126,40 @@ func (m *WritableVirtualMachineInterface) validateDescription(formats strfmt.Reg
 	}
 
 	if err := validate.MaxLength("description", "body", string(m.Description), 100); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var writableVirtualMachineInterfaceTypeFormFactorPropEnum []interface{}
+
+func init() {
+	var res []int64
+	if err := json.Unmarshal([]byte(`[0,200,800,1000,1150,1170,1050,1100,1200,1300,1310,1320,1350,1400,1420,1500,1510,1650,1520,1550,1600,1700,1750,2600,2610,2620,2630,2640,2810,2820,2830,6100,6200,6300,6400,6500,6600,6700,3010,3020,3040,3080,3160,3320,3400,4000,4010,4040,4050,5000,5050,5100,5150,5200,5300,5310,5320,5330,32767]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		writableVirtualMachineInterfaceTypeFormFactorPropEnum = append(writableVirtualMachineInterfaceTypeFormFactorPropEnum, v)
+	}
+}
+
+// prop value enum
+func (m *WritableVirtualMachineInterface) validateFormFactorEnum(path, location string, value int64) error {
+	if err := validate.Enum(path, location, value, writableVirtualMachineInterfaceTypeFormFactorPropEnum); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *WritableVirtualMachineInterface) validateFormFactor(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.FormFactor) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateFormFactorEnum("form_factor", "body", m.FormFactor); err != nil {
 		return err
 	}
 
@@ -153,7 +193,7 @@ func (m *WritableVirtualMachineInterface) validateMode(formats strfmt.Registry) 
 	}
 
 	// value enum
-	if err := m.validateModeEnum("mode", "body", m.Mode); err != nil {
+	if err := m.validateModeEnum("mode", "body", *m.Mode); err != nil {
 		return err
 	}
 
@@ -166,11 +206,11 @@ func (m *WritableVirtualMachineInterface) validateMtu(formats strfmt.Registry) e
 		return nil
 	}
 
-	if err := validate.MinimumInt("mtu", "body", int64(m.Mtu), 1, false); err != nil {
+	if err := validate.MinimumInt("mtu", "body", int64(*m.Mtu), 1, false); err != nil {
 		return err
 	}
 
-	if err := validate.MaximumInt("mtu", "body", int64(m.Mtu), 65536, false); err != nil {
+	if err := validate.MaximumInt("mtu", "body", int64(*m.Mtu), 65536, false); err != nil {
 		return err
 	}
 
@@ -219,15 +259,6 @@ func (m *WritableVirtualMachineInterface) validateTags(formats strfmt.Registry) 
 			return err
 		}
 
-	}
-
-	return nil
-}
-
-func (m *WritableVirtualMachineInterface) validateVirtualMachine(formats strfmt.Registry) error {
-
-	if err := validate.Required("virtual_machine", "body", m.VirtualMachine); err != nil {
-		return err
 	}
 
 	return nil

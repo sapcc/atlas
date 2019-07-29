@@ -63,7 +63,7 @@ type VirtualMachine struct {
 	LastUpdated strfmt.DateTime `json:"last_updated,omitempty"`
 
 	// Local context data
-	LocalContextData string `json:"local_context_data,omitempty"`
+	LocalContextData *string `json:"local_context_data,omitempty"`
 
 	// Memory (MB)
 	// Maximum: 2.147483647e+09
@@ -80,13 +80,13 @@ type VirtualMachine struct {
 	Platform *NestedPlatform `json:"platform,omitempty"`
 
 	// primary ip
-	PrimaryIP *VirtualMachineIPAddress `json:"primary_ip,omitempty"`
+	PrimaryIP *NestedIPAddress `json:"primary_ip,omitempty"`
 
 	// primary ip4
-	PrimaryIp4 *VirtualMachineIPAddress `json:"primary_ip4,omitempty"`
+	PrimaryIp4 *NestedIPAddress `json:"primary_ip4,omitempty"`
 
 	// primary ip6
-	PrimaryIp6 *VirtualMachineIPAddress `json:"primary_ip6,omitempty"`
+	PrimaryIp6 *NestedIPAddress `json:"primary_ip6,omitempty"`
 
 	// role
 	Role *NestedDeviceRole `json:"role,omitempty"`

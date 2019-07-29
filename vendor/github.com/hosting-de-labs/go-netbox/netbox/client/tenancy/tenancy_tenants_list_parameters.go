@@ -100,6 +100,8 @@ type TenancyTenantsListParams struct {
 	Offset *int64
 	/*Q*/
 	Q *string
+	/*Slug*/
+	Slug *string
 	/*Tag*/
 	Tag *string
 
@@ -216,6 +218,17 @@ func (o *TenancyTenantsListParams) WithQ(q *string) *TenancyTenantsListParams {
 // SetQ adds the q to the tenancy tenants list params
 func (o *TenancyTenantsListParams) SetQ(q *string) {
 	o.Q = q
+}
+
+// WithSlug adds the slug to the tenancy tenants list params
+func (o *TenancyTenantsListParams) WithSlug(slug *string) *TenancyTenantsListParams {
+	o.SetSlug(slug)
+	return o
+}
+
+// SetSlug adds the slug to the tenancy tenants list params
+func (o *TenancyTenantsListParams) SetSlug(slug *string) {
+	o.Slug = slug
 }
 
 // WithTag adds the tag to the tenancy tenants list params
@@ -343,6 +356,22 @@ func (o *TenancyTenantsListParams) WriteToRequest(r runtime.ClientRequest, reg s
 		qQ := qrQ
 		if qQ != "" {
 			if err := r.SetQueryParam("q", qQ); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Slug != nil {
+
+		// query param slug
+		var qrSlug string
+		if o.Slug != nil {
+			qrSlug = *o.Slug
+		}
+		qSlug := qrSlug
+		if qSlug != "" {
+			if err := r.SetQueryParam("slug", qSlug); err != nil {
 				return err
 			}
 		}

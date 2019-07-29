@@ -851,23 +851,23 @@ func (a *Client) ExtrasObjectChangesRead(params *ExtrasObjectChangesReadParams, 
 }
 
 /*
-ExtrasRecentActivityList extras recent activity list API
+ExtrasReportsList Compile all reports and their related results (if any). Result data is deferred in the list view.
 */
-func (a *Client) ExtrasRecentActivityList(params *ExtrasRecentActivityListParams, authInfo runtime.ClientAuthInfoWriter) (*ExtrasRecentActivityListOK, error) {
+func (a *Client) ExtrasReportsList(params *ExtrasReportsListParams, authInfo runtime.ClientAuthInfoWriter) (*ExtrasReportsListOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
-		params = NewExtrasRecentActivityListParams()
+		params = NewExtrasReportsListParams()
 	}
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "extras_recent-activity_list",
+		ID:                 "extras_reports_list",
 		Method:             "GET",
-		PathPattern:        "/extras/recent-activity/",
+		PathPattern:        "/extras/reports/",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http"},
 		Params:             params,
-		Reader:             &ExtrasRecentActivityListReader{formats: a.formats},
+		Reader:             &ExtrasReportsListReader{formats: a.formats},
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
@@ -875,28 +875,28 @@ func (a *Client) ExtrasRecentActivityList(params *ExtrasRecentActivityListParams
 	if err != nil {
 		return nil, err
 	}
-	return result.(*ExtrasRecentActivityListOK), nil
+	return result.(*ExtrasReportsListOK), nil
 
 }
 
 /*
-ExtrasRecentActivityRead extras recent activity read API
+ExtrasReportsRead Retrieve a single Report identified as "<module>.<report>".
 */
-func (a *Client) ExtrasRecentActivityRead(params *ExtrasRecentActivityReadParams, authInfo runtime.ClientAuthInfoWriter) (*ExtrasRecentActivityReadOK, error) {
+func (a *Client) ExtrasReportsRead(params *ExtrasReportsReadParams, authInfo runtime.ClientAuthInfoWriter) (*ExtrasReportsReadOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
-		params = NewExtrasRecentActivityReadParams()
+		params = NewExtrasReportsReadParams()
 	}
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "extras_recent-activity_read",
+		ID:                 "extras_reports_read",
 		Method:             "GET",
-		PathPattern:        "/extras/recent-activity/{id}/",
+		PathPattern:        "/extras/reports/{id}/",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http"},
 		Params:             params,
-		Reader:             &ExtrasRecentActivityReadReader{formats: a.formats},
+		Reader:             &ExtrasReportsReadReader{formats: a.formats},
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
@@ -904,7 +904,36 @@ func (a *Client) ExtrasRecentActivityRead(params *ExtrasRecentActivityReadParams
 	if err != nil {
 		return nil, err
 	}
-	return result.(*ExtrasRecentActivityReadOK), nil
+	return result.(*ExtrasReportsReadOK), nil
+
+}
+
+/*
+ExtrasReportsRun Run a Report and create a new ReportResult, overwriting any previous result for the Report.
+*/
+func (a *Client) ExtrasReportsRun(params *ExtrasReportsRunParams, authInfo runtime.ClientAuthInfoWriter) (*ExtrasReportsRunCreated, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewExtrasReportsRunParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "extras_reports_run",
+		Method:             "POST",
+		PathPattern:        "/extras/reports/{id}/run/",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &ExtrasReportsRunReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*ExtrasReportsRunCreated), nil
 
 }
 

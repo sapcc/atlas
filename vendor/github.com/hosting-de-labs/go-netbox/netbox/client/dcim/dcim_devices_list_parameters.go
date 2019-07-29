@@ -81,6 +81,10 @@ type DcimDevicesListParams struct {
 	AssetTag *string
 	/*ClusterID*/
 	ClusterID *int64
+	/*ConsolePorts*/
+	ConsolePorts *string
+	/*ConsoleServerPorts*/
+	ConsoleServerPorts *string
 	/*DeviceTypeID*/
 	DeviceTypeID *int64
 	/*HasPrimaryIP*/
@@ -90,14 +94,10 @@ type DcimDevicesListParams struct {
 
 	*/
 	IDIn *string
-	/*IsConsoleServer*/
-	IsConsoleServer *string
+	/*Interfaces*/
+	Interfaces *string
 	/*IsFullDepth*/
 	IsFullDepth *string
-	/*IsNetworkDevice*/
-	IsNetworkDevice *string
-	/*IsPdu*/
-	IsPdu *string
 	/*Limit
 	  Number of results to return per page.
 
@@ -118,12 +118,18 @@ type DcimDevicesListParams struct {
 
 	*/
 	Offset *int64
+	/*PassThroughPorts*/
+	PassThroughPorts *string
 	/*Platform*/
 	Platform *string
 	/*PlatformID*/
 	PlatformID *int64
 	/*Position*/
-	Position *float64
+	Position *int64
+	/*PowerOutlets*/
+	PowerOutlets *string
+	/*PowerPorts*/
+	PowerPorts *string
 	/*Q*/
 	Q *string
 	/*RackGroupID*/
@@ -153,7 +159,7 @@ type DcimDevicesListParams struct {
 	/*TenantID*/
 	TenantID *int64
 	/*VirtualChassisID*/
-	VirtualChassisID *int64
+	VirtualChassisID *string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -215,6 +221,28 @@ func (o *DcimDevicesListParams) SetClusterID(clusterID *int64) {
 	o.ClusterID = clusterID
 }
 
+// WithConsolePorts adds the consolePorts to the dcim devices list params
+func (o *DcimDevicesListParams) WithConsolePorts(consolePorts *string) *DcimDevicesListParams {
+	o.SetConsolePorts(consolePorts)
+	return o
+}
+
+// SetConsolePorts adds the consolePorts to the dcim devices list params
+func (o *DcimDevicesListParams) SetConsolePorts(consolePorts *string) {
+	o.ConsolePorts = consolePorts
+}
+
+// WithConsoleServerPorts adds the consoleServerPorts to the dcim devices list params
+func (o *DcimDevicesListParams) WithConsoleServerPorts(consoleServerPorts *string) *DcimDevicesListParams {
+	o.SetConsoleServerPorts(consoleServerPorts)
+	return o
+}
+
+// SetConsoleServerPorts adds the consoleServerPorts to the dcim devices list params
+func (o *DcimDevicesListParams) SetConsoleServerPorts(consoleServerPorts *string) {
+	o.ConsoleServerPorts = consoleServerPorts
+}
+
 // WithDeviceTypeID adds the deviceTypeID to the dcim devices list params
 func (o *DcimDevicesListParams) WithDeviceTypeID(deviceTypeID *int64) *DcimDevicesListParams {
 	o.SetDeviceTypeID(deviceTypeID)
@@ -248,15 +276,15 @@ func (o *DcimDevicesListParams) SetIDIn(iDIn *string) {
 	o.IDIn = iDIn
 }
 
-// WithIsConsoleServer adds the isConsoleServer to the dcim devices list params
-func (o *DcimDevicesListParams) WithIsConsoleServer(isConsoleServer *string) *DcimDevicesListParams {
-	o.SetIsConsoleServer(isConsoleServer)
+// WithInterfaces adds the interfaces to the dcim devices list params
+func (o *DcimDevicesListParams) WithInterfaces(interfaces *string) *DcimDevicesListParams {
+	o.SetInterfaces(interfaces)
 	return o
 }
 
-// SetIsConsoleServer adds the isConsoleServer to the dcim devices list params
-func (o *DcimDevicesListParams) SetIsConsoleServer(isConsoleServer *string) {
-	o.IsConsoleServer = isConsoleServer
+// SetInterfaces adds the interfaces to the dcim devices list params
+func (o *DcimDevicesListParams) SetInterfaces(interfaces *string) {
+	o.Interfaces = interfaces
 }
 
 // WithIsFullDepth adds the isFullDepth to the dcim devices list params
@@ -268,28 +296,6 @@ func (o *DcimDevicesListParams) WithIsFullDepth(isFullDepth *string) *DcimDevice
 // SetIsFullDepth adds the isFullDepth to the dcim devices list params
 func (o *DcimDevicesListParams) SetIsFullDepth(isFullDepth *string) {
 	o.IsFullDepth = isFullDepth
-}
-
-// WithIsNetworkDevice adds the isNetworkDevice to the dcim devices list params
-func (o *DcimDevicesListParams) WithIsNetworkDevice(isNetworkDevice *string) *DcimDevicesListParams {
-	o.SetIsNetworkDevice(isNetworkDevice)
-	return o
-}
-
-// SetIsNetworkDevice adds the isNetworkDevice to the dcim devices list params
-func (o *DcimDevicesListParams) SetIsNetworkDevice(isNetworkDevice *string) {
-	o.IsNetworkDevice = isNetworkDevice
-}
-
-// WithIsPdu adds the isPdu to the dcim devices list params
-func (o *DcimDevicesListParams) WithIsPdu(isPdu *string) *DcimDevicesListParams {
-	o.SetIsPdu(isPdu)
-	return o
-}
-
-// SetIsPdu adds the isPdu to the dcim devices list params
-func (o *DcimDevicesListParams) SetIsPdu(isPdu *string) {
-	o.IsPdu = isPdu
 }
 
 // WithLimit adds the limit to the dcim devices list params
@@ -369,6 +375,17 @@ func (o *DcimDevicesListParams) SetOffset(offset *int64) {
 	o.Offset = offset
 }
 
+// WithPassThroughPorts adds the passThroughPorts to the dcim devices list params
+func (o *DcimDevicesListParams) WithPassThroughPorts(passThroughPorts *string) *DcimDevicesListParams {
+	o.SetPassThroughPorts(passThroughPorts)
+	return o
+}
+
+// SetPassThroughPorts adds the passThroughPorts to the dcim devices list params
+func (o *DcimDevicesListParams) SetPassThroughPorts(passThroughPorts *string) {
+	o.PassThroughPorts = passThroughPorts
+}
+
 // WithPlatform adds the platform to the dcim devices list params
 func (o *DcimDevicesListParams) WithPlatform(platform *string) *DcimDevicesListParams {
 	o.SetPlatform(platform)
@@ -392,14 +409,36 @@ func (o *DcimDevicesListParams) SetPlatformID(platformID *int64) {
 }
 
 // WithPosition adds the position to the dcim devices list params
-func (o *DcimDevicesListParams) WithPosition(position *float64) *DcimDevicesListParams {
+func (o *DcimDevicesListParams) WithPosition(position *int64) *DcimDevicesListParams {
 	o.SetPosition(position)
 	return o
 }
 
 // SetPosition adds the position to the dcim devices list params
-func (o *DcimDevicesListParams) SetPosition(position *float64) {
+func (o *DcimDevicesListParams) SetPosition(position *int64) {
 	o.Position = position
+}
+
+// WithPowerOutlets adds the powerOutlets to the dcim devices list params
+func (o *DcimDevicesListParams) WithPowerOutlets(powerOutlets *string) *DcimDevicesListParams {
+	o.SetPowerOutlets(powerOutlets)
+	return o
+}
+
+// SetPowerOutlets adds the powerOutlets to the dcim devices list params
+func (o *DcimDevicesListParams) SetPowerOutlets(powerOutlets *string) {
+	o.PowerOutlets = powerOutlets
+}
+
+// WithPowerPorts adds the powerPorts to the dcim devices list params
+func (o *DcimDevicesListParams) WithPowerPorts(powerPorts *string) *DcimDevicesListParams {
+	o.SetPowerPorts(powerPorts)
+	return o
+}
+
+// SetPowerPorts adds the powerPorts to the dcim devices list params
+func (o *DcimDevicesListParams) SetPowerPorts(powerPorts *string) {
+	o.PowerPorts = powerPorts
 }
 
 // WithQ adds the q to the dcim devices list params
@@ -557,13 +596,13 @@ func (o *DcimDevicesListParams) SetTenantID(tenantID *int64) {
 }
 
 // WithVirtualChassisID adds the virtualChassisID to the dcim devices list params
-func (o *DcimDevicesListParams) WithVirtualChassisID(virtualChassisID *int64) *DcimDevicesListParams {
+func (o *DcimDevicesListParams) WithVirtualChassisID(virtualChassisID *string) *DcimDevicesListParams {
 	o.SetVirtualChassisID(virtualChassisID)
 	return o
 }
 
 // SetVirtualChassisID adds the virtualChassisId to the dcim devices list params
-func (o *DcimDevicesListParams) SetVirtualChassisID(virtualChassisID *int64) {
+func (o *DcimDevicesListParams) SetVirtualChassisID(virtualChassisID *string) {
 	o.VirtualChassisID = virtualChassisID
 }
 
@@ -601,6 +640,38 @@ func (o *DcimDevicesListParams) WriteToRequest(r runtime.ClientRequest, reg strf
 		qClusterID := swag.FormatInt64(qrClusterID)
 		if qClusterID != "" {
 			if err := r.SetQueryParam("cluster_id", qClusterID); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.ConsolePorts != nil {
+
+		// query param console_ports
+		var qrConsolePorts string
+		if o.ConsolePorts != nil {
+			qrConsolePorts = *o.ConsolePorts
+		}
+		qConsolePorts := qrConsolePorts
+		if qConsolePorts != "" {
+			if err := r.SetQueryParam("console_ports", qConsolePorts); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.ConsoleServerPorts != nil {
+
+		// query param console_server_ports
+		var qrConsoleServerPorts string
+		if o.ConsoleServerPorts != nil {
+			qrConsoleServerPorts = *o.ConsoleServerPorts
+		}
+		qConsoleServerPorts := qrConsoleServerPorts
+		if qConsoleServerPorts != "" {
+			if err := r.SetQueryParam("console_server_ports", qConsoleServerPorts); err != nil {
 				return err
 			}
 		}
@@ -655,16 +726,16 @@ func (o *DcimDevicesListParams) WriteToRequest(r runtime.ClientRequest, reg strf
 
 	}
 
-	if o.IsConsoleServer != nil {
+	if o.Interfaces != nil {
 
-		// query param is_console_server
-		var qrIsConsoleServer string
-		if o.IsConsoleServer != nil {
-			qrIsConsoleServer = *o.IsConsoleServer
+		// query param interfaces
+		var qrInterfaces string
+		if o.Interfaces != nil {
+			qrInterfaces = *o.Interfaces
 		}
-		qIsConsoleServer := qrIsConsoleServer
-		if qIsConsoleServer != "" {
-			if err := r.SetQueryParam("is_console_server", qIsConsoleServer); err != nil {
+		qInterfaces := qrInterfaces
+		if qInterfaces != "" {
+			if err := r.SetQueryParam("interfaces", qInterfaces); err != nil {
 				return err
 			}
 		}
@@ -681,38 +752,6 @@ func (o *DcimDevicesListParams) WriteToRequest(r runtime.ClientRequest, reg strf
 		qIsFullDepth := qrIsFullDepth
 		if qIsFullDepth != "" {
 			if err := r.SetQueryParam("is_full_depth", qIsFullDepth); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	if o.IsNetworkDevice != nil {
-
-		// query param is_network_device
-		var qrIsNetworkDevice string
-		if o.IsNetworkDevice != nil {
-			qrIsNetworkDevice = *o.IsNetworkDevice
-		}
-		qIsNetworkDevice := qrIsNetworkDevice
-		if qIsNetworkDevice != "" {
-			if err := r.SetQueryParam("is_network_device", qIsNetworkDevice); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	if o.IsPdu != nil {
-
-		// query param is_pdu
-		var qrIsPdu string
-		if o.IsPdu != nil {
-			qrIsPdu = *o.IsPdu
-		}
-		qIsPdu := qrIsPdu
-		if qIsPdu != "" {
-			if err := r.SetQueryParam("is_pdu", qIsPdu); err != nil {
 				return err
 			}
 		}
@@ -831,6 +870,22 @@ func (o *DcimDevicesListParams) WriteToRequest(r runtime.ClientRequest, reg strf
 
 	}
 
+	if o.PassThroughPorts != nil {
+
+		// query param pass_through_ports
+		var qrPassThroughPorts string
+		if o.PassThroughPorts != nil {
+			qrPassThroughPorts = *o.PassThroughPorts
+		}
+		qPassThroughPorts := qrPassThroughPorts
+		if qPassThroughPorts != "" {
+			if err := r.SetQueryParam("pass_through_ports", qPassThroughPorts); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.Platform != nil {
 
 		// query param platform
@@ -866,13 +921,45 @@ func (o *DcimDevicesListParams) WriteToRequest(r runtime.ClientRequest, reg strf
 	if o.Position != nil {
 
 		// query param position
-		var qrPosition float64
+		var qrPosition int64
 		if o.Position != nil {
 			qrPosition = *o.Position
 		}
-		qPosition := swag.FormatFloat64(qrPosition)
+		qPosition := swag.FormatInt64(qrPosition)
 		if qPosition != "" {
 			if err := r.SetQueryParam("position", qPosition); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.PowerOutlets != nil {
+
+		// query param power_outlets
+		var qrPowerOutlets string
+		if o.PowerOutlets != nil {
+			qrPowerOutlets = *o.PowerOutlets
+		}
+		qPowerOutlets := qrPowerOutlets
+		if qPowerOutlets != "" {
+			if err := r.SetQueryParam("power_outlets", qPowerOutlets); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.PowerPorts != nil {
+
+		// query param power_ports
+		var qrPowerPorts string
+		if o.PowerPorts != nil {
+			qrPowerPorts = *o.PowerPorts
+		}
+		qPowerPorts := qrPowerPorts
+		if qPowerPorts != "" {
+			if err := r.SetQueryParam("power_ports", qPowerPorts); err != nil {
 				return err
 			}
 		}
@@ -1106,11 +1193,11 @@ func (o *DcimDevicesListParams) WriteToRequest(r runtime.ClientRequest, reg strf
 	if o.VirtualChassisID != nil {
 
 		// query param virtual_chassis_id
-		var qrVirtualChassisID int64
+		var qrVirtualChassisID string
 		if o.VirtualChassisID != nil {
 			qrVirtualChassisID = *o.VirtualChassisID
 		}
-		qVirtualChassisID := swag.FormatInt64(qrVirtualChassisID)
+		qVirtualChassisID := qrVirtualChassisID
 		if qVirtualChassisID != "" {
 			if err := r.SetQueryParam("virtual_chassis_id", qVirtualChassisID); err != nil {
 				return err

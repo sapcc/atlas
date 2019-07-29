@@ -20,8 +20,6 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"encoding/json"
-
 	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
@@ -40,7 +38,7 @@ type WritablePlatform struct {
 	// Manufacturer
 	//
 	// Optionally limit this platform to devices of a certain manufacturer
-	Manufacturer int64 `json:"manufacturer,omitempty"`
+	Manufacturer *int64 `json:"manufacturer,omitempty"`
 
 	// Name
 	// Required: true
@@ -51,17 +49,13 @@ type WritablePlatform struct {
 	// NAPALM arguments
 	//
 	// Additional arguments to pass when initiating the NAPALM driver (JSON format)
-	NapalmArgs string `json:"napalm_args,omitempty"`
+	NapalmArgs *string `json:"napalm_args,omitempty"`
 
 	// NAPALM driver
 	//
 	// The name of the NAPALM driver to use when interacting with devices
 	// Max Length: 50
 	NapalmDriver string `json:"napalm_driver,omitempty"`
-
-	// Legacy RPC client
-	// Enum: [juniper-junos cisco-ios opengear]
-	RPCClient string `json:"rpc_client,omitempty"`
 
 	// Slug
 	// Required: true
@@ -80,10 +74,6 @@ func (m *WritablePlatform) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateNapalmDriver(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateRPCClient(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -121,52 +111,6 @@ func (m *WritablePlatform) validateNapalmDriver(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MaxLength("napalm_driver", "body", string(m.NapalmDriver), 50); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-var writablePlatformTypeRPCClientPropEnum []interface{}
-
-func init() {
-	var res []string
-	if err := json.Unmarshal([]byte(`["juniper-junos","cisco-ios","opengear"]`), &res); err != nil {
-		panic(err)
-	}
-	for _, v := range res {
-		writablePlatformTypeRPCClientPropEnum = append(writablePlatformTypeRPCClientPropEnum, v)
-	}
-}
-
-const (
-
-	// WritablePlatformRPCClientJuniperJunos captures enum value "juniper-junos"
-	WritablePlatformRPCClientJuniperJunos string = "juniper-junos"
-
-	// WritablePlatformRPCClientCiscoIos captures enum value "cisco-ios"
-	WritablePlatformRPCClientCiscoIos string = "cisco-ios"
-
-	// WritablePlatformRPCClientOpengear captures enum value "opengear"
-	WritablePlatformRPCClientOpengear string = "opengear"
-)
-
-// prop value enum
-func (m *WritablePlatform) validateRPCClientEnum(path, location string, value string) error {
-	if err := validate.Enum(path, location, value, writablePlatformTypeRPCClientPropEnum); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (m *WritablePlatform) validateRPCClient(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.RPCClient) { // not required
-		return nil
-	}
-
-	// value enum
-	if err := m.validateRPCClientEnum("rpc_client", "body", m.RPCClient); err != nil {
 		return err
 	}
 

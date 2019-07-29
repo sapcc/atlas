@@ -65,7 +65,7 @@ type Circuit struct {
 
 	// Date installed
 	// Format: date
-	InstallDate strfmt.Date `json:"install_date,omitempty"`
+	InstallDate *strfmt.Date `json:"install_date,omitempty"`
 
 	// Last updated
 	// Read Only: true

@@ -103,7 +103,7 @@ type DcimInterfacesListOKBody struct {
 
 	// results
 	// Required: true
-	Results []*models.Interface `json:"results"`
+	Results []*models.DeviceInterface `json:"results"`
 }
 
 // Validate validates this dcim interfaces list o k body

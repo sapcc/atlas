@@ -44,7 +44,7 @@ type WritableAggregate struct {
 
 	// Date added
 	// Format: date
-	DateAdded strfmt.Date `json:"date_added,omitempty"`
+	DateAdded *strfmt.Date `json:"date_added,omitempty"`
 
 	// Description
 	// Max Length: 100

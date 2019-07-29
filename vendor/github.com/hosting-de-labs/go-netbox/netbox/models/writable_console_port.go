@@ -34,12 +34,20 @@ import (
 // swagger:model WritableConsolePort
 type WritableConsolePort struct {
 
+	// cable
+	Cable *NestedCable `json:"cable,omitempty"`
+
+	// Connected endpoint
+	// Read Only: true
+	ConnectedEndpoint interface{} `json:"connected_endpoint,omitempty"`
+
+	// Connected endpoint type
+	// Read Only: true
+	ConnectedEndpointType string `json:"connected_endpoint_type,omitempty"`
+
 	// Connection status
 	// Enum: [false true]
 	ConnectionStatus bool `json:"connection_status,omitempty"`
-
-	// Console server port
-	CsPort int64 `json:"cs_port,omitempty"`
 
 	// Device
 	// Required: true
@@ -63,6 +71,10 @@ type WritableConsolePort struct {
 func (m *WritableConsolePort) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateCable(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateConnectionStatus(formats); err != nil {
 		res = append(res, err)
 	}
@@ -82,6 +94,24 @@ func (m *WritableConsolePort) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *WritableConsolePort) validateCable(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Cable) { // not required
+		return nil
+	}
+
+	if m.Cable != nil {
+		if err := m.Cable.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("cable")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 

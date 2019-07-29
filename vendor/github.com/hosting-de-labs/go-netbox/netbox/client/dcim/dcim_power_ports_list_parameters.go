@@ -77,6 +77,10 @@ for the dcim power ports list operation typically these are written to a http.Re
 */
 type DcimPowerPortsListParams struct {
 
+	/*Cabled*/
+	Cabled *string
+	/*ConnectionStatus*/
+	ConnectionStatus *string
 	/*Device*/
 	Device *string
 	/*DeviceID*/
@@ -93,6 +97,8 @@ type DcimPowerPortsListParams struct {
 
 	*/
 	Offset *int64
+	/*Q*/
+	Q *string
 	/*Tag*/
 	Tag *string
 
@@ -132,6 +138,28 @@ func (o *DcimPowerPortsListParams) WithHTTPClient(client *http.Client) *DcimPowe
 // SetHTTPClient adds the HTTPClient to the dcim power ports list params
 func (o *DcimPowerPortsListParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithCabled adds the cabled to the dcim power ports list params
+func (o *DcimPowerPortsListParams) WithCabled(cabled *string) *DcimPowerPortsListParams {
+	o.SetCabled(cabled)
+	return o
+}
+
+// SetCabled adds the cabled to the dcim power ports list params
+func (o *DcimPowerPortsListParams) SetCabled(cabled *string) {
+	o.Cabled = cabled
+}
+
+// WithConnectionStatus adds the connectionStatus to the dcim power ports list params
+func (o *DcimPowerPortsListParams) WithConnectionStatus(connectionStatus *string) *DcimPowerPortsListParams {
+	o.SetConnectionStatus(connectionStatus)
+	return o
+}
+
+// SetConnectionStatus adds the connectionStatus to the dcim power ports list params
+func (o *DcimPowerPortsListParams) SetConnectionStatus(connectionStatus *string) {
+	o.ConnectionStatus = connectionStatus
 }
 
 // WithDevice adds the device to the dcim power ports list params
@@ -189,6 +217,17 @@ func (o *DcimPowerPortsListParams) SetOffset(offset *int64) {
 	o.Offset = offset
 }
 
+// WithQ adds the q to the dcim power ports list params
+func (o *DcimPowerPortsListParams) WithQ(q *string) *DcimPowerPortsListParams {
+	o.SetQ(q)
+	return o
+}
+
+// SetQ adds the q to the dcim power ports list params
+func (o *DcimPowerPortsListParams) SetQ(q *string) {
+	o.Q = q
+}
+
 // WithTag adds the tag to the dcim power ports list params
 func (o *DcimPowerPortsListParams) WithTag(tag *string) *DcimPowerPortsListParams {
 	o.SetTag(tag)
@@ -207,6 +246,38 @@ func (o *DcimPowerPortsListParams) WriteToRequest(r runtime.ClientRequest, reg s
 		return err
 	}
 	var res []error
+
+	if o.Cabled != nil {
+
+		// query param cabled
+		var qrCabled string
+		if o.Cabled != nil {
+			qrCabled = *o.Cabled
+		}
+		qCabled := qrCabled
+		if qCabled != "" {
+			if err := r.SetQueryParam("cabled", qCabled); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.ConnectionStatus != nil {
+
+		// query param connection_status
+		var qrConnectionStatus string
+		if o.ConnectionStatus != nil {
+			qrConnectionStatus = *o.ConnectionStatus
+		}
+		qConnectionStatus := qrConnectionStatus
+		if qConnectionStatus != "" {
+			if err := r.SetQueryParam("connection_status", qConnectionStatus); err != nil {
+				return err
+			}
+		}
+
+	}
 
 	if o.Device != nil {
 
@@ -282,6 +353,22 @@ func (o *DcimPowerPortsListParams) WriteToRequest(r runtime.ClientRequest, reg s
 		qOffset := swag.FormatInt64(qrOffset)
 		if qOffset != "" {
 			if err := r.SetQueryParam("offset", qOffset); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Q != nil {
+
+		// query param q
+		var qrQ string
+		if o.Q != nil {
+			qrQ = *o.Q
+		}
+		qQ := qrQ
+		if qQ != "" {
+			if err := r.SetQueryParam("q", qQ); err != nil {
 				return err
 			}
 		}

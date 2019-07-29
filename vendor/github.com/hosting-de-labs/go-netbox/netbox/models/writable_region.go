@@ -42,7 +42,7 @@ type WritableRegion struct {
 	Name *string `json:"name"`
 
 	// Parent
-	Parent int64 `json:"parent,omitempty"`
+	Parent *int64 `json:"parent,omitempty"`
 
 	// Slug
 	// Required: true

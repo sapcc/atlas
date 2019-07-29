@@ -42,7 +42,7 @@ type WritableDeviceBay struct {
 	ID int64 `json:"id,omitempty"`
 
 	// Installed device
-	InstalledDevice int64 `json:"installed_device,omitempty"`
+	InstalledDevice *int64 `json:"installed_device,omitempty"`
 
 	// Name
 	// Required: true

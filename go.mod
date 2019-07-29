@@ -8,6 +8,7 @@ require (
 	github.com/armon/go-radix v1.0.0 // indirect
 	github.com/aws/aws-sdk-go v0.0.0-20161102215928-707203bc5511 // indirect
 	github.com/dgrijalva/jwt-go v0.0.0-20161101193935-9ed569b5d1ac // indirect
+	github.com/docker/distribution v2.7.1+incompatible // indirect
 	github.com/emicklei/go-restful v0.0.0-20161212084525-09691a3b6378 // indirect
 	github.com/fsnotify/fsnotify v1.4.7 // indirect
 	github.com/ghodss/yaml v0.0.0-20150909031657-73d445a93680 // indirect
@@ -34,6 +35,7 @@ require (
 	github.com/juju/ratelimit v0.0.0-20151125201925-77ed1c8a0121 // indirect
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/namsral/flag v1.7.4-pre
+	github.com/opencontainers/go-digest v1.0.0-rc1 // indirect
 	github.com/prometheus/client_golang v1.0.0
 	github.com/prometheus/common v0.4.1
 	github.com/prometheus/prometheus v2.3.2+incompatible

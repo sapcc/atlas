@@ -27,7 +27,7 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// NestedIPAddress Nat inside
+// NestedIPAddress Primary ip
 // swagger:model NestedIPAddress
 type NestedIPAddress struct {
 

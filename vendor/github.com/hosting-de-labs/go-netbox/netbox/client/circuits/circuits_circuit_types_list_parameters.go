@@ -89,6 +89,8 @@ type CircuitsCircuitTypesListParams struct {
 
 	*/
 	Offset *int64
+	/*Q*/
+	Q *string
 	/*Slug*/
 	Slug *string
 
@@ -163,6 +165,17 @@ func (o *CircuitsCircuitTypesListParams) SetOffset(offset *int64) {
 	o.Offset = offset
 }
 
+// WithQ adds the q to the circuits circuit types list params
+func (o *CircuitsCircuitTypesListParams) WithQ(q *string) *CircuitsCircuitTypesListParams {
+	o.SetQ(q)
+	return o
+}
+
+// SetQ adds the q to the circuits circuit types list params
+func (o *CircuitsCircuitTypesListParams) SetQ(q *string) {
+	o.Q = q
+}
+
 // WithSlug adds the slug to the circuits circuit types list params
 func (o *CircuitsCircuitTypesListParams) WithSlug(slug *string) *CircuitsCircuitTypesListParams {
 	o.SetSlug(slug)
@@ -224,6 +237,22 @@ func (o *CircuitsCircuitTypesListParams) WriteToRequest(r runtime.ClientRequest,
 		qOffset := swag.FormatInt64(qrOffset)
 		if qOffset != "" {
 			if err := r.SetQueryParam("offset", qOffset); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Q != nil {
+
+		// query param q
+		var qrQ string
+		if o.Q != nil {
+			qrQ = *o.Q
+		}
+		qQ := qrQ
+		if qQ != "" {
+			if err := r.SetQueryParam("q", qQ); err != nil {
 				return err
 			}
 		}

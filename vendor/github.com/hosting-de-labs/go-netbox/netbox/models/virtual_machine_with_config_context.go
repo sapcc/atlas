@@ -42,7 +42,7 @@ type VirtualMachineWithConfigContext struct {
 
 	// Config context
 	// Read Only: true
-	ConfigContext string `json:"config_context,omitempty"`
+	ConfigContext interface{} `json:"config_context,omitempty"`
 
 	// Created
 	// Read Only: true
@@ -67,7 +67,7 @@ type VirtualMachineWithConfigContext struct {
 	LastUpdated strfmt.DateTime `json:"last_updated,omitempty"`
 
 	// Local context data
-	LocalContextData string `json:"local_context_data,omitempty"`
+	LocalContextData *string `json:"local_context_data,omitempty"`
 
 	// Memory (MB)
 	// Maximum: 2.147483647e+09
@@ -84,16 +84,19 @@ type VirtualMachineWithConfigContext struct {
 	Platform *NestedPlatform `json:"platform,omitempty"`
 
 	// primary ip
-	PrimaryIP *VirtualMachineIPAddress `json:"primary_ip,omitempty"`
+	PrimaryIP *NestedIPAddress `json:"primary_ip,omitempty"`
 
 	// primary ip4
-	PrimaryIp4 *VirtualMachineIPAddress `json:"primary_ip4,omitempty"`
+	PrimaryIp4 *NestedIPAddress `json:"primary_ip4,omitempty"`
 
 	// primary ip6
-	PrimaryIp6 *VirtualMachineIPAddress `json:"primary_ip6,omitempty"`
+	PrimaryIp6 *NestedIPAddress `json:"primary_ip6,omitempty"`
 
 	// role
 	Role *NestedDeviceRole `json:"role,omitempty"`
+
+	// site
+	Site *NestedSite `json:"site,omitempty"`
 
 	// status
 	Status *VirtualMachineWithConfigContextStatus `json:"status,omitempty"`
@@ -155,6 +158,10 @@ func (m *VirtualMachineWithConfigContext) Validate(formats strfmt.Registry) erro
 	}
 
 	if err := m.validateRole(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateSite(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -357,6 +364,24 @@ func (m *VirtualMachineWithConfigContext) validateRole(formats strfmt.Registry) 
 		if err := m.Role.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("role")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *VirtualMachineWithConfigContext) validateSite(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Site) { // not required
+		return nil
+	}
+
+	if m.Site != nil {
+		if err := m.Site.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("site")
 			}
 			return err
 		}

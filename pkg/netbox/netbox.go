@@ -1,7 +1,6 @@
 package netbox
 
 import (
-	"errors"
 	"fmt"
 	"net"
 
@@ -203,7 +202,7 @@ func (nb *Netbox) ManagementIP(serverID int64) (string, error) {
 	}
 
 	if managementIPAddress.Address == nil {
-		return "", errors.New(fmt.Sprintf("no ip address for device %d", serverID))
+		return "", fmt.Errorf("no ip address for device %d", serverID)
 	}
 	ip, _, err := net.ParseCIDR(*managementIPAddress.Address)
 
@@ -229,10 +228,10 @@ func (nb *Netbox) Interface(deviceID int64, interfaceName string) (*models.Devic
 		return nil, err
 	}
 	if *list.Payload.Count < 1 {
-		return nil, errors.New(fmt.Sprintf("no %s interface found for device %d", interfaceName, deviceID))
+		return nil, fmt.Errorf("no %s interface found for device %d", interfaceName, deviceID)
 	}
 	if *list.Payload.Count > 1 {
-		return nil, errors.New(fmt.Sprintf("more than 1 %s interface found for device %d", interfaceName, deviceID))
+		return nil, fmt.Errorf("more than 1 %s interface found for device %d", interfaceName, deviceID)
 	}
 
 	return list.Payload.Results[0], nil

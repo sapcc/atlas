@@ -20,6 +20,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"strconv"
 
 	strfmt "github.com/go-openapi/strfmt"
@@ -40,12 +41,15 @@ type VirtualMachineInterface struct {
 	// Enabled
 	Enabled bool `json:"enabled,omitempty"`
 
+	// form factor
+	FormFactor *VirtualMachineInterfaceFormFactor `json:"form_factor,omitempty"`
+
 	// ID
 	// Read Only: true
 	ID int64 `json:"id,omitempty"`
 
 	// MAC Address
-	MacAddress string `json:"mac_address,omitempty"`
+	MacAddress *string `json:"mac_address,omitempty"`
 
 	// mode
 	Mode *VirtualMachineInterfaceMode `json:"mode,omitempty"`
@@ -53,7 +57,7 @@ type VirtualMachineInterface struct {
 	// MTU
 	// Maximum: 65536
 	// Minimum: 1
-	Mtu int64 `json:"mtu,omitempty"`
+	Mtu *int64 `json:"mtu,omitempty"`
 
 	// Name
 	// Required: true
@@ -63,17 +67,17 @@ type VirtualMachineInterface struct {
 
 	// tagged vlans
 	// Unique: true
-	TaggedVlans []*InterfaceVLAN `json:"tagged_vlans"`
+	TaggedVlans []*NestedVLAN `json:"tagged_vlans"`
 
 	// tags
 	Tags []string `json:"tags"`
 
 	// untagged vlan
-	UntaggedVlan *InterfaceVLAN `json:"untagged_vlan,omitempty"`
+	UntaggedVlan *NestedVLAN `json:"untagged_vlan,omitempty"`
 
 	// virtual machine
 	// Required: true
-	VirtualMachine *VirtualMachine `json:"virtual_machine"`
+	VirtualMachine *NestedVirtualMachine `json:"virtual_machine"`
 }
 
 // Validate validates this virtual machine interface
@@ -81,6 +85,10 @@ func (m *VirtualMachineInterface) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateDescription(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateFormFactor(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -131,6 +139,24 @@ func (m *VirtualMachineInterface) validateDescription(formats strfmt.Registry) e
 	return nil
 }
 
+func (m *VirtualMachineInterface) validateFormFactor(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.FormFactor) { // not required
+		return nil
+	}
+
+	if m.FormFactor != nil {
+		if err := m.FormFactor.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("form_factor")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *VirtualMachineInterface) validateMode(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Mode) { // not required
@@ -155,11 +181,11 @@ func (m *VirtualMachineInterface) validateMtu(formats strfmt.Registry) error {
 		return nil
 	}
 
-	if err := validate.MinimumInt("mtu", "body", int64(m.Mtu), 1, false); err != nil {
+	if err := validate.MinimumInt("mtu", "body", int64(*m.Mtu), 1, false); err != nil {
 		return err
 	}
 
-	if err := validate.MaximumInt("mtu", "body", int64(m.Mtu), 65536, false); err != nil {
+	if err := validate.MaximumInt("mtu", "body", int64(*m.Mtu), 65536, false); err != nil {
 		return err
 	}
 
@@ -276,6 +302,86 @@ func (m *VirtualMachineInterface) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *VirtualMachineInterface) UnmarshalBinary(b []byte) error {
 	var res VirtualMachineInterface
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// VirtualMachineInterfaceFormFactor Form factor
+// swagger:model VirtualMachineInterfaceFormFactor
+type VirtualMachineInterfaceFormFactor struct {
+
+	// label
+	// Required: true
+	Label *string `json:"label"`
+
+	// value
+	// Required: true
+	Value *int64 `json:"value"`
+}
+
+func (m *VirtualMachineInterfaceFormFactor) UnmarshalJSON(b []byte) error {
+	type VirtualMachineInterfaceFormFactorAlias VirtualMachineInterfaceFormFactor
+	var t VirtualMachineInterfaceFormFactorAlias
+	if err := json.Unmarshal([]byte("{\"label\":\"Virtual\",\"value\":0}"), &t); err != nil {
+		return err
+	}
+	if err := json.Unmarshal(b, &t); err != nil {
+		return err
+	}
+	*m = VirtualMachineInterfaceFormFactor(t)
+	return nil
+}
+
+// Validate validates this virtual machine interface form factor
+func (m *VirtualMachineInterfaceFormFactor) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateLabel(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateValue(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *VirtualMachineInterfaceFormFactor) validateLabel(formats strfmt.Registry) error {
+
+	if err := validate.Required("form_factor"+"."+"label", "body", m.Label); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *VirtualMachineInterfaceFormFactor) validateValue(formats strfmt.Registry) error {
+
+	if err := validate.Required("form_factor"+"."+"value", "body", m.Value); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *VirtualMachineInterfaceFormFactor) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *VirtualMachineInterfaceFormFactor) UnmarshalBinary(b []byte) error {
+	var res VirtualMachineInterfaceFormFactor
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

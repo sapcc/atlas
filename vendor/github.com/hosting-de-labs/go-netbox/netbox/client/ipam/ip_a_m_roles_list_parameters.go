@@ -89,6 +89,8 @@ type IPAMRolesListParams struct {
 
 	*/
 	Offset *int64
+	/*Q*/
+	Q *string
 	/*Slug*/
 	Slug *string
 
@@ -163,6 +165,17 @@ func (o *IPAMRolesListParams) SetOffset(offset *int64) {
 	o.Offset = offset
 }
 
+// WithQ adds the q to the ipam roles list params
+func (o *IPAMRolesListParams) WithQ(q *string) *IPAMRolesListParams {
+	o.SetQ(q)
+	return o
+}
+
+// SetQ adds the q to the ipam roles list params
+func (o *IPAMRolesListParams) SetQ(q *string) {
+	o.Q = q
+}
+
 // WithSlug adds the slug to the ipam roles list params
 func (o *IPAMRolesListParams) WithSlug(slug *string) *IPAMRolesListParams {
 	o.SetSlug(slug)
@@ -224,6 +237,22 @@ func (o *IPAMRolesListParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		qOffset := swag.FormatInt64(qrOffset)
 		if qOffset != "" {
 			if err := r.SetQueryParam("offset", qOffset); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Q != nil {
+
+		// query param q
+		var qrQ string
+		if o.Q != nil {
+			qrQ = *o.Q
+		}
+		qQ := qrQ
+		if qQ != "" {
+			if err := r.SetQueryParam("q", qQ); err != nil {
 				return err
 			}
 		}
