@@ -86,10 +86,10 @@ func NewSwitchDiscovery(disc interface{}, ctx context.Context, m *promDiscovery.
 
 func (sd *SwitchDiscovery) Run(ctx context.Context, ch chan<- []*targetgroup.Group) {
 	for c := time.Tick(time.Duration(sd.refreshInterval) * time.Second); ; {
-		level.Debug(log.With(sd.logger, "component", "SwitchDiscovery")).Log("Loading Switches")
+		level.Debug(log.With(sd.logger, "component", "SwitchDiscovery")).Log("debug", "Loading Switches")
 		tgs, err := sd.getSwitches()
 		if err == nil {
-			level.Debug(log.With(sd.logger, "component", "SwitchDiscovery")).Log("Done Loading Switches")
+			level.Debug(log.With(sd.logger, "component", "SwitchDiscovery")).Log("debug", "Done Loading Switches")
 			sd.status.Lock()
 			sd.status.Up = true
 			sd.status.Unlock()

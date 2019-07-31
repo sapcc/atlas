@@ -38,7 +38,7 @@ func (c *File) Write(name, data string) (err error) {
 			fmt.Fprintf(b, "%s=\"%s\"\n", key, value)
 		}
 
-		level.Debug(log.With(c.logger, "component", "writer")).Log("debug", fmt.Sprintf("writing targets to file: %s", c.fileName))
+		level.Debug(log.With(c.logger, "component", "writer")).Log("debug", fmt.Sprintf("writing targets to file: %s", name))
 		err = ioutil.WriteFile(c.fileName, b.Bytes(), 0644)
 		return err
 	})
