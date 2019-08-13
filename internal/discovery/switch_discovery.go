@@ -113,7 +113,7 @@ func (sd *SwitchDiscovery) Run(ctx context.Context, ch chan<- []*targetgroup.Gro
 			sd.status.Unlock()
 			ch <- tgs
 		} else {
-			level.Error(log.With(sd.logger, "component", "SwitchDiscovery")).Log("err", err)
+			level.Error(log.With(sd.logger, "component", "SwitchDiscovery")).Log("error", err)
 			sd.status.Lock()
 			sd.status.Up = false
 			sd.status.Unlock()
@@ -133,7 +133,8 @@ func (sd *SwitchDiscovery) getSwitches() (tgroups []*targetgroup.Group, err erro
 	var tg []*targetgroup.Group
 	for _, dcim := range sd.cfg.DCIM {
 		if dcim.Module == "" {
-			return tgroups, fmt.Errorf("Mandatory field Module not set for dcim device")
+			level.Warn(log.With(sd.logger, "component", "SwitchDiscovery")).Log("warn", "Mandatory field Module not set for dcim device")
+			continue
 		}
 		tg, err = sd.loadDCIMs(dcim)
 		if err != nil {
@@ -143,7 +144,8 @@ func (sd *SwitchDiscovery) getSwitches() (tgroups []*targetgroup.Group, err erro
 	}
 	for _, vm := range sd.cfg.VM {
 		if vm.Module == "" {
-			return tgroups, fmt.Errorf("Mandatory field Module not set for vm device")
+			level.Warn(log.With(sd.logger, "component", "SwitchDiscovery")).Log("warn", "Mandatory field Module not set for vm device")
+			continue
 		}
 		tg, err = sd.loadVMs(vm)
 		if err != nil {
