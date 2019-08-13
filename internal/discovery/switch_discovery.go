@@ -35,8 +35,8 @@ type (
 		cfg             switchConfig
 	}
 	Device struct {
-		Module string `yaml:"module"`
-		Ctx    string `yaml:"ctx"`
+		Module       string            `yaml:"module"`
+		CustomLabels map[string]string `yaml:"custom_labels"`
 	}
 	switchConfig struct {
 		RefreshInterval int    `yaml:"refresh_interval"`
@@ -162,24 +162,12 @@ func (sd *SwitchDiscovery) loadDCIMs(d DCIM) (tgroups []*targetgroup.Group, err 
 		return tgroups, level.Error(log.With(sd.logger, "component", "SwitchDiscovery")).Log("error", err)
 	}
 	for _, dv := range dcims {
-		var names []string
-		if d.Ctx != "" {
-			context := strings.Split(d.Ctx, ",")
-			for _, c := range context {
-				names = append(names, d.Module+c)
-
-			}
-		} else {
-			names = append(names, d.Module)
+		tgroup, err := sd.createGroup(d.Module, d.CustomLabels, dv)
+		if err != nil {
+			level.Error(log.With(sd.logger, "component", "SwitchDiscovery")).Log("error", err)
+			continue
 		}
-		for _, n := range names {
-			tgroup, err := sd.createGroup(n, dv)
-			if err != nil {
-				level.Error(log.With(sd.logger, "component", "SwitchDiscovery")).Log("error", err)
-				continue
-			}
-			tgroups = append(tgroups, tgroup)
-		}
+		tgroups = append(tgroups, tgroup)
 	}
 
 	return tgroups, err
@@ -191,11 +179,7 @@ func (sd *SwitchDiscovery) loadVMs(d VM) (tgroups []*targetgroup.Group, err erro
 		return tgroups, level.Error(log.With(sd.logger, "component", "SwitchDiscovery")).Log("error", err)
 	}
 	for _, vm := range vms {
-		name := d.Module
-		if d.Module == "" {
-			name = *vm.Platform.Slug
-		}
-		tgroup, err := sd.createGroup(name, vm)
+		tgroup, err := sd.createGroup(d.Module, d.CustomLabels, vm)
 		if err != nil {
 			level.Error(log.With(sd.logger, "component", "SwitchDiscovery")).Log("error", err)
 			continue
@@ -206,7 +190,12 @@ func (sd *SwitchDiscovery) loadVMs(d VM) (tgroups []*targetgroup.Group, err erro
 	return tgroups, err
 }
 
-func (sd *SwitchDiscovery) createGroup(n string, d interface{}) (tgroup *targetgroup.Group, err error) {
+func (sd *SwitchDiscovery) createGroup(n string, c map[string]string, d interface{}) (tgroup *targetgroup.Group, err error) {
+	cLabels := model.LabelSet{}
+	for k, v := range c {
+		cLabels[model.LabelName(k)] = model.LabelValue(v)
+		fmt.Println(k, v)
+	}
 	switch dv := d.(type) {
 	case models.Device:
 		id := strconv.Itoa(int(dv.ID))
@@ -224,7 +213,7 @@ func (sd *SwitchDiscovery) createGroup(n string, d interface{}) (tgroup *targetg
 		}
 		target := model.LabelSet{model.AddressLabel: model.LabelValue(deviceIP.String())}
 		labels := model.LabelSet{
-			model.LabelName("module"):       model.LabelValue(strings.Replace(n, sd.region+"-", "", 1)),
+			model.LabelName("module"):       model.LabelValue(n),
 			model.LabelName("server_name"):  model.LabelValue(dv.DisplayName),
 			model.LabelName("state"):        model.LabelValue(*dv.Status.Label),
 			model.LabelName("manufacturer"): model.LabelValue(*dv.DeviceType.Manufacturer.Name),
@@ -232,6 +221,7 @@ func (sd *SwitchDiscovery) createGroup(n string, d interface{}) (tgroup *targetg
 			model.LabelName("server_id"):    model.LabelValue(id),
 			model.LabelName("role"):         model.LabelValue(*dv.DeviceRole.Slug),
 		}
+		labels = labels.Merge(cLabels)
 
 		tgroup.Labels = labels
 		tgroup.Targets = append(tgroup.Targets, target)
