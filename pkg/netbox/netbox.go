@@ -3,6 +3,7 @@ package netbox
 import (
 	"fmt"
 	"net"
+	"time"
 
 	"github.com/hosting-de-labs/go-netbox/netbox/client/virtualization"
 
@@ -146,11 +147,65 @@ func (nb *Netbox) DevicesByRegion(query, manufacturer, region, status string) (r
 		}
 		params.Offset = &offset
 		list, err := nb.client.Dcim.DcimDevicesList(params, nil)
+		fmt.Println(*params)
 		if err != nil {
 			return res, err
 		}
 		for _, device := range list.Payload.Results {
 			res = append(res, *device)
+		}
+		if list.Payload.Next == nil {
+			break
+		}
+	}
+	return res, err
+}
+
+//DevicesByRegion retrieves devices by region, manufacturer and status
+func (nb *Netbox) DevicesByParams(params dcim.DcimDevicesListParams) (res []models.Device, err error) {
+	res = make([]models.Device, 0)
+	limit := int64(100)
+	params.WithLimit(&limit)
+	params.WithTimeout(10 * time.Second)
+
+	for {
+		offset := int64(0)
+		if params.Offset != nil {
+			offset = *params.Offset + limit
+		}
+		params.Offset = &offset
+		list, err := nb.client.Dcim.DcimDevicesList(&params, nil)
+		if err != nil {
+			return res, err
+		}
+		for _, device := range list.Payload.Results {
+			res = append(res, *device)
+		}
+		if list.Payload.Next == nil {
+			break
+		}
+	}
+	return res, err
+}
+
+//VMsByTag retrieves devices by region, manufacturer and status
+func (nb *Netbox) VMsByParams(params virtualization.VirtualizationVirtualMachinesListParams) (res []models.VirtualMachine, err error) {
+	res = make([]models.VirtualMachine, 0)
+	params.WithTimeout(10 * time.Second)
+	limit := int64(100)
+	params.WithLimit(&limit)
+	for {
+		offset := int64(0)
+		if params.Offset != nil {
+			offset = *params.Offset + limit
+		}
+		params.Offset = &offset
+		list, err := nb.client.Virtualization.VirtualizationVirtualMachinesList(&params, nil)
+		if err != nil {
+			return res, err
+		}
+		for _, vm := range list.Payload.Results {
+			res = append(res, *vm)
 		}
 		if list.Payload.Next == nil {
 			break
