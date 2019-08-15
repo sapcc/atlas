@@ -166,7 +166,7 @@ func (nb *Netbox) DevicesByParams(params dcim.DcimDevicesListParams) (res []mode
 	res = make([]models.Device, 0)
 	limit := int64(100)
 	params.WithLimit(&limit)
-	params.WithTimeout(10 * time.Second)
+	params.WithTimeout(30 * time.Second)
 
 	for {
 		offset := int64(0)
@@ -191,7 +191,7 @@ func (nb *Netbox) DevicesByParams(params dcim.DcimDevicesListParams) (res []mode
 //VMsByTag retrieves devices by region, manufacturer and status
 func (nb *Netbox) VMsByParams(params virtualization.VirtualizationVirtualMachinesListParams) (res []models.VirtualMachine, err error) {
 	res = make([]models.VirtualMachine, 0)
-	params.WithTimeout(10 * time.Second)
+	params.WithTimeout(30 * time.Second)
 	limit := int64(100)
 	params.WithLimit(&limit)
 	for {
@@ -339,6 +339,19 @@ func (nb *Netbox) IPAddress(id int64) (*models.IPAddress, error) {
 
 	return list.Payload.Results[0], nil
 
+}
+
+func (nb *Netbox) GetNestedDeviceIP(i *models.NestedIPAddress) (ip string, err error) {
+	var ipnet net.IP
+	if i == nil {
+		return ip, fmt.Errorf("No IP Address found")
+	}
+	ipnet, _, err = net.ParseCIDR(*i.Address)
+	if err != nil {
+		ipnet = net.ParseIP(*i.Address)
+	}
+
+	return ipnet.String(), err
 }
 
 // RacksByRegion retrieves all the racks in the region with specified role

@@ -3,15 +3,12 @@ package discovery
 import (
 	"context"
 	"fmt"
-	"net"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
-	"github.com/hosting-de-labs/go-netbox/netbox/client/dcim"
-	"github.com/hosting-de-labs/go-netbox/netbox/client/virtualization"
 	"github.com/hosting-de-labs/go-netbox/netbox/models"
 	"github.com/prometheus/common/model"
 	promDiscovery "github.com/prometheus/prometheus/discovery"
@@ -23,7 +20,7 @@ import (
 )
 
 type (
-	SwitchDiscovery struct {
+	NetboxDiscovery struct {
 		manager         *promDiscovery.Manager
 		adapter         adapter.Adapter
 		netbox          *netbox.Netbox
@@ -32,46 +29,30 @@ type (
 		logger          log.Logger
 		status          *Status
 		outputFile      string
-		cfg             switchConfig
-	}
-	Device struct {
-		Module       string            `yaml:"module"`
-		CustomLabels map[string]string `yaml:"custom_labels"`
-	}
-	switchConfig struct {
-		RefreshInterval int    `yaml:"refresh_interval"`
-		NetboxHost      string `yaml:"netbox_host"`
-		NetboxAPIToken  string `yaml:"netbox_api_token"`
-		TargetsFileName string `yaml:"targets_file_name"`
-		DCIM            []DCIM `yaml:"dcim"`
-		VM              []VM   `yaml:"vm"`
+		cfg             netboxConfig
 	}
 
-	DCIM struct {
-		dcim.DcimDevicesListParams `yaml:",inline"`
-		Device                     `yaml:",inline"`
-	}
-
-	VM struct {
-		virtualization.VirtualizationVirtualMachinesListParams `yaml:",inline"`
-		Device                                                 `yaml:",inline"`
+	netboxConfig struct {
+		RefreshInterval int            `yaml:"refresh_interval"`
+		NetboxHost      string         `yaml:"netbox_host"`
+		NetboxAPIToken  string         `yaml:"netbox_api_token"`
+		TargetsFileName string         `yaml:"targets_file_name"`
+		DCIM            dcim           `yaml:"dcim"`
+		Virtualization  virtualization `yaml:"virtualization"`
 	}
 
 	configValues struct {
 		Region string
 	}
-
-	group struct {
-	}
 )
 
 func init() {
-	Register("switch", NewSwitchDiscovery)
+	Register("netbox", NewNetboxDiscovery)
 }
 
-//NewSwitchDiscovery creates
-func NewSwitchDiscovery(disc interface{}, ctx context.Context, m *promDiscovery.Manager, opts config.Options, w writer.Writer, l log.Logger) (d Discovery, err error) {
-	var cfg switchConfig
+//NewNetboxDiscovery creates
+func NewNetboxDiscovery(disc interface{}, ctx context.Context, m *promDiscovery.Manager, opts config.Options, w writer.Writer, l log.Logger) (d Discovery, err error) {
+	var cfg netboxConfig
 	configValues := configValues{Region: opts.Region}
 	if err := UnmarshalHandler(disc, &cfg, configValues); err != nil {
 		return nil, err
@@ -88,7 +69,7 @@ func NewSwitchDiscovery(disc interface{}, ctx context.Context, m *promDiscovery.
 
 	a := adapter.NewPrometheus(ctx, m, cfg.TargetsFileName, w, l)
 
-	return &SwitchDiscovery{
+	return &NetboxDiscovery{
 		adapter:         a,
 		manager:         m,
 		netbox:          nClient,
@@ -102,18 +83,18 @@ func NewSwitchDiscovery(disc interface{}, ctx context.Context, m *promDiscovery.
 
 }
 
-func (sd *SwitchDiscovery) Run(ctx context.Context, ch chan<- []*targetgroup.Group) {
+func (sd *NetboxDiscovery) Run(ctx context.Context, ch chan<- []*targetgroup.Group) {
 	for c := time.Tick(time.Duration(sd.refreshInterval) * time.Second); ; {
-		level.Debug(log.With(sd.logger, "component", "SwitchDiscovery")).Log("debug", "Loading Switches")
-		tgs, err := sd.getSwitches()
+		level.Debug(log.With(sd.logger, "component", "NetboxDiscovery")).Log("debug", "Loading Devices")
+		tgs, err := sd.getData()
 		if err == nil {
-			level.Debug(log.With(sd.logger, "component", "SwitchDiscovery")).Log("debug", "Done Loading Switches")
+			level.Debug(log.With(sd.logger, "component", "NetboxDiscovery")).Log("debug", "Done Loading Devices")
 			sd.status.Lock()
 			sd.status.Up = true
 			sd.status.Unlock()
 			ch <- tgs
 		} else {
-			level.Error(log.With(sd.logger, "component", "SwitchDiscovery")).Log("error", err)
+			level.Error(log.With(sd.logger, "component", "NetboxDiscovery")).Log("error", err)
 			sd.status.Lock()
 			sd.status.Up = false
 			sd.status.Unlock()
@@ -129,25 +110,17 @@ func (sd *SwitchDiscovery) Run(ctx context.Context, ch chan<- []*targetgroup.Gro
 	}
 }
 
-func (sd *SwitchDiscovery) getSwitches() (tgroups []*targetgroup.Group, err error) {
+func (sd *NetboxDiscovery) getData() (tgroups []*targetgroup.Group, err error) {
 	var tg []*targetgroup.Group
-	for _, dcim := range sd.cfg.DCIM {
-		if dcim.Module == "" {
-			level.Warn(log.With(sd.logger, "component", "SwitchDiscovery")).Log("warn", "Mandatory field Module not set for dcim device")
-			continue
-		}
-		tg, err = sd.loadDCIMs(dcim)
+	for _, dcim := range sd.cfg.DCIM.Devices {
+		tg, err = sd.loadDcimDevices(dcim)
 		if err != nil {
 			return tgroups, err
 		}
 		tgroups = append(tgroups, tg...)
 	}
-	for _, vm := range sd.cfg.VM {
-		if vm.Module == "" {
-			level.Warn(log.With(sd.logger, "component", "SwitchDiscovery")).Log("warn", "Mandatory field Module not set for vm device")
-			continue
-		}
-		tg, err = sd.loadVMs(vm)
+	for _, vm := range sd.cfg.Virtualization.VMs {
+		tg, err = sd.loadVirtualizationVMs(vm)
 		if err != nil {
 			return tgroups, err
 		}
@@ -156,15 +129,15 @@ func (sd *SwitchDiscovery) getSwitches() (tgroups []*targetgroup.Group, err erro
 	return tgroups, err
 }
 
-func (sd *SwitchDiscovery) loadDCIMs(d DCIM) (tgroups []*targetgroup.Group, err error) {
+func (sd *NetboxDiscovery) loadDcimDevices(d dcimDevice) (tgroups []*targetgroup.Group, err error) {
 	dcims, err := sd.netbox.DevicesByParams(d.DcimDevicesListParams)
 	if err != nil {
-		return tgroups, level.Error(log.With(sd.logger, "component", "SwitchDiscovery")).Log("error", err)
+		return tgroups, level.Error(log.With(sd.logger, "component", "NetboxDiscovery")).Log("error", err)
 	}
 	for _, dv := range dcims {
-		tgroup, err := sd.createGroup(d.Module, d.CustomLabels, dv)
+		tgroup, err := sd.createGroup(d.CustomLabels, d.Target, dv)
 		if err != nil {
-			level.Error(log.With(sd.logger, "component", "SwitchDiscovery")).Log("error", err)
+			level.Error(log.With(sd.logger, "component", "NetboxDiscovery")).Log("error", err)
 			continue
 		}
 		tgroups = append(tgroups, tgroup)
@@ -173,15 +146,15 @@ func (sd *SwitchDiscovery) loadDCIMs(d DCIM) (tgroups []*targetgroup.Group, err 
 	return tgroups, err
 }
 
-func (sd *SwitchDiscovery) loadVMs(d VM) (tgroups []*targetgroup.Group, err error) {
+func (sd *NetboxDiscovery) loadVirtualizationVMs(d virtualizationVM) (tgroups []*targetgroup.Group, err error) {
 	vms, err := sd.netbox.VMsByParams(d.VirtualizationVirtualMachinesListParams)
 	if err != nil {
-		return tgroups, level.Error(log.With(sd.logger, "component", "SwitchDiscovery")).Log("error", err)
+		return tgroups, level.Error(log.With(sd.logger, "component", "NetboxDiscovery")).Log("error", err)
 	}
 	for _, vm := range vms {
-		tgroup, err := sd.createGroup(d.Module, d.CustomLabels, vm)
+		tgroup, err := sd.createGroup(d.CustomLabels, d.Target, vm)
 		if err != nil {
-			level.Error(log.With(sd.logger, "component", "SwitchDiscovery")).Log("error", err)
+			level.Error(log.With(sd.logger, "component", "NetboxDiscovery")).Log("error", err)
 			continue
 		}
 		tgroups = append(tgroups, tgroup)
@@ -190,33 +163,34 @@ func (sd *SwitchDiscovery) loadVMs(d VM) (tgroups []*targetgroup.Group, err erro
 	return tgroups, err
 }
 
-func (sd *SwitchDiscovery) createGroup(n string, c map[string]string, d interface{}) (tgroup *targetgroup.Group, err error) {
+func (sd *NetboxDiscovery) createGroup(c map[string]string, t int, d interface{}) (tgroup *targetgroup.Group, err error) {
 	cLabels := model.LabelSet{}
 	for k, v := range c {
 		cLabels[model.LabelName(k)] = model.LabelValue(v)
-		fmt.Println(k, v)
 	}
 	switch dv := d.(type) {
 	case models.Device:
+		deviceIP, err := sd.getDeviceIP(t, dv.ID, dv.PrimaryIP)
 		id := strconv.Itoa(int(dv.ID))
-		deviceIP, err := getDeviceIP(dv.PrimaryIP)
 		if err != nil {
 			return tgroup, fmt.Errorf("Ignoring device: %s. Error: %s", id, err.Error())
 		}
+
 		tgroup = &targetgroup.Group{
-			Source:  deviceIP.String(),
+			Source:  deviceIP,
 			Labels:  make(model.LabelSet),
 			Targets: make([]model.LabelSet, 0, 1),
 		}
 		if strings.ToUpper(*dv.Status.Label) != "ACTIVE" {
 			return tgroup, fmt.Errorf("Ignoring device: %s. Status: %s", id, *dv.Status.Label)
 		}
-		target := model.LabelSet{model.AddressLabel: model.LabelValue(deviceIP.String())}
+		target := model.LabelSet{model.AddressLabel: model.LabelValue(deviceIP)}
 		labels := model.LabelSet{
-			model.LabelName("module"):       model.LabelValue(n),
-			model.LabelName("server_name"):  model.LabelValue(dv.DisplayName),
+			model.LabelName("name"):         model.LabelValue(dv.DisplayName),
+			model.LabelName("server_name"):  model.LabelValue(*dv.Name),
 			model.LabelName("state"):        model.LabelValue(*dv.Status.Label),
 			model.LabelName("manufacturer"): model.LabelValue(*dv.DeviceType.Manufacturer.Name),
+			model.LabelName("status"):       model.LabelValue(*dv.Status.Label),
 			model.LabelName("model"):        model.LabelValue(*dv.DeviceType.Model),
 			model.LabelName("server_id"):    model.LabelValue(id),
 			model.LabelName("role"):         model.LabelValue(*dv.DeviceRole.Slug),
@@ -227,24 +201,23 @@ func (sd *SwitchDiscovery) createGroup(n string, c map[string]string, d interfac
 		tgroup.Targets = append(tgroup.Targets, target)
 	case models.VirtualMachine:
 		id := strconv.Itoa(int(dv.ID))
-		deviceIP, err := getDeviceIP(dv.PrimaryIP)
+		deviceIP, err := sd.getDeviceIP(t, dv.ID, dv.PrimaryIP)
 		if err != nil {
 			return tgroup, fmt.Errorf("Ignoring device: %s. Error: %s", id, err.Error())
 		}
 		tgroup = &targetgroup.Group{
-			Source:  deviceIP.String(),
+			Source:  deviceIP,
 			Labels:  make(model.LabelSet),
 			Targets: make([]model.LabelSet, 0, 1),
 		}
 		if strings.ToUpper(*dv.Status.Label) != "ACTIVE" {
 			return tgroup, fmt.Errorf("Ignoring device: %s. Status: %s", id, *dv.Status.Label)
 		}
-		target := model.LabelSet{model.AddressLabel: model.LabelValue(deviceIP.String())}
+		target := model.LabelSet{model.AddressLabel: model.LabelValue(deviceIP)}
 		labels := model.LabelSet{
-			model.LabelName("module"):    model.LabelValue(strings.Replace(n, sd.region+"-", "", 1)),
-			model.LabelName("state"):     model.LabelValue(*dv.Status.Label),
-			model.LabelName("server_id"): model.LabelValue(id),
-			model.LabelName("role"):      model.LabelValue(*dv.Role.Slug),
+			model.LabelName("state"): model.LabelValue(*dv.Status.Label),
+			model.LabelName("id"):    model.LabelValue(id),
+			model.LabelName("role"):  model.LabelValue(*dv.Role.Slug),
 		}
 
 		tgroup.Labels = labels
@@ -256,45 +229,50 @@ func (sd *SwitchDiscovery) createGroup(n string, c map[string]string, d interfac
 	return tgroup, err
 }
 
-func getDeviceIP(i *models.NestedIPAddress) (ip net.IP, err error) {
-	if i == nil {
-		return ip, fmt.Errorf("No IP Address")
+func (sd *NetboxDiscovery) getDeviceIP(t int, id int64, i *models.NestedIPAddress) (ip string, err error) {
+	switch t {
+	case managementIP:
+		ip, err = sd.netbox.ManagementIP(id)
+	case primaryIP:
+		ip, err = sd.netbox.GetNestedDeviceIP(i)
+	default:
+		return ip, fmt.Errorf("Error getting ip from device: %s. Error: %s", id, "unknown target in config")
 	}
-	ip, _, err = net.ParseCIDR(*i.Address)
+
 	if err != nil {
-		ip = net.ParseIP(*i.Address)
+		return ip, fmt.Errorf("Error getting ip from device: %s. Error: %s", id, err.Error())
 	}
 	return
 }
 
-func (sd *SwitchDiscovery) addCtx() {
+func (sd *NetboxDiscovery) addCtx() {
 
 }
 
-func (sd *SwitchDiscovery) Up() bool {
+func (sd *NetboxDiscovery) Up() bool {
 	return sd.status.Up
 
 }
-func (sd *SwitchDiscovery) Lock() {
+func (sd *NetboxDiscovery) Lock() {
 	sd.status.Lock()
 
 }
-func (sd *SwitchDiscovery) Unlock() {
+func (sd *NetboxDiscovery) Unlock() {
 	sd.status.Unlock()
 }
 
-func (sd *SwitchDiscovery) GetOutputFile() string {
+func (sd *NetboxDiscovery) GetOutputFile() string {
 	return sd.outputFile
 }
 
-func (sd *SwitchDiscovery) StartAdapter() {
+func (sd *NetboxDiscovery) StartAdapter() {
 	sd.adapter.Run()
 }
 
-func (sd *SwitchDiscovery) GetAdapter() adapter.Adapter {
+func (sd *NetboxDiscovery) GetAdapter() adapter.Adapter {
 	return sd.adapter
 }
 
-func (sd *SwitchDiscovery) GetManager() *promDiscovery.Manager {
+func (sd *NetboxDiscovery) GetManager() *promDiscovery.Manager {
 	return sd.manager
 }
