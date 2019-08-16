@@ -3,6 +3,7 @@ package discovery
 import (
 	"context"
 	"fmt"
+	"math/rand"
 	"strconv"
 	"strings"
 	"time"
@@ -177,7 +178,7 @@ func (sd *NetboxDiscovery) createGroup(c map[string]string, t int, d interface{}
 		}
 
 		tgroup = &targetgroup.Group{
-			Source:  deviceIP,
+			Source:  strconv.Itoa(rand.Intn(300000000)),
 			Labels:  make(model.LabelSet),
 			Targets: make([]model.LabelSet, 0, 1),
 		}
@@ -188,7 +189,6 @@ func (sd *NetboxDiscovery) createGroup(c map[string]string, t int, d interface{}
 		labels := model.LabelSet{
 			model.LabelName("name"):         model.LabelValue(dv.DisplayName),
 			model.LabelName("server_name"):  model.LabelValue(*dv.Name),
-			model.LabelName("state"):        model.LabelValue(*dv.Status.Label),
 			model.LabelName("manufacturer"): model.LabelValue(*dv.DeviceType.Manufacturer.Name),
 			model.LabelName("status"):       model.LabelValue(*dv.Status.Label),
 			model.LabelName("model"):        model.LabelValue(*dv.DeviceType.Model),
@@ -206,7 +206,7 @@ func (sd *NetboxDiscovery) createGroup(c map[string]string, t int, d interface{}
 			return tgroup, fmt.Errorf("Ignoring device: %s. Error: %s", id, err.Error())
 		}
 		tgroup = &targetgroup.Group{
-			Source:  deviceIP,
+			Source:  strconv.Itoa(rand.Intn(300000000)),
 			Labels:  make(model.LabelSet),
 			Targets: make([]model.LabelSet, 0, 1),
 		}
@@ -236,11 +236,11 @@ func (sd *NetboxDiscovery) getDeviceIP(t int, id int64, i *models.NestedIPAddres
 	case primaryIP:
 		ip, err = sd.netbox.GetNestedDeviceIP(i)
 	default:
-		return ip, fmt.Errorf("Error getting ip from device: %s. Error: %s", id, "unknown target in config")
+		return ip, fmt.Errorf("Error getting ip from device: %d. Error: %s", id, "unknown target in config")
 	}
 
 	if err != nil {
-		return ip, fmt.Errorf("Error getting ip from device: %s. Error: %s", id, err.Error())
+		return ip, fmt.Errorf("Error getting ip from device: %d. Error: %s", id, err.Error())
 	}
 	return
 }
