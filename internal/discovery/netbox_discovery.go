@@ -215,11 +215,12 @@ func (sd *NetboxDiscovery) createGroup(c map[string]string, t int, d interface{}
 		}
 		target := model.LabelSet{model.AddressLabel: model.LabelValue(deviceIP)}
 		labels := model.LabelSet{
-			model.LabelName("state"): model.LabelValue(*dv.Status.Label),
-			model.LabelName("id"):    model.LabelValue(id),
-			model.LabelName("role"):  model.LabelValue(*dv.Role.Slug),
+			model.LabelName("state"):       model.LabelValue(*dv.Status.Label),
+			model.LabelName("server_name"): model.LabelValue(*dv.Name),
+			model.LabelName("server_id"):   model.LabelValue(id),
+			model.LabelName("role"):        model.LabelValue(*dv.Role.Slug),
 		}
-
+		labels = labels.Merge(cLabels)
 		tgroup.Labels = labels
 		tgroup.Targets = append(tgroup.Targets, target)
 	default:
