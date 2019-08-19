@@ -23,6 +23,7 @@ package main
 
 import (
 	"context"
+	"net/http"
 	"os"
 	"os/signal"
 	"strings"
@@ -100,6 +101,7 @@ func main() {
 
 	ctx := context.Background()
 	ctx, cancel := context.WithCancel(ctx)
+
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 
@@ -108,6 +110,8 @@ func main() {
 	discovery := discovery.New(ctx, opts, w, logger)
 
 	go discovery.Start(ctx, wg, cfg, opts)
+
+	handleReload(cancel)
 
 	defer func() {
 		signal.Stop(c)
@@ -119,4 +123,12 @@ func main() {
 		cancel()
 	case <-ctx.Done():
 	}
+}
+
+func handleReload(cancel context.CancelFunc) {
+	http.HandleFunc("/-/reload", func(w http.ResponseWriter, req *http.Request) {
+		level.Info(log.With(logger, "component", "atlas")).Log("info", "atlas config file  changed! Reloading . . . ")
+		w.WriteHeader(http.StatusOK)
+		cancel()
+	})
 }
