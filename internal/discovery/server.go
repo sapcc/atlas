@@ -3,6 +3,7 @@ package discovery
 import (
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
@@ -27,6 +28,7 @@ func NewServer(a []adapter.Adapter, d []Discovery, l log.Logger) *Server {
 func (s *Server) Start() {
 	http.Handle("/metrics", promhttp.Handler())
 	http.HandleFunc("/healthz", s.health)
+	http.HandleFunc("/-/reload", s.reloadHandler)
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		panic(err)
 	}
@@ -55,6 +57,11 @@ func (s *Server) health(w http.ResponseWriter, r *http.Request) {
 	}
 	level.Debug(log.With(s.logger, "component", "health")).Log("debug", fmt.Sprintf("health probe NOK!"))
 	w.WriteHeader(http.StatusServiceUnavailable)
+}
+
+func (s *Server) reloadHandler(w http.ResponseWriter, req *http.Request) {
+	level.Debug(log.With(s.logger, "component", "reloader")).Log("debug", "CONFIG_FILE changed")
+	os.Exit(1)
 }
 
 func (s *Server) Up() bool {
