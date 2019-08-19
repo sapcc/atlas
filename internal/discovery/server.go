@@ -60,7 +60,8 @@ func (s *Server) health(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) reloadHandler(w http.ResponseWriter, req *http.Request) {
-	level.Debug(log.With(s.logger, "component", "reloader")).Log("debug", "CONFIG_FILE changed")
+	level.Info(log.With(s.logger, "component", "reloader")).Log("info", "CONFIG_FILE changed. Restart atlas sd")
+	w.WriteHeader(http.StatusOK)
 	os.Exit(1)
 }
 
