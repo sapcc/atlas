@@ -1,13 +1,41 @@
 discoveries:
-  switch:
-    refresh_interval: 5000
-    targets_file_name: "switches"
-    netbox_host: "uri"
-    netbox_api_token: "token"
-    switches:
-      - name: "f5"
-        manufacturer: "f5"
-      - name: "asr04"
-        manufacturer: "cisco"
-      - name: "asr01"
-        manufacturer: "cisco"
+      ironic:
+        refresh_interval: 600
+        targets_file_name: "ironic.json"
+        os_auth:
+          auth_url: auth_url
+          user: os_user
+          password: os_password
+          user_domain_name: os_user_domain_name
+          project_name: os_project_name
+          domain_name: os_domain_name
+      netbox:
+        refresh_interval: 600
+        targets_file_name: "netbox.json"
+        netbox_host: netbox_host
+        netbox_api_token: netbox_api_token
+        dcim:
+          devices:
+            - custom_labels: 
+                job: "snmp"
+              target: 1
+              role: "aci-leaf"
+              manufacturer: "cisco"
+              region: "eu-west"
+              status: "1"
+            - custom_labels: 
+                job: "snmp2"
+              role: "aci-spine"
+              target: 1
+              manufacturer: "cisco"
+              region: "eu-west"
+              status: "1"
+        virtualization:
+          vm:
+            - custom_labels:
+                job: "snmp"
+              target: 1
+              manufacturer: "cisco"
+              q: "asa"
+              status: "1"
+              tag: "admin_context"
