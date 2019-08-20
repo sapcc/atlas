@@ -121,11 +121,11 @@ github.com/hashicorp/go-cleanhttp
 # github.com/hashicorp/serf v0.0.0-20161007004122-1d4fa605f6ff
 github.com/hashicorp/serf/coordinate
 # github.com/hosting-de-labs/go-netbox v0.0.0-20190731091136-f55aa11994e5
-github.com/hosting-de-labs/go-netbox/netbox/client
 github.com/hosting-de-labs/go-netbox/netbox/client/dcim
-github.com/hosting-de-labs/go-netbox/netbox/client/ipam
 github.com/hosting-de-labs/go-netbox/netbox/client/virtualization
 github.com/hosting-de-labs/go-netbox/netbox/models
+github.com/hosting-de-labs/go-netbox/netbox/client
+github.com/hosting-de-labs/go-netbox/netbox/client/ipam
 github.com/hosting-de-labs/go-netbox/netbox/client/circuits
 github.com/hosting-de-labs/go-netbox/netbox/client/extras
 github.com/hosting-de-labs/go-netbox/netbox/client/secrets

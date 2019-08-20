@@ -127,7 +127,7 @@ func main() {
 
 func handleReload(cancel context.CancelFunc) {
 	http.HandleFunc("/-/reload", func(w http.ResponseWriter, req *http.Request) {
-		level.Info(log.With(logger, "component", "atlas")).Log("info", "atlas config file  changed! Reloading . . . ")
+		level.Info(log.With(logger, "component", "atlas")).Log("info", "atlas config file changed! Reloading . . . ")
 		w.WriteHeader(http.StatusOK)
 		cancel()
 	})
