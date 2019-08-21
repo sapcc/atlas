@@ -16,6 +16,7 @@ import (
 type Discovery interface {
 	Up() bool
 	Targets() map[string]int
+	GetName() string
 	Lock()
 	Unlock()
 	Run(ctx context.Context, ch chan<- []*targetgroup.Group)

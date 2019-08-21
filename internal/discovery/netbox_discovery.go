@@ -47,8 +47,10 @@ type (
 	}
 )
 
+const netboxDiscovery = "netbox"
+
 func init() {
-	Register("netbox", NewNetboxDiscovery)
+	Register(netboxDiscovery, NewNetboxDiscovery)
 }
 
 //NewNetboxDiscovery creates
@@ -266,6 +268,10 @@ func (sd *NetboxDiscovery) Unlock() {
 
 func (sd *NetboxDiscovery) GetOutputFile() string {
 	return sd.outputFile
+}
+
+func (sd *NetboxDiscovery) GetName() string {
+	return netboxDiscovery
 }
 
 func (sd *NetboxDiscovery) StartAdapter() {

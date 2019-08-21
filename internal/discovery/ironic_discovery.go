@@ -58,8 +58,10 @@ type (
 	}
 )
 
+const ironicDiscovery = "ironic"
+
 func init() {
-	Register("ironic", NewIronicDiscovery)
+	Register(ironicDiscovery, NewIronicDiscovery)
 }
 
 //NewIronicDiscovery creates a new Ironic Discovery
@@ -145,6 +147,10 @@ func (d *IronicDiscovery) Unlock() {
 
 func (d *IronicDiscovery) GetOutputFile() string {
 	return d.outputFile
+}
+
+func (s *IronicDiscovery) GetName() string {
+	return ironicDiscovery
 }
 
 func (d *IronicDiscovery) GetManager() *promDiscovery.Manager {
