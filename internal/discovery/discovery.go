@@ -95,7 +95,7 @@ func (d discovery) Start(ctx context.Context, wg *sync.WaitGroup, cfg config.Con
 
 		adapterList = append(adapterList, disc.GetAdapter())
 		discoveryList = append(discoveryList, disc)
-		prometheus.MustRegister(NewMetricsCollector(name+"_sd_up", "Shows if discovery is running", disc.GetAdapter(), disc, opts.Version))
+		prometheus.MustRegister(NewMetricsCollector(disc.GetAdapter(), disc, opts.Version))
 
 	}
 	go NewServer(adapterList, discoveryList, d.log).Start()
