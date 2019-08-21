@@ -99,6 +99,7 @@ func NewIronicDiscovery(disc interface{}, ctx context.Context, m *promDiscovery.
 
 func (d *IronicDiscovery) Run(ctx context.Context, ch chan<- []*targetgroup.Group) {
 	for c := time.Tick(time.Duration(d.refreshInterval) * time.Second); ; {
+		d.status.Targets = make(map[string]int)
 		tgs, err := d.parseServiceNodes()
 		d.setAdditionalLabels(tgs)
 		if err == nil {
