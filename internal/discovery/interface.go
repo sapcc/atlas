@@ -15,6 +15,7 @@ import (
 
 type Discovery interface {
 	Up() bool
+	Targets() map[string]int
 	Lock()
 	Unlock()
 	Run(ctx context.Context, ch chan<- []*targetgroup.Group)
@@ -28,5 +29,6 @@ type DiscoveryFactory func(config interface{}, ctx context.Context, m *promDisco
 
 type Status struct {
 	sync.Mutex
-	Up bool
+	Up      bool
+	Targets map[string]int
 }

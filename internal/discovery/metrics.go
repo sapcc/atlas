@@ -26,6 +26,7 @@ import (
 
 type MetricsCollector struct {
 	upGauge   *prometheus.Desc
+	targets   *prometheus.Desc
 	adapter   adapter.Adapter
 	discovery Discovery
 }
@@ -50,11 +51,20 @@ func (c *MetricsCollector) Collect(ch chan<- prometheus.Metric) {
 		prometheus.GaugeValue,
 		float64(up),
 	)
+	for key, value := range c.discovery.Targets() {
+		ch <- prometheus.MustNewConstMetric(
+			c.targets,
+			prometheus.GaugeValue,
+			float64(value),
+			key,
+		)
+	}
 }
 
 func NewMetricsCollector(name string, help string, a adapter.Adapter, d Discovery, v string) *MetricsCollector {
 	return &MetricsCollector{
 		upGauge:   prometheus.NewDesc(name, help, nil, prometheus.Labels{"version": v}),
+		targets:   prometheus.NewDesc("atlas_targets", "Number of found targets", []string{"module"}, prometheus.Labels{"version": v}),
 		adapter:   a,
 		discovery: d,
 	}

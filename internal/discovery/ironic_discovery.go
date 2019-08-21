@@ -48,11 +48,13 @@ type (
 		logger          log.Logger
 		status          *Status
 		outputFile      string
+		metricsLabel    string
 	}
 	ironicConfig struct {
 		RefreshInterval int             `yaml:"refresh_interval"`
 		TargetsFileName string          `yaml:"targets_file_name"`
 		OpenstackAuth   auth.OSProvider `yaml:"os_auth"`
+		MetricsLabel    string          `yaml:"metrics_label"`
 	}
 )
 
@@ -86,8 +88,9 @@ func NewIronicDiscovery(disc interface{}, ctx context.Context, m *promDiscovery.
 		providerClient:  p,
 		ironicClient:    i,
 		refreshInterval: cfg.RefreshInterval,
+		metricsLabel:    cfg.MetricsLabel,
 		logger:          l,
-		status:          &Status{Up: false},
+		status:          &Status{Up: false, Targets: make(map[string]int)},
 		outputFile:      cfg.TargetsFileName,
 	}, nil
 }
@@ -128,6 +131,9 @@ func (d *IronicDiscovery) GetAdapter() adapter.Adapter {
 func (d *IronicDiscovery) Up() bool {
 	return d.status.Up
 
+}
+func (d *IronicDiscovery) Targets() map[string]int {
+	return d.status.Targets
 }
 func (d *IronicDiscovery) Lock() {
 	d.status.Lock()
@@ -187,7 +193,7 @@ func (d *IronicDiscovery) parseServiceNodes() ([]*targetgroup.Group, error) {
 		tgroup.Targets = append(tgroup.Targets, target)
 		tgroups = append(tgroups, &tgroup)
 	}
-
+	setMetricsLabelAndValue(d.status.Targets, d.metricsLabel, len(tgroups))
 	return tgroups, nil
 }
 

@@ -14,6 +14,7 @@ type (
 	customParams struct {
 		CustomLabels map[string]string `yaml:"custom_labels"`
 		Target       int               `yaml:"target"`
+		MetricsLabel string            `yaml:"metrics_label"`
 	}
 
 	dcimDevice struct {

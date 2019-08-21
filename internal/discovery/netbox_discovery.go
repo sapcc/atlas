@@ -77,7 +77,7 @@ func NewNetboxDiscovery(disc interface{}, ctx context.Context, m *promDiscovery.
 		region:          opts.Region,
 		refreshInterval: cfg.RefreshInterval,
 		logger:          l,
-		status:          &Status{Up: false},
+		status:          &Status{Up: false, Targets: make(map[string]int)},
 		outputFile:      cfg.TargetsFileName,
 		cfg:             cfg,
 	}, err
@@ -119,6 +119,7 @@ func (sd *NetboxDiscovery) getData() (tgroups []*targetgroup.Group, err error) {
 			return tgroups, err
 		}
 		tgroups = append(tgroups, tg...)
+		setMetricsLabelAndValue(sd.status.Targets, dcim.MetricsLabel, len(tg))
 	}
 	for _, vm := range sd.cfg.Virtualization.VMs {
 		tg, err = sd.loadVirtualizationVMs(vm)
@@ -126,6 +127,7 @@ func (sd *NetboxDiscovery) getData() (tgroups []*targetgroup.Group, err error) {
 			return tgroups, err
 		}
 		tgroups = append(tgroups, tg...)
+		setMetricsLabelAndValue(sd.status.Targets, vm.MetricsLabel, len(tg))
 	}
 	return tgroups, err
 }
@@ -246,14 +248,14 @@ func (sd *NetboxDiscovery) getDeviceIP(t int, id int64, i *models.NestedIPAddres
 	return
 }
 
-func (sd *NetboxDiscovery) addCtx() {
-
-}
-
 func (sd *NetboxDiscovery) Up() bool {
 	return sd.status.Up
-
 }
+
+func (sd *NetboxDiscovery) Targets() map[string]int {
+	return sd.status.Targets
+}
+
 func (sd *NetboxDiscovery) Lock() {
 	sd.status.Lock()
 
