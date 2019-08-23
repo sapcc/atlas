@@ -67,7 +67,9 @@ func NewMetricsCollector(a adapter.Adapter, d Discovery, v string) *MetricsColle
 			"atlas_targets",
 			"Number of found targets",
 			[]string{"module"},
-			prometheus.Labels{"version": v}),
+			prometheus.Labels{
+				"version": v,
+			}),
 		upGauge: prometheus.NewDesc(
 			"atlas_sd_up",
 			"Shows if discovery is running",

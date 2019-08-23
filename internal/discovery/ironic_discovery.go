@@ -99,7 +99,9 @@ func NewIronicDiscovery(disc interface{}, ctx context.Context, m *promDiscovery.
 
 func (d *IronicDiscovery) Run(ctx context.Context, ch chan<- []*targetgroup.Group) {
 	for c := time.Tick(time.Duration(d.refreshInterval) * time.Second); ; {
+		d.status.Lock()
 		d.status.Targets = make(map[string]int)
+		d.status.Unlock()
 		tgs, err := d.parseServiceNodes()
 		d.setAdditionalLabels(tgs)
 		if err == nil {
@@ -200,7 +202,9 @@ func (d *IronicDiscovery) parseServiceNodes() ([]*targetgroup.Group, error) {
 		tgroup.Targets = append(tgroup.Targets, target)
 		tgroups = append(tgroups, &tgroup)
 	}
+	d.status.Lock()
 	setMetricsLabelAndValue(d.status.Targets, d.metricsLabel, len(tgroups))
+	d.status.Unlock()
 	return tgroups, nil
 }
 
