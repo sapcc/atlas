@@ -88,9 +88,6 @@ func NewNetboxDiscovery(disc interface{}, ctx context.Context, m *promDiscovery.
 
 func (sd *NetboxDiscovery) Run(ctx context.Context, ch chan<- []*targetgroup.Group) {
 	for c := time.Tick(time.Duration(sd.refreshInterval) * time.Second); ; {
-		sd.status.Lock()
-		sd.status.Targets = make(map[string]int)
-		sd.status.Unlock()
 		level.Debug(log.With(sd.logger, "component", "NetboxDiscovery")).Log("debug", "Loading Devices")
 		tgs, err := sd.getData()
 		if err == nil {
@@ -133,6 +130,7 @@ func (sd *NetboxDiscovery) getData() (tgroups []*targetgroup.Group, err error) {
 		}
 		tgroups = append(tgroups, tg...)
 		sd.status.Lock()
+		sd.status.Targets = make(map[string]int)
 		setMetricsLabelAndValue(sd.status.Targets, vm.MetricsLabel, len(tg))
 		sd.status.Unlock()
 	}
