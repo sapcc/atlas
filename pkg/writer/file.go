@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io/ioutil"
+	"strings"
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
@@ -25,14 +26,27 @@ func NewFile(fileName string, logger log.Logger) (f *File, err error) {
 }
 
 func (c *File) GetData(name string) (data string, err error) {
-	return c.data[name], err
+	d, err := ioutil.ReadFile(c.fileName)
+	data = string(d)
+	data = strings.TrimSuffix(data, "\n")
+	files := strings.FieldsFunc(data, split)
+
+	for i, f := range files {
+		t := strings.TrimSuffix(strings.Trim(strings.TrimSpace(f), "\""), "\n")
+		t = strings.Replace(t, "\n", "", -1)
+		if t == name {
+			return files[i+1], err
+		}
+	}
+
+	return data, err
 }
 
 // Writes string data to configmap.
 func (c *File) Write(name, data string) (err error) {
 	err = util.RetryOnConflict(util.DefaultBackoff, func() (err error) {
 
-		c.data[name] = string(data)
+		c.data[name] = string(data) + ";"
 		b := new(bytes.Buffer)
 		for key, value := range c.data {
 			fmt.Fprintf(b, "%s=\"%s\"\n", key, value)
@@ -44,4 +58,8 @@ func (c *File) Write(name, data string) (err error) {
 	})
 
 	return err
+}
+
+func split(r rune) bool {
+	return r == '=' || r == ';'
 }

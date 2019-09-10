@@ -135,6 +135,8 @@ func (d *IronicDiscovery) Up() bool {
 
 }
 func (d *IronicDiscovery) Targets() map[string]int {
+	d.status.Targets = make(map[string]int)
+	setMetricsLabelAndValue(d.status.Targets, d.metricsLabel, d.adapter.GetNumberOfTargetsFor(d.metricsLabel))
 	return d.status.Targets
 }
 func (d *IronicDiscovery) Lock() {
@@ -189,6 +191,7 @@ func (d *IronicDiscovery) parseServiceNodes() ([]*targetgroup.Group, error) {
 			model.LabelName("serial"):          model.LabelValue(node.Properties.SerialNumber),
 			model.LabelName("manufacturer"):    model.LabelValue(node.Properties.Manufacturer),
 			model.LabelName("model"):           model.LabelValue(node.Properties.Model),
+			model.LabelName("metrics_label"):   model.LabelValue(d.metricsLabel),
 		}
 
 		if len(node.InstanceUuID) > 0 {
@@ -199,10 +202,6 @@ func (d *IronicDiscovery) parseServiceNodes() ([]*targetgroup.Group, error) {
 		tgroup.Targets = append(tgroup.Targets, target)
 		tgroups = append(tgroups, &tgroup)
 	}
-	d.status.Lock()
-	d.status.Targets = make(map[string]int)
-	setMetricsLabelAndValue(d.status.Targets, d.metricsLabel, len(tgroups))
-	d.status.Unlock()
 	return tgroups, nil
 }
 

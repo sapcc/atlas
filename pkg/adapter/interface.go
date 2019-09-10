@@ -19,4 +19,5 @@ type AdapterFactory func(ctx context.Context, m *promDiscovery.Manager, w writer
 type Adapter interface {
 	GetStatus() *Status
 	Run()
+	GetNumberOfTargetsFor(label string) int
 }

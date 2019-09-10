@@ -88,14 +88,13 @@ func (d discovery) Start(ctx context.Context, wg *sync.WaitGroup, cfg config.Con
 			level.Error(log.With(d.log, "component", "discovery")).Log("err", err)
 			continue
 		}
-
+		prometheus.MustRegister(NewMetricsCollector(disc.GetAdapter(), disc, opts.Version))
 		go disc.GetManager().Run()
 		disc.GetManager().StartCustomProvider(ctx, name, disc)
 		go disc.StartAdapter()
 
 		adapterList = append(adapterList, disc.GetAdapter())
 		discoveryList = append(discoveryList, disc)
-		prometheus.MustRegister(NewMetricsCollector(disc.GetAdapter(), disc, opts.Version))
 
 	}
 	go NewServer(adapterList, discoveryList, d.log).Start()

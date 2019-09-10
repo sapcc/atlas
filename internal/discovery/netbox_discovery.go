@@ -101,7 +101,6 @@ func (sd *NetboxDiscovery) Run(ctx context.Context, ch chan<- []*targetgroup.Gro
 			sd.status.Lock()
 			sd.status.Up = false
 			sd.status.Unlock()
-			continue
 		}
 		// Wait for ticker or exit when ctx is closed.
 		select {
@@ -121,7 +120,7 @@ func (sd *NetboxDiscovery) getData() (tgroups []*targetgroup.Group, err error) {
 			return tgroups, err
 		}
 		tgroups = append(tgroups, tg...)
-		setMetricsLabelAndValue(sd.status.Targets, dcim.MetricsLabel, len(tg))
+
 	}
 	for _, vm := range sd.cfg.Virtualization.VMs {
 		tg, err = sd.loadVirtualizationVMs(vm)
@@ -129,21 +128,18 @@ func (sd *NetboxDiscovery) getData() (tgroups []*targetgroup.Group, err error) {
 			return tgroups, err
 		}
 		tgroups = append(tgroups, tg...)
-		sd.status.Lock()
-		sd.status.Targets = make(map[string]int)
-		setMetricsLabelAndValue(sd.status.Targets, vm.MetricsLabel, len(tg))
-		sd.status.Unlock()
 	}
 	return tgroups, err
 }
 
 func (sd *NetboxDiscovery) loadDcimDevices(d dcimDevice) (tgroups []*targetgroup.Group, err error) {
-	dcims, err := sd.netbox.DevicesByParams(d.DcimDevicesListParams)
+	var dcims []models.Device
+	dcims, err = sd.netbox.DevicesByParams(d.DcimDevicesListParams)
 	if err != nil {
-		return tgroups, level.Error(log.With(sd.logger, "component", "NetboxDiscovery")).Log("error", err)
+		return tgroups, err
 	}
 	for _, dv := range dcims {
-		tgroup, err := sd.createGroup(d.CustomLabels, d.Target, dv)
+		tgroup, err := sd.createGroup(d.CustomLabels, d.MetricsLabel, d.Target, dv)
 		if err != nil {
 			level.Error(log.With(sd.logger, "component", "NetboxDiscovery")).Log("error", err)
 			continue
@@ -157,10 +153,10 @@ func (sd *NetboxDiscovery) loadDcimDevices(d dcimDevice) (tgroups []*targetgroup
 func (sd *NetboxDiscovery) loadVirtualizationVMs(d virtualizationVM) (tgroups []*targetgroup.Group, err error) {
 	vms, err := sd.netbox.VMsByParams(d.VirtualizationVirtualMachinesListParams)
 	if err != nil {
-		return tgroups, level.Error(log.With(sd.logger, "component", "NetboxDiscovery")).Log("error", err)
+		return tgroups, err
 	}
 	for _, vm := range vms {
-		tgroup, err := sd.createGroup(d.CustomLabels, d.Target, vm)
+		tgroup, err := sd.createGroup(d.CustomLabels, d.MetricsLabel, d.Target, vm)
 		if err != nil {
 			level.Error(log.With(sd.logger, "component", "NetboxDiscovery")).Log("error", err)
 			continue
@@ -171,7 +167,7 @@ func (sd *NetboxDiscovery) loadVirtualizationVMs(d virtualizationVM) (tgroups []
 	return tgroups, err
 }
 
-func (sd *NetboxDiscovery) createGroup(c map[string]string, t int, d interface{}) (tgroup *targetgroup.Group, err error) {
+func (sd *NetboxDiscovery) createGroup(c map[string]string, metricsLabel string, t int, d interface{}) (tgroup *targetgroup.Group, err error) {
 	cLabels := model.LabelSet{}
 	for k, v := range c {
 		cLabels[model.LabelName(k)] = model.LabelValue(v)
@@ -194,13 +190,14 @@ func (sd *NetboxDiscovery) createGroup(c map[string]string, t int, d interface{}
 		}
 		target := model.LabelSet{model.AddressLabel: model.LabelValue(deviceIP)}
 		labels := model.LabelSet{
-			model.LabelName("name"):         model.LabelValue(dv.DisplayName),
-			model.LabelName("server_name"):  model.LabelValue(*dv.Name),
-			model.LabelName("manufacturer"): model.LabelValue(*dv.DeviceType.Manufacturer.Name),
-			model.LabelName("status"):       model.LabelValue(*dv.Status.Label),
-			model.LabelName("model"):        model.LabelValue(*dv.DeviceType.Model),
-			model.LabelName("server_id"):    model.LabelValue(id),
-			model.LabelName("role"):         model.LabelValue(*dv.DeviceRole.Slug),
+			model.LabelName("name"):          model.LabelValue(dv.DisplayName),
+			model.LabelName("server_name"):   model.LabelValue(*dv.Name),
+			model.LabelName("manufacturer"):  model.LabelValue(*dv.DeviceType.Manufacturer.Name),
+			model.LabelName("status"):        model.LabelValue(*dv.Status.Label),
+			model.LabelName("model"):         model.LabelValue(*dv.DeviceType.Model),
+			model.LabelName("server_id"):     model.LabelValue(id),
+			model.LabelName("role"):          model.LabelValue(*dv.DeviceRole.Slug),
+			model.LabelName("metrics_label"): model.LabelValue(metricsLabel),
 		}
 		labels = labels.Merge(cLabels)
 
@@ -222,10 +219,11 @@ func (sd *NetboxDiscovery) createGroup(c map[string]string, t int, d interface{}
 		}
 		target := model.LabelSet{model.AddressLabel: model.LabelValue(deviceIP)}
 		labels := model.LabelSet{
-			model.LabelName("state"):       model.LabelValue(*dv.Status.Label),
-			model.LabelName("server_name"): model.LabelValue(*dv.Name),
-			model.LabelName("server_id"):   model.LabelValue(id),
-			model.LabelName("role"):        model.LabelValue(*dv.Role.Slug),
+			model.LabelName("state"):         model.LabelValue(*dv.Status.Label),
+			model.LabelName("server_name"):   model.LabelValue(*dv.Name),
+			model.LabelName("server_id"):     model.LabelValue(id),
+			model.LabelName("role"):          model.LabelValue(*dv.Role.Slug),
+			model.LabelName("metrics_label"): model.LabelValue(metricsLabel),
 		}
 		labels = labels.Merge(cLabels)
 		tgroup.Labels = labels
@@ -253,11 +251,29 @@ func (sd *NetboxDiscovery) getDeviceIP(t int, id int64, i *models.NestedIPAddres
 	return
 }
 
+func (sd *NetboxDiscovery) setMetrics() {
+	labels := make(map[string]int, 0)
+	for _, dcim := range sd.cfg.DCIM.Devices {
+		if _, ok := labels[dcim.MetricsLabel]; !ok {
+			labels[dcim.MetricsLabel] = 0
+			setMetricsLabelAndValue(sd.status.Targets, dcim.MetricsLabel, sd.adapter.GetNumberOfTargetsFor(dcim.MetricsLabel))
+		}
+	}
+	for _, vm := range sd.cfg.Virtualization.VMs {
+		if _, ok := labels[vm.MetricsLabel]; !ok {
+			labels[vm.MetricsLabel] = 0
+			setMetricsLabelAndValue(sd.status.Targets, vm.MetricsLabel, sd.adapter.GetNumberOfTargetsFor(vm.MetricsLabel))
+		}
+	}
+}
+
 func (sd *NetboxDiscovery) Up() bool {
 	return sd.status.Up
 }
 
 func (sd *NetboxDiscovery) Targets() map[string]int {
+	sd.status.Targets = make(map[string]int)
+	sd.setMetrics()
 	return sd.status.Targets
 }
 

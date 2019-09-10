@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
+	"strings"
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
@@ -113,6 +114,23 @@ func (p *Prom) writeOutput() error {
 
 func (p *Prom) GetStatus() *Status {
 	return p.Status
+}
+
+func (p *Prom) GetNumberOfTargetsFor(label string) (targets int) {
+	data, err := p.writer.GetData(p.outputFileName)
+	if err != nil {
+		return targets
+	}
+	groups := make([]customSD, 0)
+	err = json.Unmarshal([]byte(strings.Trim(data, "\"")), &groups)
+	for _, g := range groups {
+		if val, ok := g.Labels["metrics_label"]; ok {
+			if val == label {
+				targets++
+			}
+		}
+	}
+	return targets
 }
 
 func (p *Prom) Run() {
