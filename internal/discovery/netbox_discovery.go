@@ -12,7 +12,6 @@ import (
 	"github.com/go-kit/kit/log/level"
 	"github.com/hosting-de-labs/go-netbox/netbox/models"
 	"github.com/prometheus/common/model"
-	promDiscovery "github.com/prometheus/prometheus/discovery"
 	"github.com/prometheus/prometheus/discovery/targetgroup"
 	"github.com/sapcc/atlas/pkg/adapter"
 	"github.com/sapcc/atlas/pkg/config"
@@ -22,7 +21,6 @@ import (
 
 type (
 	NetboxDiscovery struct {
-		manager         *promDiscovery.Manager
 		adapter         adapter.Adapter
 		netbox          *netbox.Netbox
 		region          string
@@ -54,7 +52,7 @@ func init() {
 }
 
 //NewNetboxDiscovery creates
-func NewNetboxDiscovery(disc interface{}, ctx context.Context, m *promDiscovery.Manager, opts config.Options, w writer.Writer, l log.Logger) (d Discovery, err error) {
+func NewNetboxDiscovery(disc interface{}, ctx context.Context, opts config.Options, w writer.Writer, l log.Logger) (d Discovery, err error) {
 	var cfg netboxConfig
 	configValues := configValues{Region: opts.Region}
 	if err := UnmarshalHandler(disc, &cfg, configValues); err != nil {
@@ -70,11 +68,10 @@ func NewNetboxDiscovery(disc interface{}, ctx context.Context, m *promDiscovery.
 		return d, err
 	}
 
-	a := adapter.NewPrometheus(ctx, m, cfg.TargetsFileName, w, l)
+	a := adapter.NewPrometheus(ctx, cfg.TargetsFileName, w, l)
 
 	return &NetboxDiscovery{
 		adapter:         a,
-		manager:         m,
 		netbox:          nClient,
 		region:          opts.Region,
 		refreshInterval: cfg.RefreshInterval,
@@ -293,14 +290,6 @@ func (sd *NetboxDiscovery) GetName() string {
 	return netboxDiscovery
 }
 
-func (sd *NetboxDiscovery) StartAdapter() {
-	sd.adapter.Run()
-}
-
 func (sd *NetboxDiscovery) GetAdapter() adapter.Adapter {
 	return sd.adapter
-}
-
-func (sd *NetboxDiscovery) GetManager() *promDiscovery.Manager {
-	return sd.manager
 }

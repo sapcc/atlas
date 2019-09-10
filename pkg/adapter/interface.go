@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-kit/kit/log"
 	promDiscovery "github.com/prometheus/prometheus/discovery"
+	"github.com/prometheus/prometheus/discovery/targetgroup"
 	"github.com/sapcc/atlas/pkg/writer"
 )
 
@@ -18,6 +19,6 @@ type AdapterFactory func(ctx context.Context, m *promDiscovery.Manager, w writer
 
 type Adapter interface {
 	GetStatus() *Status
-	Run()
+	Run(ctx context.Context, updates <-chan []*targetgroup.Group)
 	GetNumberOfTargetsFor(label string) int
 }

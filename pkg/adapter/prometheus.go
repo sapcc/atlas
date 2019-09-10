@@ -22,7 +22,6 @@ import (
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
-	promDiscovery "github.com/prometheus/prometheus/discovery"
 	"github.com/prometheus/prometheus/discovery/targetgroup"
 	"github.com/sapcc/atlas/pkg/writer"
 )
@@ -38,19 +37,17 @@ type Prom struct {
 	writer         writer.Writer
 	ctx            context.Context
 	groups         map[string]*customSD
-	manager        *promDiscovery.Manager
 	outputFileName string
 	logger         log.Logger
 	Status         *Status
 }
 
 // New creates a new instance of Adapter.
-func NewPrometheus(ctx context.Context, m *promDiscovery.Manager, outputFileName string, w writer.Writer, logger log.Logger) Adapter {
+func NewPrometheus(ctx context.Context, outputFileName string, w writer.Writer, logger log.Logger) Adapter {
 
 	return &Prom{
 		ctx:            ctx,
 		groups:         make(map[string]*customSD),
-		manager:        m,
 		writer:         w,
 		outputFileName: outputFileName,
 		Status:         &Status{Up: false},
@@ -68,28 +65,26 @@ func mapToArray(m map[string]*customSD) []customSD {
 
 // Parses incoming target groups updates. If the update contains changes to the target groups
 // Adapter already knows about, or new target groups, we Marshal to JSON and write to file.
-func (p *Prom) generateTargetGroups(allTargetGroups map[string][]*targetgroup.Group) error {
+func (p *Prom) generateTargetGroups(allTargetGroups []*targetgroup.Group) error {
 	tempGroups := make(map[string]*customSD)
-	for k, sdTargetGroups := range allTargetGroups {
-		for i, group := range sdTargetGroups {
-			newTargets := make([]string, 0)
-			newLabels := make(map[string]string)
+	for i, group := range allTargetGroups {
+		newTargets := make([]string, 0)
+		newLabels := make(map[string]string)
 
-			for _, targets := range group.Targets {
-				for _, target := range targets {
-					newTargets = append(newTargets, string(target))
-				}
+		for _, targets := range group.Targets {
+			for _, target := range targets {
+				newTargets = append(newTargets, string(target))
 			}
+		}
 
-			for name, value := range group.Labels {
-				newLabels[string(name)] = string(value)
-			}
-			// Make a unique key, including the current index, in case the sd_type (map key) and group.Source is not unique.
-			key := fmt.Sprintf("%s:%s:%d", k, group.Source, i)
-			tempGroups[key] = &customSD{
-				Targets: newTargets,
-				Labels:  newLabels,
-			}
+		for name, value := range group.Labels {
+			newLabels[string(name)] = string(value)
+		}
+		// Make a unique key, including the current index, in case the sd_type (map key) and group.Source is not unique.
+		key := fmt.Sprintf("%s:%d", group.Source, i)
+		tempGroups[key] = &customSD{
+			Targets: newTargets,
+			Labels:  newLabels,
 		}
 	}
 	if !reflect.DeepEqual(p.groups, tempGroups) {
@@ -106,6 +101,7 @@ func (p *Prom) generateTargetGroups(allTargetGroups map[string][]*targetgroup.Gr
 }
 
 func (p *Prom) writeOutput() error {
+	fmt.Println(len(p.groups))
 	arr := mapToArray(p.groups)
 	b, _ := json.MarshalIndent(arr, "", "    ")
 
@@ -133,7 +129,7 @@ func (p *Prom) GetNumberOfTargetsFor(label string) (targets int) {
 	return targets
 }
 
-func (p *Prom) Run() {
+func (p *Prom) Run(ctx context.Context, updates <-chan []*targetgroup.Group) {
 	data, err := p.writer.GetData(p.outputFileName)
 	if err != nil {
 		level.Error(log.With(p.logger, "component", "sd-adapter")).Log("err", err)
@@ -144,10 +140,10 @@ func (p *Prom) Run() {
 	if len(data) > 0 {
 		p.groups["dummy"] = &customSD{}
 	}
-	updates := p.manager.SyncCh()
+
 	for {
 		select {
-		case <-p.ctx.Done():
+		case <-ctx.Done():
 		case allTargetGroups, ok := <-updates:
 			// Handle the case that a target provider exits and closes the channel
 			// before the context is done.

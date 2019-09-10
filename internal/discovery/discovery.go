@@ -13,7 +13,7 @@ import (
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	"github.com/prometheus/client_golang/prometheus"
-	promDiscovery "github.com/prometheus/prometheus/discovery"
+	"github.com/prometheus/prometheus/discovery/targetgroup"
 	"github.com/sapcc/atlas/pkg/adapter"
 	"github.com/sapcc/atlas/pkg/config"
 	"gopkg.in/yaml.v2"
@@ -61,9 +61,8 @@ func (d discovery) createDiscovery(name string, config interface{}) (Discovery, 
 		return nil, fmt.Errorf(fmt.Sprintf("Invalid Handler name. Must be one of: %s", strings.Join(availableDiscoveries, ", ")))
 	}
 
-	m := promDiscovery.NewManager(d.ctx, d.log)
 	// Run the factory with the configuration.
-	return discoveryFactory(config, d.ctx, m, d.opts, d.writer, d.log)
+	return discoveryFactory(config, d.ctx, d.opts, d.writer, d.log)
 }
 
 func (d discovery) getDiscoveries() []string {
@@ -88,13 +87,15 @@ func (d discovery) Start(ctx context.Context, wg *sync.WaitGroup, cfg config.Con
 			level.Error(log.With(d.log, "component", "discovery")).Log("err", err)
 			continue
 		}
-		prometheus.MustRegister(NewMetricsCollector(disc.GetAdapter(), disc, opts.Version))
-		go disc.GetManager().Run()
-		disc.GetManager().StartCustomProvider(ctx, name, disc)
-		go disc.StartAdapter()
+
+		updates := make(chan []*targetgroup.Group)
+		go disc.Run(ctx, updates)
+		go disc.GetAdapter().Run(ctx, updates)
 
 		adapterList = append(adapterList, disc.GetAdapter())
 		discoveryList = append(discoveryList, disc)
+
+		prometheus.MustRegister(NewMetricsCollector(disc.GetAdapter(), disc, opts.Version))
 
 	}
 	go NewServer(adapterList, discoveryList, d.log).Start()

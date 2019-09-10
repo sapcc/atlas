@@ -30,7 +30,6 @@ import (
 	"github.com/go-kit/kit/log/level"
 	"github.com/gophercloud/gophercloud"
 	"github.com/prometheus/common/model"
-	promDiscovery "github.com/prometheus/prometheus/discovery"
 	"github.com/prometheus/prometheus/discovery/targetgroup"
 	"github.com/sapcc/atlas/pkg/adapter"
 	"github.com/sapcc/atlas/pkg/auth"
@@ -40,7 +39,6 @@ import (
 
 type (
 	IronicDiscovery struct {
-		manager         *promDiscovery.Manager
 		adapter         adapter.Adapter
 		providerClient  *gophercloud.ProviderClient
 		ironicClient    *clients.IronicClient
@@ -65,7 +63,7 @@ func init() {
 }
 
 //NewIronicDiscovery creates a new Ironic Discovery
-func NewIronicDiscovery(disc interface{}, ctx context.Context, m *promDiscovery.Manager, opts config.Options, w writer.Writer, l log.Logger) (d Discovery, err error) {
+func NewIronicDiscovery(disc interface{}, ctx context.Context, opts config.Options, w writer.Writer, l log.Logger) (d Discovery, err error) {
 	var cfg ironicConfig
 	if err := UnmarshalHandler(disc, &cfg, nil); err != nil {
 		return d, err
@@ -82,10 +80,9 @@ func NewIronicDiscovery(disc interface{}, ctx context.Context, m *promDiscovery.
 		return d, err
 	}
 
-	a := adapter.NewPrometheus(ctx, m, cfg.TargetsFileName, w, l)
+	a := adapter.NewPrometheus(ctx, cfg.TargetsFileName, w, l)
 
 	return &IronicDiscovery{
-		manager:         m,
 		adapter:         a,
 		providerClient:  p,
 		ironicClient:    i,
@@ -102,11 +99,13 @@ func (d *IronicDiscovery) Run(ctx context.Context, ch chan<- []*targetgroup.Grou
 		tgs, err := d.parseServiceNodes()
 		d.setAdditionalLabels(tgs)
 		if err == nil {
+			level.Debug(log.With(d.logger, "component", "IronicDiscovery")).Log("debug", "Done Loading Nodes")
 			d.status.Lock()
 			d.status.Up = true
 			d.status.Unlock()
 			ch <- tgs
 		} else {
+			level.Error(log.With(d.logger, "component", "IronicDiscovery")).Log("error", err)
 			d.status.Lock()
 			d.status.Up = false
 			d.status.Unlock()
@@ -120,10 +119,6 @@ func (d *IronicDiscovery) Run(ctx context.Context, ch chan<- []*targetgroup.Grou
 			return
 		}
 	}
-}
-
-func (d *IronicDiscovery) StartAdapter() {
-	d.adapter.Run()
 }
 
 func (d *IronicDiscovery) GetAdapter() adapter.Adapter {
@@ -153,10 +148,6 @@ func (d *IronicDiscovery) GetOutputFile() string {
 
 func (s *IronicDiscovery) GetName() string {
 	return ironicDiscovery
-}
-
-func (d *IronicDiscovery) GetManager() *promDiscovery.Manager {
-	return d.manager
 }
 
 func (d *IronicDiscovery) parseServiceNodes() ([]*targetgroup.Group, error) {
