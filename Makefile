@@ -7,6 +7,8 @@ BINARY  := atlas
 LDFLAGS := -X github.com/sapcc/atlas/pkg/atlas.VERSION=$(VERSION)
 GOFLAGS := -ldflags "$(LDFLAGS)"
 
+GOFILES := $(shell find . -type f -name '*.go' -not -path "./vendor/*")
+
 all: bin/$(GOOS)/$(BINARY)
 
 bin/%/$(BINARY): $(GOFILES) Makefile
