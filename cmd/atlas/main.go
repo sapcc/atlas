@@ -49,22 +49,21 @@ var (
 func init() {
 	logger = log.NewLogfmtLogger(log.NewSyncWriter(os.Stderr))
 	logger = log.With(logger, "ts", log.DefaultTimestampUTC)
-	flag.StringVar(&opts.LogLevel, "LOG_LEVEL", "debug", "To set Log Level")
 
+	flag.StringVar(&opts.LogLevel, "LOG_LEVEL", "debug", "To set Log Level")
 	flag.StringVar(&opts.Version, "OS_VERSION", "v0.3.0", "IPMI SD Version")
 	flag.StringVar(&opts.NameSpace, "K8S_NAMESPACE", "kube-monitoring", "k8s Namespace the service is running in")
 	flag.StringVar(&opts.Region, "K8S_REGION", "qa-de-1", "k8s Region the service is running in")
 	flag.StringVar(&opts.WriteTo, "WRITE_TO", "file", "k8s Region the service is running in")
-
 	flag.StringVar(&opts.ConfigFilePath, "CONFIG_FILE", "/etc/config/config.yaml", "Path to the config file")
+	flag.Parse()
+
 	if val, ok := os.LookupEnv("PROM_CONFIGMAP_NAME"); ok {
 		opts.ConfigmapName = val
 	} else {
 		level.Error(log.With(logger, "component", "atlas")).Log("err", "no configmap name given")
 		os.Exit(2)
 	}
-
-	flag.Parse()
 
 	switch strings.ToLower(opts.LogLevel) {
 	case "info":

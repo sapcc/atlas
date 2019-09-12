@@ -7,6 +7,12 @@ BINARY  := atlas
 LDFLAGS := -X github.com/sapcc/atlas/pkg/atlas.VERSION=$(VERSION)
 GOFLAGS := -ldflags "$(LDFLAGS)"
 
+SRCDIRS  := cmd pkg internal
+PACKAGES := $(shell find $(SRCDIRS) -type d)
+GOFILES  := $(addsuffix /*.go,$(PACKAGES))
+GOFILES  := $(wildcard $(GOFILES))
+
+
 all: bin/$(GOOS)/$(BINARY)
 
 bin/%/$(BINARY): $(GOFILES) Makefile
