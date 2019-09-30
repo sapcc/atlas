@@ -1,6 +1,6 @@
 /*******************************************************************************
 *
-* Copyright 2018 SAP SE
+* Copyright 2019 SAP SE
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 * limitations under the License.
 *
 *******************************************************************************/
-
-// custom prometheus discovery
 
 package main
 
@@ -55,9 +53,8 @@ func init() {
 	flag.StringVar(&opts.NameSpace, "K8S_NAMESPACE", "kube-monitoring", "k8s Namespace the service is running in")
 	flag.StringVar(&opts.Region, "K8S_REGION", "qa-de-1", "k8s Region the service is running in")
 	flag.StringVar(&opts.WriteTo, "WRITE_TO", "file", "k8s Region the service is running in")
-	flag.StringVar(&opts.ConfigFilePath, "CONFIG_FILE", "/etc/config/config.yaml", "Path to the config file")
-	flag.Parse()
 
+	flag.StringVar(&opts.ConfigFilePath, "CONFIG_FILE", "./etc/config/config.yaml", "Path to the config file")
 	if val, ok := os.LookupEnv("PROM_CONFIGMAP_NAME"); ok {
 		opts.ConfigmapName = val
 	} else {

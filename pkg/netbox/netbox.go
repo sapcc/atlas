@@ -1,8 +1,25 @@
+/**
+ * Copyright 2019 SAP SE
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package netbox
 
 import (
 	"fmt"
 	"net"
+	"strconv"
 	"time"
 
 	"github.com/hosting-de-labs/go-netbox/netbox/client/virtualization"
@@ -246,7 +263,7 @@ func (nb *Netbox) VMsByTag(query, status, tag string) (res []models.VirtualMachi
 // ManagementIP retrieves the IP of the management interface for server
 func (nb *Netbox) ManagementIP(serverID int64) (string, error) {
 
-	managementInterface, err := nb.Interface(serverID, "cimc")
+	managementInterface, err := nb.MgmtInterface(serverID, true)
 	if err != nil {
 		return "", err
 	}
@@ -270,7 +287,6 @@ func (nb *Netbox) ManagementIP(serverID int64) (string, error) {
 
 // Interface retrieves the interface on the device
 func (nb *Netbox) Interface(deviceID int64, interfaceName string) (*models.DeviceInterface, error) {
-
 	params := dcim.NewDcimInterfacesListParams()
 	params.DeviceID = &deviceID
 	params.Name = &interfaceName
@@ -291,6 +307,30 @@ func (nb *Netbox) Interface(deviceID int64, interfaceName string) (*models.Devic
 
 	return list.Payload.Results[0], nil
 
+}
+
+// MgmtInterface retrieves the management interface on the device
+func (nb *Netbox) MgmtInterface(deviceID int64, mgmtOnly bool) (*models.DeviceInterface, error) {
+	mgmtOnlyString := strconv.FormatBool(mgmtOnly)
+	params := dcim.NewDcimInterfacesListParams()
+	params.DeviceID = &deviceID
+	params.MgmtOnly = &mgmtOnlyString
+
+	limit := int64(1)
+	params.Limit = &limit
+
+	list, err := nb.client.Dcim.DcimInterfacesList(params, nil)
+	if err != nil {
+		return nil, err
+	}
+	if *list.Payload.Count < 1 {
+		return nil, fmt.Errorf("no MgmtOnly=%s interface found for device %d", mgmtOnlyString, deviceID)
+	}
+	if *list.Payload.Count > 1 {
+		return nil, fmt.Errorf("more than 1 MgmtOnly=%s interface found for device %d", mgmtOnlyString, deviceID)
+	}
+
+	return list.Payload.Results[0], nil
 }
 
 // IPAddressByDeviceAndIntefrace retrieves the IP address by device and interface
