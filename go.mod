@@ -25,6 +25,8 @@ require (
 	github.com/hashicorp/raft v1.1.1 // indirect
 	github.com/hashicorp/serf v0.0.0-20161007004122-1d4fa605f6ff // indirect
 	github.com/hosting-de-labs/go-netbox v0.0.0-20190731091136-f55aa11994e5
+	github.com/howeyc/gopass v0.0.0-20190910152052-7cb4b85ec19c // indirect
+	github.com/imdario/mergo v0.3.7 // indirect
 	github.com/jmespath/go-jmespath v0.0.0-20160803190731-bd40a432e4c7 // indirect
 	github.com/juju/ratelimit v0.0.0-20151125201925-77ed1c8a0121 // indirect
 	github.com/namsral/flag v1.7.4-pre

@@ -169,6 +169,10 @@ github.com/hashicorp/serf v0.0.0-20161007004122-1d4fa605f6ff h1:3QdMaUEV3zE0VcBg
 github.com/hashicorp/serf v0.0.0-20161007004122-1d4fa605f6ff/go.mod h1:h/Ru6tmZazX7WO/GDmwdpS975F019L4t5ng5IgwbNrE=
 github.com/hosting-de-labs/go-netbox v0.0.0-20190731091136-f55aa11994e5 h1:+uPHEFii0HoUN2eT6xoMtkiap7iT+XshD2CG8jYswyw=
 github.com/hosting-de-labs/go-netbox v0.0.0-20190731091136-f55aa11994e5/go.mod h1:JFo3C4JO3jZ2NGnFGZkEsh1tVwm1bpvprBoxX8y2gvc=
+github.com/howeyc/gopass v0.0.0-20190910152052-7cb4b85ec19c h1:aY2hhxLhjEAbfXOx2nRJxCXezC6CO2V/yN+OCr1srtk=
+github.com/howeyc/gopass v0.0.0-20190910152052-7cb4b85ec19c/go.mod h1:lADxMC39cJJqL93Duh1xhAs4I2Zs8mKS89XWXFGp9cs=
+github.com/imdario/mergo v0.3.7 h1:Y+UAYTZ7gDEuOfhxKWy+dvb5dRQ6rJjFSdX2HZY1/gI=
+github.com/imdario/mergo v0.3.7/go.mod h1:2EnlNZ0deacrJVfApfmtdGgDfMuh/nq6Ok1EcJh5FfA=
 github.com/jmespath/go-jmespath v0.0.0-20160803190731-bd40a432e4c7 h1:SMvOWPJCES2GdFracYbBQh93GXac8fq7HeN6JnpduB8=
 github.com/jmespath/go-jmespath v0.0.0-20160803190731-bd40a432e4c7/go.mod h1:Nht3zPeWKUH0NzdCt2Blrr5ys8VGpn0CEB0cQHVjt7k=
 github.com/json-iterator/go v1.1.6/go.mod h1:+SdeFBvtyEkXs7REEP0seUULqWtbJapLOCVDaaPEHmU=

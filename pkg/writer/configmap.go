@@ -18,6 +18,8 @@ package writer
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
@@ -26,6 +28,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 	v1 "k8s.io/client-go/pkg/api/v1"
 	"k8s.io/client-go/rest"
+	"k8s.io/client-go/tools/clientcmd"
 )
 
 type ConfigMap struct {
@@ -50,6 +53,27 @@ func NewConfigMap(cmName, namespace string, logger log.Logger) (cw *ConfigMap, e
 		client:    clientset,
 		configMap: cmName,
 		logger:    logger,
+	}, err
+}
+
+func NewConfigMapOutofCluster(cmName, namespace string, logger log.Logger) (cw *ConfigMap, err error) {
+	home := os.Getenv("HOME")
+	kubeconfig := filepath.Join(home, ".kube", "config")
+	config, err := clientcmd.BuildConfigFromFlags("", kubeconfig)
+	if err != nil {
+		return nil, err
+	}
+
+	clientset, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		return cw, err
+	}
+
+	return &ConfigMap{
+		client:    clientset,
+		configMap: cmName,
+		logger:    logger,
+		ns:        namespace,
 	}, err
 }
 
