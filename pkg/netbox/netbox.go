@@ -179,7 +179,7 @@ func (nb *Netbox) DevicesByRegion(query, manufacturer, region, status string) (r
 }
 
 //DevicesByRegion retrieves devices by region, manufacturer and status
-func (nb *Netbox) DevicesByParams(params dcim.DcimDevicesListParams) (res []models.Device, err error) {
+func (nb *Netbox) DevicesByParams(params *dcim.DcimDevicesListParams) (res []models.Device, err error) {
 	res = make([]models.Device, 0)
 	limit := int64(100)
 	params.WithLimit(&limit)
@@ -191,7 +191,7 @@ func (nb *Netbox) DevicesByParams(params dcim.DcimDevicesListParams) (res []mode
 			offset = *params.Offset + limit
 		}
 		params.Offset = &offset
-		list, err := nb.client.Dcim.DcimDevicesList(&params, nil)
+		list, err := nb.client.Dcim.DcimDevicesList(params, nil)
 		if err != nil {
 			return res, err
 		}
@@ -433,33 +433,6 @@ func (nb *Netbox) ServersByRegion(rackRole string, region string) ([]models.Devi
 	}
 
 	return results, nil
-}
-
-// AcitveDevicesByCustomParameters retrievs all active devices with custom parameters
-func (nb *Netbox) ActiveDevicesByCustomParameters(query string, params *dcim.DcimDevicesListParams) ([]models.Device, error) {
-	res := make([]models.Device, 0)
-	activeStatus := "1"
-	limit := int64(100)
-	params.WithStatus(&activeStatus)
-	params.WithLimit(&limit)
-	for {
-		offset := int64(0)
-		if params.Offset != nil {
-			offset = *params.Offset + limit
-		}
-		params.Offset = &offset
-		list, err := nb.client.Dcim.DcimDevicesList(params, nil)
-		if err != nil {
-			return res, err
-		}
-		for _, device := range list.Payload.Results {
-			res = append(res, *device)
-		}
-		if list.Payload.Next == nil {
-			break
-		}
-	}
-	return res, nil
 }
 
 func client(host, token string) (*netboxclient.NetBox, error) {

@@ -131,7 +131,7 @@ func (sd *NetboxDiscovery) getData() (tgroups []*targetgroup.Group, err error) {
 
 func (sd *NetboxDiscovery) loadDcimDevices(d dcimDevice) (tgroups []*targetgroup.Group, err error) {
 	var dcims []models.Device
-	dcims, err = sd.netbox.DevicesByParams(d.DcimDevicesListParams)
+	dcims, err = sd.netbox.DevicesByParams(&d.DcimDevicesListParams)
 	if err != nil {
 		return tgroups, err
 	}
