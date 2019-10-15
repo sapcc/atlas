@@ -61,6 +61,7 @@ func init() {
 		level.Error(log.With(logger, "component", "atlas")).Log("err", "no configmap name given")
 		os.Exit(2)
 	}
+	flag.Parse()
 
 	switch strings.ToLower(opts.LogLevel) {
 	case "info":
