@@ -317,11 +317,3 @@ func (sd *NetboxDiscovery) GetName() string {
 func (sd *NetboxDiscovery) GetAdapter() adapter.Adapter {
 	return sd.adapter
 }
-
-func track(msg string) (string, time.Time) {
-	return msg, time.Now()
-}
-
-func duration(msg string, start time.Time) {
-	fmt.Printf("%v: %v\n", msg, time.Since(start))
-}
