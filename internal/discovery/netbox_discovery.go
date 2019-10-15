@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/go-kit/kit/log"
@@ -110,62 +111,81 @@ func (sd *NetboxDiscovery) Run(ctx context.Context, ch chan<- []*targetgroup.Gro
 }
 
 func (sd *NetboxDiscovery) getData() (tgroups []*targetgroup.Group, err error) {
-	var tg []*targetgroup.Group
+	var wg sync.WaitGroup
+	groupCh := make(chan []*targetgroup.Group, 0)
+	wg.Add(len(sd.cfg.DCIM.Devices))
 	for _, dcim := range sd.cfg.DCIM.Devices {
-		tg, err = sd.loadDcimDevices(dcim)
-		if err != nil {
-			return tgroups, err
-		}
-		tgroups = append(tgroups, tg...)
-
+		go sd.loadDcimDevices(dcim, &wg, groupCh)
 	}
+	wg.Add(len(sd.cfg.Virtualization.VMs))
 	for _, vm := range sd.cfg.Virtualization.VMs {
-		tg, err = sd.loadVirtualizationVMs(vm)
-		if err != nil {
-			return tgroups, err
-		}
-		tgroups = append(tgroups, tg...)
+		go sd.loadVirtualizationVMs(vm, &wg, groupCh)
+	}
+	go func() {
+		wg.Wait()
+		close(groupCh)
+	}()
+	for groups := range groupCh {
+		tgroups = append(tgroups, groups...)
 	}
 	return tgroups, err
 }
 
-func (sd *NetboxDiscovery) loadDcimDevices(d dcimDevice) (tgroups []*targetgroup.Group, err error) {
+func (sd *NetboxDiscovery) loadDcimDevices(d dcimDevice, w *sync.WaitGroup, groupsCh chan<- []*targetgroup.Group) {
 	var dcims []models.Device
-	dcims, err = sd.netbox.DevicesByParams(d.DcimDevicesListParams)
+	var wg sync.WaitGroup
+	var tgroups []*targetgroup.Group
+	defer w.Done()
+	groupCh := make(chan *targetgroup.Group, 0)
+	dcims, err := sd.netbox.DevicesByParams(d.DcimDevicesListParams)
 	if err != nil {
-		return tgroups, err
+		level.Error(log.With(sd.logger, "component", "NetboxDiscovery")).Log("error", fmt.Errorf("Error loading devices. Error: %s", err.Error()))
+		return
 	}
+	wg.Add(len(dcims))
 	for _, dv := range dcims {
-		tgroup, err := sd.createGroup(d.CustomLabels, d.MetricsLabel, d.Target, dv)
-		if err != nil {
-			level.Error(log.With(sd.logger, "component", "NetboxDiscovery")).Log("error", err)
-			continue
-		}
-		tgroups = append(tgroups, tgroup)
+		go sd.createGroup(d.CustomLabels, d.MetricsLabel, d.Target, dv, &wg, groupCh)
 	}
+	go func() {
+		wg.Wait()
+		close(groupCh)
+	}()
 
-	return tgroups, err
+	for group := range groupCh {
+		tgroups = append(tgroups, group)
+	}
+	groupsCh <- tgroups
 }
 
-func (sd *NetboxDiscovery) loadVirtualizationVMs(d virtualizationVM) (tgroups []*targetgroup.Group, err error) {
+func (sd *NetboxDiscovery) loadVirtualizationVMs(d virtualizationVM, w *sync.WaitGroup, groupsCh chan<- []*targetgroup.Group) {
+	var wg sync.WaitGroup
+	var tgroups []*targetgroup.Group
+	groupCh := make(chan *targetgroup.Group, 0)
+	defer w.Done()
 	vms, err := sd.netbox.VMsByParams(d.VirtualizationVirtualMachinesListParams)
 	if err != nil {
-		return tgroups, err
+		level.Error(log.With(sd.logger, "component", "NetboxDiscovery")).Log("error", fmt.Errorf("Error loading vms. Error: %s", err.Error()))
+		return
 	}
+	wg.Add(len(vms))
 	for _, vm := range vms {
-		tgroup, err := sd.createGroup(d.CustomLabels, d.MetricsLabel, d.Target, vm)
-		if err != nil {
-			level.Error(log.With(sd.logger, "component", "NetboxDiscovery")).Log("error", err)
-			continue
-		}
-		tgroups = append(tgroups, tgroup)
+		go sd.createGroup(d.CustomLabels, d.MetricsLabel, d.Target, vm, &wg, groupCh)
 	}
+	go func() {
+		wg.Wait()
+		close(groupCh)
+	}()
 
-	return tgroups, err
+	for group := range groupCh {
+		tgroups = append(tgroups, group)
+	}
+	groupsCh <- tgroups
 }
 
-func (sd *NetboxDiscovery) createGroup(c map[string]string, metricsLabel string, t int, d interface{}) (tgroup *targetgroup.Group, err error) {
+func (sd *NetboxDiscovery) createGroup(c map[string]string, metricsLabel string, t int, d interface{}, wg *sync.WaitGroup, groupsCh chan<- *targetgroup.Group) {
 	cLabels := model.LabelSet{}
+	var tgroup *targetgroup.Group
+	defer wg.Done()
 	for k, v := range c {
 		cLabels[model.LabelName(k)] = model.LabelValue(v)
 	}
@@ -174,7 +194,8 @@ func (sd *NetboxDiscovery) createGroup(c map[string]string, metricsLabel string,
 		deviceIP, err := sd.getDeviceIP(t, dv.ID, dv.PrimaryIP)
 		id := strconv.Itoa(int(dv.ID))
 		if err != nil {
-			return tgroup, fmt.Errorf("Ignoring device: %s. Error: %s", id, err.Error())
+			level.Error(log.With(sd.logger, "component", "NetboxDiscovery")).Log("error", fmt.Errorf("Ignoring device: %s. Error: %s", id, err.Error()))
+			return
 		}
 
 		tgroup = &targetgroup.Group{
@@ -183,7 +204,8 @@ func (sd *NetboxDiscovery) createGroup(c map[string]string, metricsLabel string,
 			Targets: make([]model.LabelSet, 0, 1),
 		}
 		if strings.ToUpper(*dv.Status.Label) != "ACTIVE" {
-			return tgroup, fmt.Errorf("Ignoring device: %s. Status: %s", id, *dv.Status.Label)
+			level.Error(log.With(sd.logger, "component", "NetboxDiscovery")).Log("error", fmt.Errorf("Ignoring device: %s. Status: %s", id, *dv.Status.Label))
+			return
 		}
 		target := model.LabelSet{model.AddressLabel: model.LabelValue(deviceIP)}
 		labels := model.LabelSet{
@@ -204,7 +226,8 @@ func (sd *NetboxDiscovery) createGroup(c map[string]string, metricsLabel string,
 		id := strconv.Itoa(int(dv.ID))
 		deviceIP, err := sd.getDeviceIP(t, dv.ID, dv.PrimaryIP)
 		if err != nil {
-			return tgroup, fmt.Errorf("Ignoring device: %s. Error: %s", id, err.Error())
+			level.Error(log.With(sd.logger, "component", "NetboxDiscovery")).Log("error", fmt.Errorf("Ignoring vm: %s. Error: %s", id, err.Error()))
+			return
 		}
 		tgroup = &targetgroup.Group{
 			Source:  strconv.Itoa(rand.Intn(300000000)),
@@ -212,7 +235,8 @@ func (sd *NetboxDiscovery) createGroup(c map[string]string, metricsLabel string,
 			Targets: make([]model.LabelSet, 0, 1),
 		}
 		if strings.ToUpper(*dv.Status.Label) != "ACTIVE" {
-			return tgroup, fmt.Errorf("Ignoring device: %s. Status: %s", id, *dv.Status.Label)
+			level.Error(log.With(sd.logger, "component", "NetboxDiscovery")).Log("error", fmt.Errorf("Ignoring vm: %s. Status: %s", id, *dv.Status.Label))
+			return
 		}
 		target := model.LabelSet{model.AddressLabel: model.LabelValue(deviceIP)}
 		labels := model.LabelSet{
@@ -226,10 +250,10 @@ func (sd *NetboxDiscovery) createGroup(c map[string]string, metricsLabel string,
 		tgroup.Labels = labels
 		tgroup.Targets = append(tgroup.Targets, target)
 	default:
-		return tgroup, fmt.Errorf("Not supported device interface")
+		level.Error(log.With(sd.logger, "component", "NetboxDiscovery")).Log("error", fmt.Errorf("Not supported device interface"))
+		return
 	}
-
-	return tgroup, err
+	groupsCh <- tgroup
 }
 
 func (sd *NetboxDiscovery) getDeviceIP(t int, id int64, i *models.NestedIPAddress) (ip string, err error) {
@@ -292,4 +316,12 @@ func (sd *NetboxDiscovery) GetName() string {
 
 func (sd *NetboxDiscovery) GetAdapter() adapter.Adapter {
 	return sd.adapter
+}
+
+func track(msg string) (string, time.Time) {
+	return msg, time.Now()
+}
+
+func duration(msg string, start time.Time) {
+	fmt.Printf("%v: %v\n", msg, time.Since(start))
 }
