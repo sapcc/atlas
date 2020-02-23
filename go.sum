@@ -197,10 +197,8 @@ github.com/prometheus/prometheus v2.3.2+incompatible/go.mod h1:oAIUtOny2rjMX0OWN
 github.com/prometheus/tsdb v0.10.0/go.mod h1:oi49uRhEe9dPUTlS3JRZOwJuVi6tmh10QSgwXEyGCt4=
 github.com/samuel/go-zookeeper v0.0.0-20161028232340-1d7be4effb13 h1:4AQBn5RJY4WH8t8TLEMZUsWeXHAUcoao42TCAfpEJJE=
 github.com/samuel/go-zookeeper v0.0.0-20161028232340-1d7be4effb13/go.mod h1:gi+0XIa01GRL2eRQVjQkKGqKF3SF9vZR/HnPullcV2E=
-github.com/sapcc/go-netbox v0.0.0-20200223204607-9b7dcad760ae h1:tAQj/hbp5uGFLvXpUJ9XDAQmCDJPjIUGek4Y5kRyHGA=
-github.com/sapcc/go-netbox v0.0.0-20200223204607-9b7dcad760ae/go.mod h1:JFo3C4JO3jZ2NGnFGZkEsh1tVwm1bpvprBoxX8y2gvc=
-github.com/sapcc/go-netbox v0.0.0-20200223211703-c4000b8bb1b2 h1:nq+zQ16736CJpSb5hLdJTYJfQeDY1udHZxKfGbcAyu0=
-github.com/sapcc/go-netbox v0.0.0-20200223211703-c4000b8bb1b2/go.mod h1:JFo3C4JO3jZ2NGnFGZkEsh1tVwm1bpvprBoxX8y2gvc=
+github.com/sapcc/go-netbox v0.0.0-20200223214438-b66253786f7b h1:2vvbQ3GtQcXOGY/PPuHDQnLn1eBT+7l05RQYY5Hz5ZY=
+github.com/sapcc/go-netbox v0.0.0-20200223214438-b66253786f7b/go.mod h1:JFo3C4JO3jZ2NGnFGZkEsh1tVwm1bpvprBoxX8y2gvc=
 github.com/sean-/seed v0.0.0-20170313163322-e2103e2c3529/go.mod h1:DxrIzT+xaE7yg65j358z/aeFdxmN0P9QXhEzd20vsDc=
 github.com/sirupsen/logrus v1.2.0/go.mod h1:LxeOpSwHxABJmUn/MG1IvRgCAasNZTLOkJPxbbu5VWo=
 github.com/smartystreets/assertions v0.0.0-20180927180507-b2de0cb4f26d/go.mod h1:OnSkiWE9lh6wB0YB77sQom3nweQdgAjqCqsofrRNTgc=

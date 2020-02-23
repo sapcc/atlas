@@ -48,4 +48,4 @@ require (
 	k8s.io/client-go v3.0.0-beta.0+incompatible
 )
 
-replace github.com/hosting-de-labs/go-netbox => github.com/sapcc/go-netbox v0.0.0-20200223211703-c4000b8bb1b2
+replace github.com/hosting-de-labs/go-netbox => github.com/sapcc/go-netbox v0.0.0-20200223214438-b66253786f7b
