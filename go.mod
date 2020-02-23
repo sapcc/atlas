@@ -47,3 +47,5 @@ require (
 	k8s.io/apimachinery v0.0.0-20170321210947-75b8dd260ef0
 	k8s.io/client-go v3.0.0-beta.0+incompatible
 )
+
+replace github.com/hosting-de-labs/go-netbox => github.com/sapcc/go-netbox v0.0.0-20200223200654-f96c0fb946a3

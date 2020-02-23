@@ -239,6 +239,10 @@ github.com/prometheus/tsdb v0.10.0 h1:If5rVCMTp6W2SiRAQFlbpJNgVlgMEd+U2GZckwK38i
 github.com/prometheus/tsdb v0.10.0/go.mod h1:oi49uRhEe9dPUTlS3JRZOwJuVi6tmh10QSgwXEyGCt4=
 github.com/samuel/go-zookeeper v0.0.0-20161028232340-1d7be4effb13 h1:4AQBn5RJY4WH8t8TLEMZUsWeXHAUcoao42TCAfpEJJE=
 github.com/samuel/go-zookeeper v0.0.0-20161028232340-1d7be4effb13/go.mod h1:gi+0XIa01GRL2eRQVjQkKGqKF3SF9vZR/HnPullcV2E=
+github.com/sapcc/go-netbox v0.0.0-20190731091136-f55aa11994e5 h1:Y1RSuVgXJ2qlXTw0u+s/suv/0WkNCpTpAU7OnX1gGV8=
+github.com/sapcc/go-netbox v0.0.0-20190731091136-f55aa11994e5/go.mod h1:JFo3C4JO3jZ2NGnFGZkEsh1tVwm1bpvprBoxX8y2gvc=
+github.com/sapcc/go-netbox v0.0.0-20200223200654-f96c0fb946a3 h1:suY0PsBjwHmpFzOPvqLpBN2HTqw41If+EPDgJDDdt7s=
+github.com/sapcc/go-netbox v0.0.0-20200223200654-f96c0fb946a3/go.mod h1:JFo3C4JO3jZ2NGnFGZkEsh1tVwm1bpvprBoxX8y2gvc=
 github.com/sean-/seed v0.0.0-20170313163322-e2103e2c3529 h1:nn5Wsu0esKSJiIVhscUtVbo7ada43DJhG55ua/hjS5I=
 github.com/sean-/seed v0.0.0-20170313163322-e2103e2c3529/go.mod h1:DxrIzT+xaE7yg65j358z/aeFdxmN0P9QXhEzd20vsDc=
 github.com/sirupsen/logrus v1.2.0/go.mod h1:LxeOpSwHxABJmUn/MG1IvRgCAasNZTLOkJPxbbu5VWo=
