@@ -24,7 +24,7 @@ require (
 	github.com/hashicorp/memberlist v0.1.4 // indirect
 	github.com/hashicorp/raft v1.1.1 // indirect
 	github.com/hashicorp/serf v0.0.0-20161007004122-1d4fa605f6ff // indirect
-	github.com/hosting-de-labs/go-netbox v0.0.0-00010101000000-000000000000
+	github.com/hosting-de-labs/go-netbox v0.0.0-20190806143433-dd6a857021ad
 	github.com/jmespath/go-jmespath v0.0.0-20160803190731-bd40a432e4c7 // indirect
 	github.com/juju/ratelimit v0.0.0-20151125201925-77ed1c8a0121 // indirect
 	github.com/namsral/flag v1.7.4-pre
@@ -48,4 +48,4 @@ require (
 	k8s.io/client-go v3.0.0-beta.0+incompatible
 )
 
-replace github.com/hosting-de-labs/go-netbox => github.com/sapcc/go-netbox v0.0.0-20200223204607-9b7dcad760ae
+replace github.com/hosting-de-labs/go-netbox => github.com/sapcc/go-netbox v0.0.0-20200223211703-c4000b8bb1b2
