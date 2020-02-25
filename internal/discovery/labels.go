@@ -111,7 +111,7 @@ func (l *labels) getProjectLabels(s map[string]*servers.Server) (map[string]*pro
 	if err != nil {
 		switch err.(type) {
 		case gophercloud.ErrDefault403:
-			return result, errors.New("user missing role for porject labels")
+			return result, errors.New("user missing role for project labels")
 		}
 	}
 
