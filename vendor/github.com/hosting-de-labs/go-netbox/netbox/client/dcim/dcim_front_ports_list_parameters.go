@@ -78,10 +78,14 @@ type DcimFrontPortsListParams struct {
 
 	/*Cabled*/
 	Cabled *string
+	/*Description*/
+	Description *string
 	/*Device*/
 	Device *string
 	/*DeviceID*/
 	DeviceID *int64
+	/*ID*/
+	ID *int64
 	/*Limit
 	  Number of results to return per page.
 
@@ -96,6 +100,14 @@ type DcimFrontPortsListParams struct {
 	Offset *int64
 	/*Q*/
 	Q *string
+	/*Region*/
+	Region *string
+	/*RegionID*/
+	RegionID *int64
+	/*Site*/
+	Site *string
+	/*SiteID*/
+	SiteID *int64
 	/*Tag*/
 	Tag *string
 	/*Type*/
@@ -150,6 +162,17 @@ func (o *DcimFrontPortsListParams) SetCabled(cabled *string) {
 	o.Cabled = cabled
 }
 
+// WithDescription adds the description to the dcim front ports list params
+func (o *DcimFrontPortsListParams) WithDescription(description *string) *DcimFrontPortsListParams {
+	o.SetDescription(description)
+	return o
+}
+
+// SetDescription adds the description to the dcim front ports list params
+func (o *DcimFrontPortsListParams) SetDescription(description *string) {
+	o.Description = description
+}
+
 // WithDevice adds the device to the dcim front ports list params
 func (o *DcimFrontPortsListParams) WithDevice(device *string) *DcimFrontPortsListParams {
 	o.SetDevice(device)
@@ -170,6 +193,17 @@ func (o *DcimFrontPortsListParams) WithDeviceID(deviceID *int64) *DcimFrontPorts
 // SetDeviceID adds the deviceId to the dcim front ports list params
 func (o *DcimFrontPortsListParams) SetDeviceID(deviceID *int64) {
 	o.DeviceID = deviceID
+}
+
+// WithID adds the id to the dcim front ports list params
+func (o *DcimFrontPortsListParams) WithID(id *int64) *DcimFrontPortsListParams {
+	o.SetID(id)
+	return o
+}
+
+// SetID adds the id to the dcim front ports list params
+func (o *DcimFrontPortsListParams) SetID(id *int64) {
+	o.ID = id
 }
 
 // WithLimit adds the limit to the dcim front ports list params
@@ -214,6 +248,50 @@ func (o *DcimFrontPortsListParams) WithQ(q *string) *DcimFrontPortsListParams {
 // SetQ adds the q to the dcim front ports list params
 func (o *DcimFrontPortsListParams) SetQ(q *string) {
 	o.Q = q
+}
+
+// WithRegion adds the region to the dcim front ports list params
+func (o *DcimFrontPortsListParams) WithRegion(region *string) *DcimFrontPortsListParams {
+	o.SetRegion(region)
+	return o
+}
+
+// SetRegion adds the region to the dcim front ports list params
+func (o *DcimFrontPortsListParams) SetRegion(region *string) {
+	o.Region = region
+}
+
+// WithRegionID adds the regionID to the dcim front ports list params
+func (o *DcimFrontPortsListParams) WithRegionID(regionID *int64) *DcimFrontPortsListParams {
+	o.SetRegionID(regionID)
+	return o
+}
+
+// SetRegionID adds the regionId to the dcim front ports list params
+func (o *DcimFrontPortsListParams) SetRegionID(regionID *int64) {
+	o.RegionID = regionID
+}
+
+// WithSite adds the site to the dcim front ports list params
+func (o *DcimFrontPortsListParams) WithSite(site *string) *DcimFrontPortsListParams {
+	o.SetSite(site)
+	return o
+}
+
+// SetSite adds the site to the dcim front ports list params
+func (o *DcimFrontPortsListParams) SetSite(site *string) {
+	o.Site = site
+}
+
+// WithSiteID adds the siteID to the dcim front ports list params
+func (o *DcimFrontPortsListParams) WithSiteID(siteID *int64) *DcimFrontPortsListParams {
+	o.SetSiteID(siteID)
+	return o
+}
+
+// SetSiteID adds the siteId to the dcim front ports list params
+func (o *DcimFrontPortsListParams) SetSiteID(siteID *int64) {
+	o.SiteID = siteID
 }
 
 // WithTag adds the tag to the dcim front ports list params
@@ -262,6 +340,22 @@ func (o *DcimFrontPortsListParams) WriteToRequest(r runtime.ClientRequest, reg s
 
 	}
 
+	if o.Description != nil {
+
+		// query param description
+		var qrDescription string
+		if o.Description != nil {
+			qrDescription = *o.Description
+		}
+		qDescription := qrDescription
+		if qDescription != "" {
+			if err := r.SetQueryParam("description", qDescription); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.Device != nil {
 
 		// query param device
@@ -288,6 +382,22 @@ func (o *DcimFrontPortsListParams) WriteToRequest(r runtime.ClientRequest, reg s
 		qDeviceID := swag.FormatInt64(qrDeviceID)
 		if qDeviceID != "" {
 			if err := r.SetQueryParam("device_id", qDeviceID); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.ID != nil {
+
+		// query param id
+		var qrID int64
+		if o.ID != nil {
+			qrID = *o.ID
+		}
+		qID := swag.FormatInt64(qrID)
+		if qID != "" {
+			if err := r.SetQueryParam("id", qID); err != nil {
 				return err
 			}
 		}
@@ -352,6 +462,70 @@ func (o *DcimFrontPortsListParams) WriteToRequest(r runtime.ClientRequest, reg s
 		qQ := qrQ
 		if qQ != "" {
 			if err := r.SetQueryParam("q", qQ); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Region != nil {
+
+		// query param region
+		var qrRegion string
+		if o.Region != nil {
+			qrRegion = *o.Region
+		}
+		qRegion := qrRegion
+		if qRegion != "" {
+			if err := r.SetQueryParam("region", qRegion); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.RegionID != nil {
+
+		// query param region_id
+		var qrRegionID int64
+		if o.RegionID != nil {
+			qrRegionID = *o.RegionID
+		}
+		qRegionID := swag.FormatInt64(qrRegionID)
+		if qRegionID != "" {
+			if err := r.SetQueryParam("region_id", qRegionID); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Site != nil {
+
+		// query param site
+		var qrSite string
+		if o.Site != nil {
+			qrSite = *o.Site
+		}
+		qSite := qrSite
+		if qSite != "" {
+			if err := r.SetQueryParam("site", qSite); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.SiteID != nil {
+
+		// query param site_id
+		var qrSiteID int64
+		if o.SiteID != nil {
+			qrSiteID = *o.SiteID
+		}
+		qSiteID := swag.FormatInt64(qrSiteID)
+		if qSiteID != "" {
+			if err := r.SetQueryParam("site_id", qSiteID); err != nil {
 				return err
 			}
 		}

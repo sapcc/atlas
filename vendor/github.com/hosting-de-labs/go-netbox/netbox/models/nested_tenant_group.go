@@ -48,6 +48,10 @@ type NestedTenantGroup struct {
 	// Pattern: ^[-a-zA-Z0-9_]+$
 	Slug *string `json:"slug"`
 
+	// Tenant count
+	// Read Only: true
+	TenantCount int64 `json:"tenant_count,omitempty"`
+
 	// Url
 	// Read Only: true
 	// Format: uri

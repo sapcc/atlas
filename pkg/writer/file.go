@@ -58,9 +58,32 @@ func (c *File) GetData(name string) (data string, err error) {
 	return data, err
 }
 
+func (c *File) loadData() (err error) {
+	d, err := ioutil.ReadFile(c.fileName)
+	if err != nil {
+		return
+	}
+	data := string(d)
+	data = strings.TrimSuffix(data, "\n")
+	files := strings.FieldsFunc(data, split)
+
+	for i, f := range files {
+		t := strings.TrimSuffix(strings.Trim(strings.TrimSpace(f), "\""), "\n")
+		t = strings.Replace(t, "\n", "", -1)
+		if i%2 == 0 {
+			if len(t) > 1 {
+				c.data[t] = files[i+1] + ";"
+			}
+		}
+	}
+
+	return
+}
+
 // Writes string data to configmap.
 func (c *File) Write(name, data string) (err error) {
 	err = util.RetryOnConflict(util.DefaultBackoff, func() (err error) {
+		err = c.loadData()
 
 		c.data[name] = string(data) + ";"
 		b := new(bytes.Buffer)

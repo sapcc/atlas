@@ -76,6 +76,8 @@ for the circuits circuit types list operation typically these are written to a h
 */
 type CircuitsCircuitTypesListParams struct {
 
+	/*ID*/
+	ID *int64
 	/*Limit
 	  Number of results to return per page.
 
@@ -129,6 +131,17 @@ func (o *CircuitsCircuitTypesListParams) WithHTTPClient(client *http.Client) *Ci
 // SetHTTPClient adds the HTTPClient to the circuits circuit types list params
 func (o *CircuitsCircuitTypesListParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithID adds the id to the circuits circuit types list params
+func (o *CircuitsCircuitTypesListParams) WithID(id *int64) *CircuitsCircuitTypesListParams {
+	o.SetID(id)
+	return o
+}
+
+// SetID adds the id to the circuits circuit types list params
+func (o *CircuitsCircuitTypesListParams) SetID(id *int64) {
+	o.ID = id
 }
 
 // WithLimit adds the limit to the circuits circuit types list params
@@ -193,6 +206,22 @@ func (o *CircuitsCircuitTypesListParams) WriteToRequest(r runtime.ClientRequest,
 		return err
 	}
 	var res []error
+
+	if o.ID != nil {
+
+		// query param id
+		var qrID int64
+		if o.ID != nil {
+			qrID = *o.ID
+		}
+		qID := swag.FormatInt64(qrID)
+		if qID != "" {
+			if err := r.SetQueryParam("id", qID); err != nil {
+				return err
+			}
+		}
+
+	}
 
 	if o.Limit != nil {
 

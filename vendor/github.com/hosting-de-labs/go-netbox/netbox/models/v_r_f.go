@@ -58,6 +58,10 @@ type VRF struct {
 	// Read Only: true
 	ID int64 `json:"id,omitempty"`
 
+	// Ipaddress count
+	// Read Only: true
+	IpaddressCount int64 `json:"ipaddress_count,omitempty"`
+
 	// Last updated
 	// Read Only: true
 	// Format: date-time
@@ -68,6 +72,10 @@ type VRF struct {
 	// Max Length: 50
 	// Min Length: 1
 	Name *string `json:"name"`
+
+	// Prefix count
+	// Read Only: true
+	PrefixCount int64 `json:"prefix_count,omitempty"`
 
 	// Route distinguisher
 	// Max Length: 21

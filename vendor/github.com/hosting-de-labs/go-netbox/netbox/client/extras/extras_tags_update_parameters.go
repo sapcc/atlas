@@ -81,7 +81,7 @@ type ExtrasTagsUpdateParams struct {
 	/*Data*/
 	Data *models.Tag
 	/*ID
-	  A unique integer value identifying this Tag.
+	  A unique integer value identifying this tag.
 
 	*/
 	ID int64

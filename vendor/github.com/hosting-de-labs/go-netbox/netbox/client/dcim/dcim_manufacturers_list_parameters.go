@@ -76,6 +76,8 @@ for the dcim manufacturers list operation typically these are written to a http.
 */
 type DcimManufacturersListParams struct {
 
+	/*ID*/
+	ID *int64
 	/*Limit
 	  Number of results to return per page.
 
@@ -129,6 +131,17 @@ func (o *DcimManufacturersListParams) WithHTTPClient(client *http.Client) *DcimM
 // SetHTTPClient adds the HTTPClient to the dcim manufacturers list params
 func (o *DcimManufacturersListParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithID adds the id to the dcim manufacturers list params
+func (o *DcimManufacturersListParams) WithID(id *int64) *DcimManufacturersListParams {
+	o.SetID(id)
+	return o
+}
+
+// SetID adds the id to the dcim manufacturers list params
+func (o *DcimManufacturersListParams) SetID(id *int64) {
+	o.ID = id
 }
 
 // WithLimit adds the limit to the dcim manufacturers list params
@@ -193,6 +206,22 @@ func (o *DcimManufacturersListParams) WriteToRequest(r runtime.ClientRequest, re
 		return err
 	}
 	var res []error
+
+	if o.ID != nil {
+
+		// query param id
+		var qrID int64
+		if o.ID != nil {
+			qrID = *o.ID
+		}
+		qID := swag.FormatInt64(qrID)
+		if qID != "" {
+			if err := r.SetQueryParam("id", qID); err != nil {
+				return err
+			}
+		}
+
+	}
 
 	if o.Limit != nil {
 

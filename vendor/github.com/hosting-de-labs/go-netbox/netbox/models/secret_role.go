@@ -31,6 +31,10 @@ import (
 // swagger:model SecretRole
 type SecretRole struct {
 
+	// Description
+	// Max Length: 100
+	Description string `json:"description,omitempty"`
+
 	// ID
 	// Read Only: true
 	ID int64 `json:"id,omitempty"`
@@ -40,6 +44,10 @@ type SecretRole struct {
 	// Max Length: 50
 	// Min Length: 1
 	Name *string `json:"name"`
+
+	// Secret count
+	// Read Only: true
+	SecretCount int64 `json:"secret_count,omitempty"`
 
 	// Slug
 	// Required: true
@@ -53,6 +61,10 @@ type SecretRole struct {
 func (m *SecretRole) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateDescription(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateName(formats); err != nil {
 		res = append(res, err)
 	}
@@ -64,6 +76,19 @@ func (m *SecretRole) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *SecretRole) validateDescription(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Description) { // not required
+		return nil
+	}
+
+	if err := validate.MaxLength("description", "body", string(m.Description), 100); err != nil {
+		return err
+	}
+
 	return nil
 }
 

@@ -73,7 +73,7 @@ type ImageAttachment struct {
 
 	// Parent
 	// Read Only: true
-	Parent string `json:"parent,omitempty"`
+	Parent map[string]string `json:"parent,omitempty"`
 }
 
 // Validate validates this image attachment

@@ -82,8 +82,12 @@ type DcimCablesListParams struct {
 	Device *string
 	/*DeviceID*/
 	DeviceID *int64
+	/*ID*/
+	ID *int64
+	/*Label*/
+	Label *string
 	/*Length*/
-	Length *float64
+	Length *string
 	/*LengthUnit*/
 	LengthUnit *string
 	/*Limit
@@ -98,8 +102,20 @@ type DcimCablesListParams struct {
 	Offset *int64
 	/*Q*/
 	Q *string
+	/*Rack*/
+	Rack *string
+	/*RackID*/
+	RackID *int64
+	/*Site*/
+	Site *string
+	/*SiteID*/
+	SiteID *int64
 	/*Status*/
 	Status *string
+	/*Tenant*/
+	Tenant *string
+	/*TenantID*/
+	TenantID *int64
 	/*Type*/
 	Type *string
 
@@ -174,14 +190,36 @@ func (o *DcimCablesListParams) SetDeviceID(deviceID *int64) {
 	o.DeviceID = deviceID
 }
 
+// WithID adds the id to the dcim cables list params
+func (o *DcimCablesListParams) WithID(id *int64) *DcimCablesListParams {
+	o.SetID(id)
+	return o
+}
+
+// SetID adds the id to the dcim cables list params
+func (o *DcimCablesListParams) SetID(id *int64) {
+	o.ID = id
+}
+
+// WithLabel adds the label to the dcim cables list params
+func (o *DcimCablesListParams) WithLabel(label *string) *DcimCablesListParams {
+	o.SetLabel(label)
+	return o
+}
+
+// SetLabel adds the label to the dcim cables list params
+func (o *DcimCablesListParams) SetLabel(label *string) {
+	o.Label = label
+}
+
 // WithLength adds the length to the dcim cables list params
-func (o *DcimCablesListParams) WithLength(length *float64) *DcimCablesListParams {
+func (o *DcimCablesListParams) WithLength(length *string) *DcimCablesListParams {
 	o.SetLength(length)
 	return o
 }
 
 // SetLength adds the length to the dcim cables list params
-func (o *DcimCablesListParams) SetLength(length *float64) {
+func (o *DcimCablesListParams) SetLength(length *string) {
 	o.Length = length
 }
 
@@ -229,6 +267,50 @@ func (o *DcimCablesListParams) SetQ(q *string) {
 	o.Q = q
 }
 
+// WithRack adds the rack to the dcim cables list params
+func (o *DcimCablesListParams) WithRack(rack *string) *DcimCablesListParams {
+	o.SetRack(rack)
+	return o
+}
+
+// SetRack adds the rack to the dcim cables list params
+func (o *DcimCablesListParams) SetRack(rack *string) {
+	o.Rack = rack
+}
+
+// WithRackID adds the rackID to the dcim cables list params
+func (o *DcimCablesListParams) WithRackID(rackID *int64) *DcimCablesListParams {
+	o.SetRackID(rackID)
+	return o
+}
+
+// SetRackID adds the rackId to the dcim cables list params
+func (o *DcimCablesListParams) SetRackID(rackID *int64) {
+	o.RackID = rackID
+}
+
+// WithSite adds the site to the dcim cables list params
+func (o *DcimCablesListParams) WithSite(site *string) *DcimCablesListParams {
+	o.SetSite(site)
+	return o
+}
+
+// SetSite adds the site to the dcim cables list params
+func (o *DcimCablesListParams) SetSite(site *string) {
+	o.Site = site
+}
+
+// WithSiteID adds the siteID to the dcim cables list params
+func (o *DcimCablesListParams) WithSiteID(siteID *int64) *DcimCablesListParams {
+	o.SetSiteID(siteID)
+	return o
+}
+
+// SetSiteID adds the siteId to the dcim cables list params
+func (o *DcimCablesListParams) SetSiteID(siteID *int64) {
+	o.SiteID = siteID
+}
+
 // WithStatus adds the status to the dcim cables list params
 func (o *DcimCablesListParams) WithStatus(status *string) *DcimCablesListParams {
 	o.SetStatus(status)
@@ -238,6 +320,28 @@ func (o *DcimCablesListParams) WithStatus(status *string) *DcimCablesListParams 
 // SetStatus adds the status to the dcim cables list params
 func (o *DcimCablesListParams) SetStatus(status *string) {
 	o.Status = status
+}
+
+// WithTenant adds the tenant to the dcim cables list params
+func (o *DcimCablesListParams) WithTenant(tenant *string) *DcimCablesListParams {
+	o.SetTenant(tenant)
+	return o
+}
+
+// SetTenant adds the tenant to the dcim cables list params
+func (o *DcimCablesListParams) SetTenant(tenant *string) {
+	o.Tenant = tenant
+}
+
+// WithTenantID adds the tenantID to the dcim cables list params
+func (o *DcimCablesListParams) WithTenantID(tenantID *int64) *DcimCablesListParams {
+	o.SetTenantID(tenantID)
+	return o
+}
+
+// SetTenantID adds the tenantId to the dcim cables list params
+func (o *DcimCablesListParams) SetTenantID(tenantID *int64) {
+	o.TenantID = tenantID
 }
 
 // WithType adds the typeVar to the dcim cables list params
@@ -307,14 +411,46 @@ func (o *DcimCablesListParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 
 	}
 
+	if o.ID != nil {
+
+		// query param id
+		var qrID int64
+		if o.ID != nil {
+			qrID = *o.ID
+		}
+		qID := swag.FormatInt64(qrID)
+		if qID != "" {
+			if err := r.SetQueryParam("id", qID); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Label != nil {
+
+		// query param label
+		var qrLabel string
+		if o.Label != nil {
+			qrLabel = *o.Label
+		}
+		qLabel := qrLabel
+		if qLabel != "" {
+			if err := r.SetQueryParam("label", qLabel); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.Length != nil {
 
 		// query param length
-		var qrLength float64
+		var qrLength string
 		if o.Length != nil {
 			qrLength = *o.Length
 		}
-		qLength := swag.FormatFloat64(qrLength)
+		qLength := qrLength
 		if qLength != "" {
 			if err := r.SetQueryParam("length", qLength); err != nil {
 				return err
@@ -387,6 +523,70 @@ func (o *DcimCablesListParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 
 	}
 
+	if o.Rack != nil {
+
+		// query param rack
+		var qrRack string
+		if o.Rack != nil {
+			qrRack = *o.Rack
+		}
+		qRack := qrRack
+		if qRack != "" {
+			if err := r.SetQueryParam("rack", qRack); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.RackID != nil {
+
+		// query param rack_id
+		var qrRackID int64
+		if o.RackID != nil {
+			qrRackID = *o.RackID
+		}
+		qRackID := swag.FormatInt64(qrRackID)
+		if qRackID != "" {
+			if err := r.SetQueryParam("rack_id", qRackID); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Site != nil {
+
+		// query param site
+		var qrSite string
+		if o.Site != nil {
+			qrSite = *o.Site
+		}
+		qSite := qrSite
+		if qSite != "" {
+			if err := r.SetQueryParam("site", qSite); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.SiteID != nil {
+
+		// query param site_id
+		var qrSiteID int64
+		if o.SiteID != nil {
+			qrSiteID = *o.SiteID
+		}
+		qSiteID := swag.FormatInt64(qrSiteID)
+		if qSiteID != "" {
+			if err := r.SetQueryParam("site_id", qSiteID); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.Status != nil {
 
 		// query param status
@@ -397,6 +597,38 @@ func (o *DcimCablesListParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 		qStatus := qrStatus
 		if qStatus != "" {
 			if err := r.SetQueryParam("status", qStatus); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Tenant != nil {
+
+		// query param tenant
+		var qrTenant string
+		if o.Tenant != nil {
+			qrTenant = *o.Tenant
+		}
+		qTenant := qrTenant
+		if qTenant != "" {
+			if err := r.SetQueryParam("tenant", qTenant); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.TenantID != nil {
+
+		// query param tenant_id
+		var qrTenantID int64
+		if o.TenantID != nil {
+			qrTenantID = *o.TenantID
+		}
+		qTenantID := swag.FormatInt64(qrTenantID)
+		if qTenantID != "" {
+			if err := r.SetQueryParam("tenant_id", qTenantID); err != nil {
 				return err
 			}
 		}

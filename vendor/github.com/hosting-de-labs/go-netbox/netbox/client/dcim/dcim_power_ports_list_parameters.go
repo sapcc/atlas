@@ -76,19 +76,27 @@ for the dcim power ports list operation typically these are written to a http.Re
 */
 type DcimPowerPortsListParams struct {
 
+	/*AllocatedDraw*/
+	AllocatedDraw *string
 	/*Cabled*/
 	Cabled *string
 	/*ConnectionStatus*/
 	ConnectionStatus *string
+	/*Description*/
+	Description *string
 	/*Device*/
 	Device *string
 	/*DeviceID*/
 	DeviceID *int64
+	/*ID*/
+	ID *int64
 	/*Limit
 	  Number of results to return per page.
 
 	*/
 	Limit *int64
+	/*MaximumDraw*/
+	MaximumDraw *string
 	/*Name*/
 	Name *string
 	/*Offset
@@ -98,8 +106,18 @@ type DcimPowerPortsListParams struct {
 	Offset *int64
 	/*Q*/
 	Q *string
+	/*Region*/
+	Region *string
+	/*RegionID*/
+	RegionID *int64
+	/*Site*/
+	Site *string
+	/*SiteID*/
+	SiteID *int64
 	/*Tag*/
 	Tag *string
+	/*Type*/
+	Type *string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -139,6 +157,17 @@ func (o *DcimPowerPortsListParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
+// WithAllocatedDraw adds the allocatedDraw to the dcim power ports list params
+func (o *DcimPowerPortsListParams) WithAllocatedDraw(allocatedDraw *string) *DcimPowerPortsListParams {
+	o.SetAllocatedDraw(allocatedDraw)
+	return o
+}
+
+// SetAllocatedDraw adds the allocatedDraw to the dcim power ports list params
+func (o *DcimPowerPortsListParams) SetAllocatedDraw(allocatedDraw *string) {
+	o.AllocatedDraw = allocatedDraw
+}
+
 // WithCabled adds the cabled to the dcim power ports list params
 func (o *DcimPowerPortsListParams) WithCabled(cabled *string) *DcimPowerPortsListParams {
 	o.SetCabled(cabled)
@@ -159,6 +188,17 @@ func (o *DcimPowerPortsListParams) WithConnectionStatus(connectionStatus *string
 // SetConnectionStatus adds the connectionStatus to the dcim power ports list params
 func (o *DcimPowerPortsListParams) SetConnectionStatus(connectionStatus *string) {
 	o.ConnectionStatus = connectionStatus
+}
+
+// WithDescription adds the description to the dcim power ports list params
+func (o *DcimPowerPortsListParams) WithDescription(description *string) *DcimPowerPortsListParams {
+	o.SetDescription(description)
+	return o
+}
+
+// SetDescription adds the description to the dcim power ports list params
+func (o *DcimPowerPortsListParams) SetDescription(description *string) {
+	o.Description = description
 }
 
 // WithDevice adds the device to the dcim power ports list params
@@ -183,6 +223,17 @@ func (o *DcimPowerPortsListParams) SetDeviceID(deviceID *int64) {
 	o.DeviceID = deviceID
 }
 
+// WithID adds the id to the dcim power ports list params
+func (o *DcimPowerPortsListParams) WithID(id *int64) *DcimPowerPortsListParams {
+	o.SetID(id)
+	return o
+}
+
+// SetID adds the id to the dcim power ports list params
+func (o *DcimPowerPortsListParams) SetID(id *int64) {
+	o.ID = id
+}
+
 // WithLimit adds the limit to the dcim power ports list params
 func (o *DcimPowerPortsListParams) WithLimit(limit *int64) *DcimPowerPortsListParams {
 	o.SetLimit(limit)
@@ -192,6 +243,17 @@ func (o *DcimPowerPortsListParams) WithLimit(limit *int64) *DcimPowerPortsListPa
 // SetLimit adds the limit to the dcim power ports list params
 func (o *DcimPowerPortsListParams) SetLimit(limit *int64) {
 	o.Limit = limit
+}
+
+// WithMaximumDraw adds the maximumDraw to the dcim power ports list params
+func (o *DcimPowerPortsListParams) WithMaximumDraw(maximumDraw *string) *DcimPowerPortsListParams {
+	o.SetMaximumDraw(maximumDraw)
+	return o
+}
+
+// SetMaximumDraw adds the maximumDraw to the dcim power ports list params
+func (o *DcimPowerPortsListParams) SetMaximumDraw(maximumDraw *string) {
+	o.MaximumDraw = maximumDraw
 }
 
 // WithName adds the name to the dcim power ports list params
@@ -227,6 +289,50 @@ func (o *DcimPowerPortsListParams) SetQ(q *string) {
 	o.Q = q
 }
 
+// WithRegion adds the region to the dcim power ports list params
+func (o *DcimPowerPortsListParams) WithRegion(region *string) *DcimPowerPortsListParams {
+	o.SetRegion(region)
+	return o
+}
+
+// SetRegion adds the region to the dcim power ports list params
+func (o *DcimPowerPortsListParams) SetRegion(region *string) {
+	o.Region = region
+}
+
+// WithRegionID adds the regionID to the dcim power ports list params
+func (o *DcimPowerPortsListParams) WithRegionID(regionID *int64) *DcimPowerPortsListParams {
+	o.SetRegionID(regionID)
+	return o
+}
+
+// SetRegionID adds the regionId to the dcim power ports list params
+func (o *DcimPowerPortsListParams) SetRegionID(regionID *int64) {
+	o.RegionID = regionID
+}
+
+// WithSite adds the site to the dcim power ports list params
+func (o *DcimPowerPortsListParams) WithSite(site *string) *DcimPowerPortsListParams {
+	o.SetSite(site)
+	return o
+}
+
+// SetSite adds the site to the dcim power ports list params
+func (o *DcimPowerPortsListParams) SetSite(site *string) {
+	o.Site = site
+}
+
+// WithSiteID adds the siteID to the dcim power ports list params
+func (o *DcimPowerPortsListParams) WithSiteID(siteID *int64) *DcimPowerPortsListParams {
+	o.SetSiteID(siteID)
+	return o
+}
+
+// SetSiteID adds the siteId to the dcim power ports list params
+func (o *DcimPowerPortsListParams) SetSiteID(siteID *int64) {
+	o.SiteID = siteID
+}
+
 // WithTag adds the tag to the dcim power ports list params
 func (o *DcimPowerPortsListParams) WithTag(tag *string) *DcimPowerPortsListParams {
 	o.SetTag(tag)
@@ -238,6 +344,17 @@ func (o *DcimPowerPortsListParams) SetTag(tag *string) {
 	o.Tag = tag
 }
 
+// WithType adds the typeVar to the dcim power ports list params
+func (o *DcimPowerPortsListParams) WithType(typeVar *string) *DcimPowerPortsListParams {
+	o.SetType(typeVar)
+	return o
+}
+
+// SetType adds the type to the dcim power ports list params
+func (o *DcimPowerPortsListParams) SetType(typeVar *string) {
+	o.Type = typeVar
+}
+
 // WriteToRequest writes these params to a swagger request
 func (o *DcimPowerPortsListParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -245,6 +362,22 @@ func (o *DcimPowerPortsListParams) WriteToRequest(r runtime.ClientRequest, reg s
 		return err
 	}
 	var res []error
+
+	if o.AllocatedDraw != nil {
+
+		// query param allocated_draw
+		var qrAllocatedDraw string
+		if o.AllocatedDraw != nil {
+			qrAllocatedDraw = *o.AllocatedDraw
+		}
+		qAllocatedDraw := qrAllocatedDraw
+		if qAllocatedDraw != "" {
+			if err := r.SetQueryParam("allocated_draw", qAllocatedDraw); err != nil {
+				return err
+			}
+		}
+
+	}
 
 	if o.Cabled != nil {
 
@@ -272,6 +405,22 @@ func (o *DcimPowerPortsListParams) WriteToRequest(r runtime.ClientRequest, reg s
 		qConnectionStatus := qrConnectionStatus
 		if qConnectionStatus != "" {
 			if err := r.SetQueryParam("connection_status", qConnectionStatus); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Description != nil {
+
+		// query param description
+		var qrDescription string
+		if o.Description != nil {
+			qrDescription = *o.Description
+		}
+		qDescription := qrDescription
+		if qDescription != "" {
+			if err := r.SetQueryParam("description", qDescription); err != nil {
 				return err
 			}
 		}
@@ -310,6 +459,22 @@ func (o *DcimPowerPortsListParams) WriteToRequest(r runtime.ClientRequest, reg s
 
 	}
 
+	if o.ID != nil {
+
+		// query param id
+		var qrID int64
+		if o.ID != nil {
+			qrID = *o.ID
+		}
+		qID := swag.FormatInt64(qrID)
+		if qID != "" {
+			if err := r.SetQueryParam("id", qID); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.Limit != nil {
 
 		// query param limit
@@ -320,6 +485,22 @@ func (o *DcimPowerPortsListParams) WriteToRequest(r runtime.ClientRequest, reg s
 		qLimit := swag.FormatInt64(qrLimit)
 		if qLimit != "" {
 			if err := r.SetQueryParam("limit", qLimit); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.MaximumDraw != nil {
+
+		// query param maximum_draw
+		var qrMaximumDraw string
+		if o.MaximumDraw != nil {
+			qrMaximumDraw = *o.MaximumDraw
+		}
+		qMaximumDraw := qrMaximumDraw
+		if qMaximumDraw != "" {
+			if err := r.SetQueryParam("maximum_draw", qMaximumDraw); err != nil {
 				return err
 			}
 		}
@@ -374,6 +555,70 @@ func (o *DcimPowerPortsListParams) WriteToRequest(r runtime.ClientRequest, reg s
 
 	}
 
+	if o.Region != nil {
+
+		// query param region
+		var qrRegion string
+		if o.Region != nil {
+			qrRegion = *o.Region
+		}
+		qRegion := qrRegion
+		if qRegion != "" {
+			if err := r.SetQueryParam("region", qRegion); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.RegionID != nil {
+
+		// query param region_id
+		var qrRegionID int64
+		if o.RegionID != nil {
+			qrRegionID = *o.RegionID
+		}
+		qRegionID := swag.FormatInt64(qrRegionID)
+		if qRegionID != "" {
+			if err := r.SetQueryParam("region_id", qRegionID); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Site != nil {
+
+		// query param site
+		var qrSite string
+		if o.Site != nil {
+			qrSite = *o.Site
+		}
+		qSite := qrSite
+		if qSite != "" {
+			if err := r.SetQueryParam("site", qSite); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.SiteID != nil {
+
+		// query param site_id
+		var qrSiteID int64
+		if o.SiteID != nil {
+			qrSiteID = *o.SiteID
+		}
+		qSiteID := swag.FormatInt64(qrSiteID)
+		if qSiteID != "" {
+			if err := r.SetQueryParam("site_id", qSiteID); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.Tag != nil {
 
 		// query param tag
@@ -384,6 +629,22 @@ func (o *DcimPowerPortsListParams) WriteToRequest(r runtime.ClientRequest, reg s
 		qTag := qrTag
 		if qTag != "" {
 			if err := r.SetQueryParam("tag", qTag); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Type != nil {
+
+		// query param type
+		var qrType string
+		if o.Type != nil {
+			qrType = *o.Type
+		}
+		qType := qrType
+		if qType != "" {
+			if err := r.SetQueryParam("type", qType); err != nil {
 				return err
 			}
 		}

@@ -45,6 +45,10 @@ type Provider struct {
 	// Minimum: 1
 	Asn *int64 `json:"asn,omitempty"`
 
+	// Circuit count
+	// Read Only: true
+	CircuitCount int64 `json:"circuit_count,omitempty"`
+
 	// Comments
 	Comments string `json:"comments,omitempty"`
 

@@ -88,16 +88,38 @@ type VirtualizationVirtualMachinesListParams struct {
 	ClusterType *string
 	/*ClusterTypeID*/
 	ClusterTypeID *int64
+	/*Created*/
+	Created *string
+	/*CreatedGte*/
+	CreatedGte *string
+	/*CreatedLte*/
+	CreatedLte *string
+	/*Disk*/
+	Disk *float64
+	/*ID*/
+	ID *int64
 	/*IDIn
 	  Multiple values may be separated by commas.
 
 	*/
 	IDIn *string
+	/*LastUpdated*/
+	LastUpdated *string
+	/*LastUpdatedGte*/
+	LastUpdatedGte *string
+	/*LastUpdatedLte*/
+	LastUpdatedLte *string
 	/*Limit
 	  Number of results to return per page.
 
 	*/
 	Limit *int64
+	/*LocalContextData*/
+	LocalContextData *string
+	/*MacAddress*/
+	MacAddress *string
+	/*Memory*/
+	Memory *float64
 	/*Name*/
 	Name *string
 	/*Offset
@@ -129,8 +151,14 @@ type VirtualizationVirtualMachinesListParams struct {
 	Tag *string
 	/*Tenant*/
 	Tenant *string
+	/*TenantGroup*/
+	TenantGroup *string
+	/*TenantGroupID*/
+	TenantGroupID *int64
 	/*TenantID*/
 	TenantID *int64
+	/*Vcpus*/
+	Vcpus *float64
 
 	timeout    time.Duration
 	Context    context.Context
@@ -236,6 +264,61 @@ func (o *VirtualizationVirtualMachinesListParams) SetClusterTypeID(clusterTypeID
 	o.ClusterTypeID = clusterTypeID
 }
 
+// WithCreated adds the created to the virtualization virtual machines list params
+func (o *VirtualizationVirtualMachinesListParams) WithCreated(created *string) *VirtualizationVirtualMachinesListParams {
+	o.SetCreated(created)
+	return o
+}
+
+// SetCreated adds the created to the virtualization virtual machines list params
+func (o *VirtualizationVirtualMachinesListParams) SetCreated(created *string) {
+	o.Created = created
+}
+
+// WithCreatedGte adds the createdGte to the virtualization virtual machines list params
+func (o *VirtualizationVirtualMachinesListParams) WithCreatedGte(createdGte *string) *VirtualizationVirtualMachinesListParams {
+	o.SetCreatedGte(createdGte)
+	return o
+}
+
+// SetCreatedGte adds the createdGte to the virtualization virtual machines list params
+func (o *VirtualizationVirtualMachinesListParams) SetCreatedGte(createdGte *string) {
+	o.CreatedGte = createdGte
+}
+
+// WithCreatedLte adds the createdLte to the virtualization virtual machines list params
+func (o *VirtualizationVirtualMachinesListParams) WithCreatedLte(createdLte *string) *VirtualizationVirtualMachinesListParams {
+	o.SetCreatedLte(createdLte)
+	return o
+}
+
+// SetCreatedLte adds the createdLte to the virtualization virtual machines list params
+func (o *VirtualizationVirtualMachinesListParams) SetCreatedLte(createdLte *string) {
+	o.CreatedLte = createdLte
+}
+
+// WithDisk adds the disk to the virtualization virtual machines list params
+func (o *VirtualizationVirtualMachinesListParams) WithDisk(disk *float64) *VirtualizationVirtualMachinesListParams {
+	o.SetDisk(disk)
+	return o
+}
+
+// SetDisk adds the disk to the virtualization virtual machines list params
+func (o *VirtualizationVirtualMachinesListParams) SetDisk(disk *float64) {
+	o.Disk = disk
+}
+
+// WithID adds the id to the virtualization virtual machines list params
+func (o *VirtualizationVirtualMachinesListParams) WithID(id *int64) *VirtualizationVirtualMachinesListParams {
+	o.SetID(id)
+	return o
+}
+
+// SetID adds the id to the virtualization virtual machines list params
+func (o *VirtualizationVirtualMachinesListParams) SetID(id *int64) {
+	o.ID = id
+}
+
 // WithIDIn adds the iDIn to the virtualization virtual machines list params
 func (o *VirtualizationVirtualMachinesListParams) WithIDIn(iDIn *string) *VirtualizationVirtualMachinesListParams {
 	o.SetIDIn(iDIn)
@@ -247,6 +330,39 @@ func (o *VirtualizationVirtualMachinesListParams) SetIDIn(iDIn *string) {
 	o.IDIn = iDIn
 }
 
+// WithLastUpdated adds the lastUpdated to the virtualization virtual machines list params
+func (o *VirtualizationVirtualMachinesListParams) WithLastUpdated(lastUpdated *string) *VirtualizationVirtualMachinesListParams {
+	o.SetLastUpdated(lastUpdated)
+	return o
+}
+
+// SetLastUpdated adds the lastUpdated to the virtualization virtual machines list params
+func (o *VirtualizationVirtualMachinesListParams) SetLastUpdated(lastUpdated *string) {
+	o.LastUpdated = lastUpdated
+}
+
+// WithLastUpdatedGte adds the lastUpdatedGte to the virtualization virtual machines list params
+func (o *VirtualizationVirtualMachinesListParams) WithLastUpdatedGte(lastUpdatedGte *string) *VirtualizationVirtualMachinesListParams {
+	o.SetLastUpdatedGte(lastUpdatedGte)
+	return o
+}
+
+// SetLastUpdatedGte adds the lastUpdatedGte to the virtualization virtual machines list params
+func (o *VirtualizationVirtualMachinesListParams) SetLastUpdatedGte(lastUpdatedGte *string) {
+	o.LastUpdatedGte = lastUpdatedGte
+}
+
+// WithLastUpdatedLte adds the lastUpdatedLte to the virtualization virtual machines list params
+func (o *VirtualizationVirtualMachinesListParams) WithLastUpdatedLte(lastUpdatedLte *string) *VirtualizationVirtualMachinesListParams {
+	o.SetLastUpdatedLte(lastUpdatedLte)
+	return o
+}
+
+// SetLastUpdatedLte adds the lastUpdatedLte to the virtualization virtual machines list params
+func (o *VirtualizationVirtualMachinesListParams) SetLastUpdatedLte(lastUpdatedLte *string) {
+	o.LastUpdatedLte = lastUpdatedLte
+}
+
 // WithLimit adds the limit to the virtualization virtual machines list params
 func (o *VirtualizationVirtualMachinesListParams) WithLimit(limit *int64) *VirtualizationVirtualMachinesListParams {
 	o.SetLimit(limit)
@@ -256,6 +372,39 @@ func (o *VirtualizationVirtualMachinesListParams) WithLimit(limit *int64) *Virtu
 // SetLimit adds the limit to the virtualization virtual machines list params
 func (o *VirtualizationVirtualMachinesListParams) SetLimit(limit *int64) {
 	o.Limit = limit
+}
+
+// WithLocalContextData adds the localContextData to the virtualization virtual machines list params
+func (o *VirtualizationVirtualMachinesListParams) WithLocalContextData(localContextData *string) *VirtualizationVirtualMachinesListParams {
+	o.SetLocalContextData(localContextData)
+	return o
+}
+
+// SetLocalContextData adds the localContextData to the virtualization virtual machines list params
+func (o *VirtualizationVirtualMachinesListParams) SetLocalContextData(localContextData *string) {
+	o.LocalContextData = localContextData
+}
+
+// WithMacAddress adds the macAddress to the virtualization virtual machines list params
+func (o *VirtualizationVirtualMachinesListParams) WithMacAddress(macAddress *string) *VirtualizationVirtualMachinesListParams {
+	o.SetMacAddress(macAddress)
+	return o
+}
+
+// SetMacAddress adds the macAddress to the virtualization virtual machines list params
+func (o *VirtualizationVirtualMachinesListParams) SetMacAddress(macAddress *string) {
+	o.MacAddress = macAddress
+}
+
+// WithMemory adds the memory to the virtualization virtual machines list params
+func (o *VirtualizationVirtualMachinesListParams) WithMemory(memory *float64) *VirtualizationVirtualMachinesListParams {
+	o.SetMemory(memory)
+	return o
+}
+
+// SetMemory adds the memory to the virtualization virtual machines list params
+func (o *VirtualizationVirtualMachinesListParams) SetMemory(memory *float64) {
+	o.Memory = memory
 }
 
 // WithName adds the name to the virtualization virtual machines list params
@@ -412,6 +561,28 @@ func (o *VirtualizationVirtualMachinesListParams) SetTenant(tenant *string) {
 	o.Tenant = tenant
 }
 
+// WithTenantGroup adds the tenantGroup to the virtualization virtual machines list params
+func (o *VirtualizationVirtualMachinesListParams) WithTenantGroup(tenantGroup *string) *VirtualizationVirtualMachinesListParams {
+	o.SetTenantGroup(tenantGroup)
+	return o
+}
+
+// SetTenantGroup adds the tenantGroup to the virtualization virtual machines list params
+func (o *VirtualizationVirtualMachinesListParams) SetTenantGroup(tenantGroup *string) {
+	o.TenantGroup = tenantGroup
+}
+
+// WithTenantGroupID adds the tenantGroupID to the virtualization virtual machines list params
+func (o *VirtualizationVirtualMachinesListParams) WithTenantGroupID(tenantGroupID *int64) *VirtualizationVirtualMachinesListParams {
+	o.SetTenantGroupID(tenantGroupID)
+	return o
+}
+
+// SetTenantGroupID adds the tenantGroupId to the virtualization virtual machines list params
+func (o *VirtualizationVirtualMachinesListParams) SetTenantGroupID(tenantGroupID *int64) {
+	o.TenantGroupID = tenantGroupID
+}
+
 // WithTenantID adds the tenantID to the virtualization virtual machines list params
 func (o *VirtualizationVirtualMachinesListParams) WithTenantID(tenantID *int64) *VirtualizationVirtualMachinesListParams {
 	o.SetTenantID(tenantID)
@@ -421,6 +592,17 @@ func (o *VirtualizationVirtualMachinesListParams) WithTenantID(tenantID *int64) 
 // SetTenantID adds the tenantId to the virtualization virtual machines list params
 func (o *VirtualizationVirtualMachinesListParams) SetTenantID(tenantID *int64) {
 	o.TenantID = tenantID
+}
+
+// WithVcpus adds the vcpus to the virtualization virtual machines list params
+func (o *VirtualizationVirtualMachinesListParams) WithVcpus(vcpus *float64) *VirtualizationVirtualMachinesListParams {
+	o.SetVcpus(vcpus)
+	return o
+}
+
+// SetVcpus adds the vcpus to the virtualization virtual machines list params
+func (o *VirtualizationVirtualMachinesListParams) SetVcpus(vcpus *float64) {
+	o.Vcpus = vcpus
 }
 
 // WriteToRequest writes these params to a swagger request
@@ -527,6 +709,86 @@ func (o *VirtualizationVirtualMachinesListParams) WriteToRequest(r runtime.Clien
 
 	}
 
+	if o.Created != nil {
+
+		// query param created
+		var qrCreated string
+		if o.Created != nil {
+			qrCreated = *o.Created
+		}
+		qCreated := qrCreated
+		if qCreated != "" {
+			if err := r.SetQueryParam("created", qCreated); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.CreatedGte != nil {
+
+		// query param created__gte
+		var qrCreatedGte string
+		if o.CreatedGte != nil {
+			qrCreatedGte = *o.CreatedGte
+		}
+		qCreatedGte := qrCreatedGte
+		if qCreatedGte != "" {
+			if err := r.SetQueryParam("created__gte", qCreatedGte); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.CreatedLte != nil {
+
+		// query param created__lte
+		var qrCreatedLte string
+		if o.CreatedLte != nil {
+			qrCreatedLte = *o.CreatedLte
+		}
+		qCreatedLte := qrCreatedLte
+		if qCreatedLte != "" {
+			if err := r.SetQueryParam("created__lte", qCreatedLte); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Disk != nil {
+
+		// query param disk
+		var qrDisk float64
+		if o.Disk != nil {
+			qrDisk = *o.Disk
+		}
+		qDisk := swag.FormatFloat64(qrDisk)
+		if qDisk != "" {
+			if err := r.SetQueryParam("disk", qDisk); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.ID != nil {
+
+		// query param id
+		var qrID int64
+		if o.ID != nil {
+			qrID = *o.ID
+		}
+		qID := swag.FormatInt64(qrID)
+		if qID != "" {
+			if err := r.SetQueryParam("id", qID); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.IDIn != nil {
 
 		// query param id__in
@@ -543,6 +805,54 @@ func (o *VirtualizationVirtualMachinesListParams) WriteToRequest(r runtime.Clien
 
 	}
 
+	if o.LastUpdated != nil {
+
+		// query param last_updated
+		var qrLastUpdated string
+		if o.LastUpdated != nil {
+			qrLastUpdated = *o.LastUpdated
+		}
+		qLastUpdated := qrLastUpdated
+		if qLastUpdated != "" {
+			if err := r.SetQueryParam("last_updated", qLastUpdated); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.LastUpdatedGte != nil {
+
+		// query param last_updated__gte
+		var qrLastUpdatedGte string
+		if o.LastUpdatedGte != nil {
+			qrLastUpdatedGte = *o.LastUpdatedGte
+		}
+		qLastUpdatedGte := qrLastUpdatedGte
+		if qLastUpdatedGte != "" {
+			if err := r.SetQueryParam("last_updated__gte", qLastUpdatedGte); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.LastUpdatedLte != nil {
+
+		// query param last_updated__lte
+		var qrLastUpdatedLte string
+		if o.LastUpdatedLte != nil {
+			qrLastUpdatedLte = *o.LastUpdatedLte
+		}
+		qLastUpdatedLte := qrLastUpdatedLte
+		if qLastUpdatedLte != "" {
+			if err := r.SetQueryParam("last_updated__lte", qLastUpdatedLte); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.Limit != nil {
 
 		// query param limit
@@ -553,6 +863,54 @@ func (o *VirtualizationVirtualMachinesListParams) WriteToRequest(r runtime.Clien
 		qLimit := swag.FormatInt64(qrLimit)
 		if qLimit != "" {
 			if err := r.SetQueryParam("limit", qLimit); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.LocalContextData != nil {
+
+		// query param local_context_data
+		var qrLocalContextData string
+		if o.LocalContextData != nil {
+			qrLocalContextData = *o.LocalContextData
+		}
+		qLocalContextData := qrLocalContextData
+		if qLocalContextData != "" {
+			if err := r.SetQueryParam("local_context_data", qLocalContextData); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.MacAddress != nil {
+
+		// query param mac_address
+		var qrMacAddress string
+		if o.MacAddress != nil {
+			qrMacAddress = *o.MacAddress
+		}
+		qMacAddress := qrMacAddress
+		if qMacAddress != "" {
+			if err := r.SetQueryParam("mac_address", qMacAddress); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Memory != nil {
+
+		// query param memory
+		var qrMemory float64
+		if o.Memory != nil {
+			qrMemory = *o.Memory
+		}
+		qMemory := swag.FormatFloat64(qrMemory)
+		if qMemory != "" {
+			if err := r.SetQueryParam("memory", qMemory); err != nil {
 				return err
 			}
 		}
@@ -783,6 +1141,38 @@ func (o *VirtualizationVirtualMachinesListParams) WriteToRequest(r runtime.Clien
 
 	}
 
+	if o.TenantGroup != nil {
+
+		// query param tenant_group
+		var qrTenantGroup string
+		if o.TenantGroup != nil {
+			qrTenantGroup = *o.TenantGroup
+		}
+		qTenantGroup := qrTenantGroup
+		if qTenantGroup != "" {
+			if err := r.SetQueryParam("tenant_group", qTenantGroup); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.TenantGroupID != nil {
+
+		// query param tenant_group_id
+		var qrTenantGroupID int64
+		if o.TenantGroupID != nil {
+			qrTenantGroupID = *o.TenantGroupID
+		}
+		qTenantGroupID := swag.FormatInt64(qrTenantGroupID)
+		if qTenantGroupID != "" {
+			if err := r.SetQueryParam("tenant_group_id", qTenantGroupID); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.TenantID != nil {
 
 		// query param tenant_id
@@ -793,6 +1183,22 @@ func (o *VirtualizationVirtualMachinesListParams) WriteToRequest(r runtime.Clien
 		qTenantID := swag.FormatInt64(qrTenantID)
 		if qTenantID != "" {
 			if err := r.SetQueryParam("tenant_id", qTenantID); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Vcpus != nil {
+
+		// query param vcpus
+		var qrVcpus float64
+		if o.Vcpus != nil {
+			qrVcpus = *o.Vcpus
+		}
+		qVcpus := swag.FormatFloat64(qrVcpus)
+		if qVcpus != "" {
+			if err := r.SetQueryParam("vcpus", qVcpus); err != nil {
 				return err
 			}
 		}

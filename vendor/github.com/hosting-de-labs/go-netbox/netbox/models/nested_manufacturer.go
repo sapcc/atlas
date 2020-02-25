@@ -31,6 +31,10 @@ import (
 // swagger:model NestedManufacturer
 type NestedManufacturer struct {
 
+	// Devicetype count
+	// Read Only: true
+	DevicetypeCount int64 `json:"devicetype_count,omitempty"`
+
 	// ID
 	// Read Only: true
 	ID int64 `json:"id,omitempty"`

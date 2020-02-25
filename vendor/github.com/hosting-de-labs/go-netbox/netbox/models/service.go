@@ -74,8 +74,10 @@ type Service struct {
 	Port *int64 `json:"port"`
 
 	// protocol
-	// Required: true
-	Protocol *ServiceProtocol `json:"protocol"`
+	Protocol *ServiceProtocol `json:"protocol,omitempty"`
+
+	// tags
+	Tags []string `json:"tags"`
 
 	// virtual machine
 	VirtualMachine *NestedVirtualMachine `json:"virtual_machine,omitempty"`
@@ -114,6 +116,10 @@ func (m *Service) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateProtocol(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateTags(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -249,8 +255,8 @@ func (m *Service) validatePort(formats strfmt.Registry) error {
 
 func (m *Service) validateProtocol(formats strfmt.Registry) error {
 
-	if err := validate.Required("protocol", "body", m.Protocol); err != nil {
-		return err
+	if swag.IsZero(m.Protocol) { // not required
+		return nil
 	}
 
 	if m.Protocol != nil {
@@ -260,6 +266,23 @@ func (m *Service) validateProtocol(formats strfmt.Registry) error {
 			}
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (m *Service) validateTags(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Tags) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Tags); i++ {
+
+		if err := validate.MinLength("tags"+"."+strconv.Itoa(i), "body", string(m.Tags[i]), 1); err != nil {
+			return err
+		}
+
 	}
 
 	return nil
@@ -311,7 +334,7 @@ type ServiceProtocol struct {
 
 	// value
 	// Required: true
-	Value *int64 `json:"value"`
+	Value *string `json:"value"`
 }
 
 // Validate validates this service protocol

@@ -44,6 +44,10 @@ type DeviceType struct {
 	// Custom fields
 	CustomFields interface{} `json:"custom_fields,omitempty"`
 
+	// Device count
+	// Read Only: true
+	DeviceCount int64 `json:"device_count,omitempty"`
+
 	// Display name
 	// Read Only: true
 	DisplayName string `json:"display_name,omitempty"`
@@ -51,10 +55,6 @@ type DeviceType struct {
 	// ID
 	// Read Only: true
 	ID int64 `json:"id,omitempty"`
-
-	// Instance count
-	// Read Only: true
-	InstanceCount int64 `json:"instance_count,omitempty"`
 
 	// Is full depth
 	//
@@ -322,7 +322,7 @@ type DeviceTypeSubdeviceRole struct {
 
 	// value
 	// Required: true
-	Value *bool `json:"value"`
+	Value *string `json:"value"`
 }
 
 // Validate validates this device type subdevice role

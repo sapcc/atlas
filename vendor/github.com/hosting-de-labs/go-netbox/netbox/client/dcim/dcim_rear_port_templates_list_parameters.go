@@ -78,6 +78,8 @@ type DcimRearPortTemplatesListParams struct {
 
 	/*DevicetypeID*/
 	DevicetypeID *int64
+	/*ID*/
+	ID *int64
 	/*Limit
 	  Number of results to return per page.
 
@@ -90,6 +92,8 @@ type DcimRearPortTemplatesListParams struct {
 
 	*/
 	Offset *int64
+	/*Positions*/
+	Positions *string
 	/*Q*/
 	Q *string
 	/*Type*/
@@ -144,6 +148,17 @@ func (o *DcimRearPortTemplatesListParams) SetDevicetypeID(devicetypeID *int64) {
 	o.DevicetypeID = devicetypeID
 }
 
+// WithID adds the id to the dcim rear port templates list params
+func (o *DcimRearPortTemplatesListParams) WithID(id *int64) *DcimRearPortTemplatesListParams {
+	o.SetID(id)
+	return o
+}
+
+// SetID adds the id to the dcim rear port templates list params
+func (o *DcimRearPortTemplatesListParams) SetID(id *int64) {
+	o.ID = id
+}
+
 // WithLimit adds the limit to the dcim rear port templates list params
 func (o *DcimRearPortTemplatesListParams) WithLimit(limit *int64) *DcimRearPortTemplatesListParams {
 	o.SetLimit(limit)
@@ -175,6 +190,17 @@ func (o *DcimRearPortTemplatesListParams) WithOffset(offset *int64) *DcimRearPor
 // SetOffset adds the offset to the dcim rear port templates list params
 func (o *DcimRearPortTemplatesListParams) SetOffset(offset *int64) {
 	o.Offset = offset
+}
+
+// WithPositions adds the positions to the dcim rear port templates list params
+func (o *DcimRearPortTemplatesListParams) WithPositions(positions *string) *DcimRearPortTemplatesListParams {
+	o.SetPositions(positions)
+	return o
+}
+
+// SetPositions adds the positions to the dcim rear port templates list params
+func (o *DcimRearPortTemplatesListParams) SetPositions(positions *string) {
+	o.Positions = positions
 }
 
 // WithQ adds the q to the dcim rear port templates list params
@@ -223,6 +249,22 @@ func (o *DcimRearPortTemplatesListParams) WriteToRequest(r runtime.ClientRequest
 
 	}
 
+	if o.ID != nil {
+
+		// query param id
+		var qrID int64
+		if o.ID != nil {
+			qrID = *o.ID
+		}
+		qID := swag.FormatInt64(qrID)
+		if qID != "" {
+			if err := r.SetQueryParam("id", qID); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.Limit != nil {
 
 		// query param limit
@@ -265,6 +307,22 @@ func (o *DcimRearPortTemplatesListParams) WriteToRequest(r runtime.ClientRequest
 		qOffset := swag.FormatInt64(qrOffset)
 		if qOffset != "" {
 			if err := r.SetQueryParam("offset", qOffset); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Positions != nil {
+
+		// query param positions
+		var qrPositions string
+		if o.Positions != nil {
+			qrPositions = *o.Positions
+		}
+		qPositions := qrPositions
+		if qPositions != "" {
+			if err := r.SetQueryParam("positions", qPositions); err != nil {
 				return err
 			}
 		}

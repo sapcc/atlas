@@ -76,6 +76,8 @@ for the dcim rack groups list operation typically these are written to a http.Re
 */
 type DcimRackGroupsListParams struct {
 
+	/*ID*/
+	ID *int64
 	/*Limit
 	  Number of results to return per page.
 
@@ -90,6 +92,10 @@ type DcimRackGroupsListParams struct {
 	Offset *int64
 	/*Q*/
 	Q *string
+	/*Region*/
+	Region *string
+	/*RegionID*/
+	RegionID *int64
 	/*Site*/
 	Site *string
 	/*SiteID*/
@@ -133,6 +139,17 @@ func (o *DcimRackGroupsListParams) WithHTTPClient(client *http.Client) *DcimRack
 // SetHTTPClient adds the HTTPClient to the dcim rack groups list params
 func (o *DcimRackGroupsListParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithID adds the id to the dcim rack groups list params
+func (o *DcimRackGroupsListParams) WithID(id *int64) *DcimRackGroupsListParams {
+	o.SetID(id)
+	return o
+}
+
+// SetID adds the id to the dcim rack groups list params
+func (o *DcimRackGroupsListParams) SetID(id *int64) {
+	o.ID = id
 }
 
 // WithLimit adds the limit to the dcim rack groups list params
@@ -179,6 +196,28 @@ func (o *DcimRackGroupsListParams) SetQ(q *string) {
 	o.Q = q
 }
 
+// WithRegion adds the region to the dcim rack groups list params
+func (o *DcimRackGroupsListParams) WithRegion(region *string) *DcimRackGroupsListParams {
+	o.SetRegion(region)
+	return o
+}
+
+// SetRegion adds the region to the dcim rack groups list params
+func (o *DcimRackGroupsListParams) SetRegion(region *string) {
+	o.Region = region
+}
+
+// WithRegionID adds the regionID to the dcim rack groups list params
+func (o *DcimRackGroupsListParams) WithRegionID(regionID *int64) *DcimRackGroupsListParams {
+	o.SetRegionID(regionID)
+	return o
+}
+
+// SetRegionID adds the regionId to the dcim rack groups list params
+func (o *DcimRackGroupsListParams) SetRegionID(regionID *int64) {
+	o.RegionID = regionID
+}
+
 // WithSite adds the site to the dcim rack groups list params
 func (o *DcimRackGroupsListParams) WithSite(site *string) *DcimRackGroupsListParams {
 	o.SetSite(site)
@@ -219,6 +258,22 @@ func (o *DcimRackGroupsListParams) WriteToRequest(r runtime.ClientRequest, reg s
 		return err
 	}
 	var res []error
+
+	if o.ID != nil {
+
+		// query param id
+		var qrID int64
+		if o.ID != nil {
+			qrID = *o.ID
+		}
+		qID := swag.FormatInt64(qrID)
+		if qID != "" {
+			if err := r.SetQueryParam("id", qID); err != nil {
+				return err
+			}
+		}
+
+	}
 
 	if o.Limit != nil {
 
@@ -278,6 +333,38 @@ func (o *DcimRackGroupsListParams) WriteToRequest(r runtime.ClientRequest, reg s
 		qQ := qrQ
 		if qQ != "" {
 			if err := r.SetQueryParam("q", qQ); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Region != nil {
+
+		// query param region
+		var qrRegion string
+		if o.Region != nil {
+			qrRegion = *o.Region
+		}
+		qRegion := qrRegion
+		if qRegion != "" {
+			if err := r.SetQueryParam("region", qRegion); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.RegionID != nil {
+
+		// query param region_id
+		var qrRegionID int64
+		if o.RegionID != nil {
+			qrRegionID = *o.RegionID
+		}
+		qRegionID := swag.FormatInt64(qrRegionID)
+		if qRegionID != "" {
+			if err := r.SetQueryParam("region_id", qRegionID); err != nil {
 				return err
 			}
 		}

@@ -47,6 +47,10 @@ type TenantGroup struct {
 	// Min Length: 1
 	// Pattern: ^[-a-zA-Z0-9_]+$
 	Slug *string `json:"slug"`
+
+	// Tenant count
+	// Read Only: true
+	TenantCount int64 `json:"tenant_count,omitempty"`
 }
 
 // Validate validates this tenant group

@@ -61,7 +61,7 @@ func NewVirtualizationVirtualMachinesPartialUpdateOK() *VirtualizationVirtualMac
 VirtualizationVirtualMachinesPartialUpdateOK virtualization virtual machines partial update o k
 */
 type VirtualizationVirtualMachinesPartialUpdateOK struct {
-	Payload *models.VirtualMachine
+	Payload *models.VirtualMachineWithConfigContext
 }
 
 func (o *VirtualizationVirtualMachinesPartialUpdateOK) Error() string {
@@ -70,7 +70,7 @@ func (o *VirtualizationVirtualMachinesPartialUpdateOK) Error() string {
 
 func (o *VirtualizationVirtualMachinesPartialUpdateOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(models.VirtualMachine)
+	o.Payload = new(models.VirtualMachineWithConfigContext)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {

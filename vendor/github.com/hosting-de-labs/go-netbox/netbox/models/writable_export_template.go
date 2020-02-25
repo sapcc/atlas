@@ -42,6 +42,8 @@ type WritableExportTemplate struct {
 	Description string `json:"description,omitempty"`
 
 	// File extension
+	//
+	// Extension to append to the rendered filename
 	// Max Length: 15
 	FileExtension string `json:"file_extension,omitempty"`
 
@@ -49,7 +51,9 @@ type WritableExportTemplate struct {
 	// Read Only: true
 	ID int64 `json:"id,omitempty"`
 
-	// Mime type
+	// MIME type
+	//
+	// Defaults to <code>text/plain</code>
 	// Max Length: 50
 	MimeType string `json:"mime_type,omitempty"`
 
@@ -60,13 +64,15 @@ type WritableExportTemplate struct {
 	Name *string `json:"name"`
 
 	// Template code
+	//
+	// The list of objects being exported is passed as a context variable named <code>queryset</code>.
 	// Required: true
 	// Min Length: 1
 	TemplateCode *string `json:"template_code"`
 
 	// Template language
-	// Enum: [10 20]
-	TemplateLanguage int64 `json:"template_language,omitempty"`
+	// Enum: [django jinja2]
+	TemplateLanguage string `json:"template_language,omitempty"`
 }
 
 // Validate validates this writable export template
@@ -188,8 +194,8 @@ func (m *WritableExportTemplate) validateTemplateCode(formats strfmt.Registry) e
 var writableExportTemplateTypeTemplateLanguagePropEnum []interface{}
 
 func init() {
-	var res []int64
-	if err := json.Unmarshal([]byte(`[10,20]`), &res); err != nil {
+	var res []string
+	if err := json.Unmarshal([]byte(`["django","jinja2"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -197,8 +203,17 @@ func init() {
 	}
 }
 
+const (
+
+	// WritableExportTemplateTemplateLanguageDjango captures enum value "django"
+	WritableExportTemplateTemplateLanguageDjango string = "django"
+
+	// WritableExportTemplateTemplateLanguageJinja2 captures enum value "jinja2"
+	WritableExportTemplateTemplateLanguageJinja2 string = "jinja2"
+)
+
 // prop value enum
-func (m *WritableExportTemplate) validateTemplateLanguageEnum(path, location string, value int64) error {
+func (m *WritableExportTemplate) validateTemplateLanguageEnum(path, location string, value string) error {
 	if err := validate.Enum(path, location, value, writableExportTemplateTypeTemplateLanguagePropEnum); err != nil {
 		return err
 	}

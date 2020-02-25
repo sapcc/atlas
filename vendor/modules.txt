@@ -11,7 +11,7 @@ github.com/Azure/go-autorest/autorest/validation
 github.com/PuerkitoBio/purell
 # github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578
 github.com/PuerkitoBio/urlesc
-# github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a
+# github.com/asaskevich/govalidator v0.0.0-20200108200545-475eaeb16496
 github.com/asaskevich/govalidator
 # github.com/aws/aws-sdk-go v0.0.0-20161102215928-707203bc5511
 github.com/aws/aws-sdk-go/aws
@@ -61,18 +61,18 @@ github.com/go-kit/kit/log
 github.com/go-kit/kit/log/level
 # github.com/go-logfmt/logfmt v0.3.0
 github.com/go-logfmt/logfmt
-# github.com/go-openapi/analysis v0.19.4
+# github.com/go-openapi/analysis v0.19.7
 github.com/go-openapi/analysis
 github.com/go-openapi/analysis/internal
-# github.com/go-openapi/errors v0.19.2
+# github.com/go-openapi/errors v0.19.3
 github.com/go-openapi/errors
-# github.com/go-openapi/jsonpointer v0.19.2
+# github.com/go-openapi/jsonpointer v0.19.3
 github.com/go-openapi/jsonpointer
-# github.com/go-openapi/jsonreference v0.19.2
+# github.com/go-openapi/jsonreference v0.19.3
 github.com/go-openapi/jsonreference
-# github.com/go-openapi/loads v0.19.2
+# github.com/go-openapi/loads v0.19.4
 github.com/go-openapi/loads
-# github.com/go-openapi/runtime v0.19.3
+# github.com/go-openapi/runtime v0.19.11
 github.com/go-openapi/runtime
 github.com/go-openapi/runtime/client
 github.com/go-openapi/runtime/logger
@@ -81,13 +81,13 @@ github.com/go-openapi/runtime/middleware/denco
 github.com/go-openapi/runtime/middleware/header
 github.com/go-openapi/runtime/middleware/untyped
 github.com/go-openapi/runtime/security
-# github.com/go-openapi/spec v0.19.2
+# github.com/go-openapi/spec v0.19.6
 github.com/go-openapi/spec
-# github.com/go-openapi/strfmt v0.19.2
+# github.com/go-openapi/strfmt v0.19.4
 github.com/go-openapi/strfmt
-# github.com/go-openapi/swag v0.19.4
+# github.com/go-openapi/swag v0.19.7
 github.com/go-openapi/swag
-# github.com/go-openapi/validate v0.19.2
+# github.com/go-openapi/validate v0.19.6
 github.com/go-openapi/validate
 # github.com/go-stack/stack v1.8.0
 github.com/go-stack/stack
@@ -116,11 +116,15 @@ github.com/gophercloud/gophercloud/openstack/utils
 github.com/gophercloud/gophercloud/pagination
 # github.com/hashicorp/consul v0.0.0-20170112012924-23ce10f88913
 github.com/hashicorp/consul/api
+# github.com/hashicorp/errwrap v1.0.0
+github.com/hashicorp/errwrap
 # github.com/hashicorp/go-cleanhttp v0.5.0
 github.com/hashicorp/go-cleanhttp
+# github.com/hashicorp/go-multierror v1.0.0
+github.com/hashicorp/go-multierror
 # github.com/hashicorp/serf v0.0.0-20161007004122-1d4fa605f6ff
 github.com/hashicorp/serf/coordinate
-# github.com/hosting-de-labs/go-netbox v0.0.0-20190806143433-dd6a857021ad => github.com/sapcc/go-netbox v0.0.0-20200223214438-b66253786f7b
+# github.com/hosting-de-labs/go-netbox v1.0.1-api2.7.6 => github.com/stefanhipfel/go-netbox v1.0.4-api2.7.7
 github.com/hosting-de-labs/go-netbox/netbox/client
 github.com/hosting-de-labs/go-netbox/netbox/client/circuits
 github.com/hosting-de-labs/go-netbox/netbox/client/dcim
@@ -136,7 +140,7 @@ github.com/jmespath/go-jmespath
 github.com/juju/ratelimit
 # github.com/kr/logfmt v0.0.0-20140226030751-b84e30acd515
 github.com/kr/logfmt
-# github.com/mailru/easyjson v0.0.0-20190626092158-b2ccc519800e
+# github.com/mailru/easyjson v0.7.1
 github.com/mailru/easyjson/buffer
 github.com/mailru/easyjson/jlexer
 github.com/mailru/easyjson/jwriter
@@ -185,21 +189,22 @@ github.com/prometheus/prometheus/util/strutil
 github.com/prometheus/prometheus/util/treecache
 # github.com/samuel/go-zookeeper v0.0.0-20161028232340-1d7be4effb13
 github.com/samuel/go-zookeeper/zk
-# github.com/spf13/pflag v1.0.0
+# github.com/spf13/pflag v1.0.5
 github.com/spf13/pflag
 # github.com/ugorji/go v0.0.0-20170107133203-ded73eae5db7
 github.com/ugorji/go/codec
-# go.mongodb.org/mongo-driver v1.0.4
+# go.mongodb.org/mongo-driver v1.3.0
 go.mongodb.org/mongo-driver/bson
 go.mongodb.org/mongo-driver/bson/bsoncodec
+go.mongodb.org/mongo-driver/bson/bsonoptions
 go.mongodb.org/mongo-driver/bson/bsonrw
 go.mongodb.org/mongo-driver/bson/bsontype
 go.mongodb.org/mongo-driver/bson/primitive
 go.mongodb.org/mongo-driver/x/bsonx/bsoncore
-# golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4
+# golang.org/x/crypto v0.0.0-20190617133340-57b3e21c3d56
 golang.org/x/crypto/ed25519
 golang.org/x/crypto/ed25519/internal/edwards25519
-# golang.org/x/net v0.0.0-20190724013045-ca1201d0de80
+# golang.org/x/net v0.0.0-20200222125558-5a598a2470a0
 golang.org/x/net/bpf
 golang.org/x/net/context
 golang.org/x/net/context/ctxhttp
@@ -219,7 +224,7 @@ golang.org/x/oauth2/google
 golang.org/x/oauth2/internal
 golang.org/x/oauth2/jws
 golang.org/x/oauth2/jwt
-# golang.org/x/sys v0.0.0-20190730183949-1393eb018365
+# golang.org/x/sys v0.0.0-20190616124812-15dcb6c0061f
 golang.org/x/sys/unix
 golang.org/x/sys/windows
 # golang.org/x/text v0.3.2
@@ -251,7 +256,7 @@ google.golang.org/cloud/internal
 gopkg.in/fsnotify/fsnotify.v1
 # gopkg.in/inf.v0 v0.9.0
 gopkg.in/inf.v0
-# gopkg.in/yaml.v2 v2.2.2
+# gopkg.in/yaml.v2 v2.2.8
 gopkg.in/yaml.v2
 # k8s.io/apimachinery v0.0.0-20170321210947-75b8dd260ef0
 k8s.io/apimachinery/pkg/api/errors

@@ -78,10 +78,20 @@ type IPAMIPAddressesListParams struct {
 
 	/*Address*/
 	Address *string
+	/*AssignedToInterface*/
+	AssignedToInterface *string
+	/*Created*/
+	Created *string
+	/*CreatedGte*/
+	CreatedGte *string
+	/*CreatedLte*/
+	CreatedLte *string
 	/*Device*/
 	Device *string
 	/*DeviceID*/
 	DeviceID *int64
+	/*DNSName*/
+	DNSName *string
 	/*Family*/
 	Family *string
 	/*IDIn
@@ -89,15 +99,23 @@ type IPAMIPAddressesListParams struct {
 
 	*/
 	IDIn *string
+	/*Interface*/
+	Interface *string
 	/*InterfaceID*/
 	InterfaceID *int64
+	/*LastUpdated*/
+	LastUpdated *string
+	/*LastUpdatedGte*/
+	LastUpdatedGte *string
+	/*LastUpdatedLte*/
+	LastUpdatedLte *string
 	/*Limit
 	  Number of results to return per page.
 
 	*/
 	Limit *int64
 	/*MaskLength*/
-	MaskLength *int64
+	MaskLength *float64
 	/*Offset
 	  The initial index from which to return the results.
 
@@ -115,6 +133,10 @@ type IPAMIPAddressesListParams struct {
 	Tag *string
 	/*Tenant*/
 	Tenant *string
+	/*TenantGroup*/
+	TenantGroup *string
+	/*TenantGroupID*/
+	TenantGroupID *int64
 	/*TenantID*/
 	TenantID *int64
 	/*VirtualMachine*/
@@ -175,6 +197,50 @@ func (o *IPAMIPAddressesListParams) SetAddress(address *string) {
 	o.Address = address
 }
 
+// WithAssignedToInterface adds the assignedToInterface to the ipam ip addresses list params
+func (o *IPAMIPAddressesListParams) WithAssignedToInterface(assignedToInterface *string) *IPAMIPAddressesListParams {
+	o.SetAssignedToInterface(assignedToInterface)
+	return o
+}
+
+// SetAssignedToInterface adds the assignedToInterface to the ipam ip addresses list params
+func (o *IPAMIPAddressesListParams) SetAssignedToInterface(assignedToInterface *string) {
+	o.AssignedToInterface = assignedToInterface
+}
+
+// WithCreated adds the created to the ipam ip addresses list params
+func (o *IPAMIPAddressesListParams) WithCreated(created *string) *IPAMIPAddressesListParams {
+	o.SetCreated(created)
+	return o
+}
+
+// SetCreated adds the created to the ipam ip addresses list params
+func (o *IPAMIPAddressesListParams) SetCreated(created *string) {
+	o.Created = created
+}
+
+// WithCreatedGte adds the createdGte to the ipam ip addresses list params
+func (o *IPAMIPAddressesListParams) WithCreatedGte(createdGte *string) *IPAMIPAddressesListParams {
+	o.SetCreatedGte(createdGte)
+	return o
+}
+
+// SetCreatedGte adds the createdGte to the ipam ip addresses list params
+func (o *IPAMIPAddressesListParams) SetCreatedGte(createdGte *string) {
+	o.CreatedGte = createdGte
+}
+
+// WithCreatedLte adds the createdLte to the ipam ip addresses list params
+func (o *IPAMIPAddressesListParams) WithCreatedLte(createdLte *string) *IPAMIPAddressesListParams {
+	o.SetCreatedLte(createdLte)
+	return o
+}
+
+// SetCreatedLte adds the createdLte to the ipam ip addresses list params
+func (o *IPAMIPAddressesListParams) SetCreatedLte(createdLte *string) {
+	o.CreatedLte = createdLte
+}
+
 // WithDevice adds the device to the ipam ip addresses list params
 func (o *IPAMIPAddressesListParams) WithDevice(device *string) *IPAMIPAddressesListParams {
 	o.SetDevice(device)
@@ -195,6 +261,17 @@ func (o *IPAMIPAddressesListParams) WithDeviceID(deviceID *int64) *IPAMIPAddress
 // SetDeviceID adds the deviceId to the ipam ip addresses list params
 func (o *IPAMIPAddressesListParams) SetDeviceID(deviceID *int64) {
 	o.DeviceID = deviceID
+}
+
+// WithDNSName adds the dNSName to the ipam ip addresses list params
+func (o *IPAMIPAddressesListParams) WithDNSName(dNSName *string) *IPAMIPAddressesListParams {
+	o.SetDNSName(dNSName)
+	return o
+}
+
+// SetDNSName adds the dnsName to the ipam ip addresses list params
+func (o *IPAMIPAddressesListParams) SetDNSName(dNSName *string) {
+	o.DNSName = dNSName
 }
 
 // WithFamily adds the family to the ipam ip addresses list params
@@ -219,6 +296,17 @@ func (o *IPAMIPAddressesListParams) SetIDIn(iDIn *string) {
 	o.IDIn = iDIn
 }
 
+// WithInterface adds the interfaceVar to the ipam ip addresses list params
+func (o *IPAMIPAddressesListParams) WithInterface(interfaceVar *string) *IPAMIPAddressesListParams {
+	o.SetInterface(interfaceVar)
+	return o
+}
+
+// SetInterface adds the interface to the ipam ip addresses list params
+func (o *IPAMIPAddressesListParams) SetInterface(interfaceVar *string) {
+	o.Interface = interfaceVar
+}
+
 // WithInterfaceID adds the interfaceID to the ipam ip addresses list params
 func (o *IPAMIPAddressesListParams) WithInterfaceID(interfaceID *int64) *IPAMIPAddressesListParams {
 	o.SetInterfaceID(interfaceID)
@@ -228,6 +316,39 @@ func (o *IPAMIPAddressesListParams) WithInterfaceID(interfaceID *int64) *IPAMIPA
 // SetInterfaceID adds the interfaceId to the ipam ip addresses list params
 func (o *IPAMIPAddressesListParams) SetInterfaceID(interfaceID *int64) {
 	o.InterfaceID = interfaceID
+}
+
+// WithLastUpdated adds the lastUpdated to the ipam ip addresses list params
+func (o *IPAMIPAddressesListParams) WithLastUpdated(lastUpdated *string) *IPAMIPAddressesListParams {
+	o.SetLastUpdated(lastUpdated)
+	return o
+}
+
+// SetLastUpdated adds the lastUpdated to the ipam ip addresses list params
+func (o *IPAMIPAddressesListParams) SetLastUpdated(lastUpdated *string) {
+	o.LastUpdated = lastUpdated
+}
+
+// WithLastUpdatedGte adds the lastUpdatedGte to the ipam ip addresses list params
+func (o *IPAMIPAddressesListParams) WithLastUpdatedGte(lastUpdatedGte *string) *IPAMIPAddressesListParams {
+	o.SetLastUpdatedGte(lastUpdatedGte)
+	return o
+}
+
+// SetLastUpdatedGte adds the lastUpdatedGte to the ipam ip addresses list params
+func (o *IPAMIPAddressesListParams) SetLastUpdatedGte(lastUpdatedGte *string) {
+	o.LastUpdatedGte = lastUpdatedGte
+}
+
+// WithLastUpdatedLte adds the lastUpdatedLte to the ipam ip addresses list params
+func (o *IPAMIPAddressesListParams) WithLastUpdatedLte(lastUpdatedLte *string) *IPAMIPAddressesListParams {
+	o.SetLastUpdatedLte(lastUpdatedLte)
+	return o
+}
+
+// SetLastUpdatedLte adds the lastUpdatedLte to the ipam ip addresses list params
+func (o *IPAMIPAddressesListParams) SetLastUpdatedLte(lastUpdatedLte *string) {
+	o.LastUpdatedLte = lastUpdatedLte
 }
 
 // WithLimit adds the limit to the ipam ip addresses list params
@@ -242,13 +363,13 @@ func (o *IPAMIPAddressesListParams) SetLimit(limit *int64) {
 }
 
 // WithMaskLength adds the maskLength to the ipam ip addresses list params
-func (o *IPAMIPAddressesListParams) WithMaskLength(maskLength *int64) *IPAMIPAddressesListParams {
+func (o *IPAMIPAddressesListParams) WithMaskLength(maskLength *float64) *IPAMIPAddressesListParams {
 	o.SetMaskLength(maskLength)
 	return o
 }
 
 // SetMaskLength adds the maskLength to the ipam ip addresses list params
-func (o *IPAMIPAddressesListParams) SetMaskLength(maskLength *int64) {
+func (o *IPAMIPAddressesListParams) SetMaskLength(maskLength *float64) {
 	o.MaskLength = maskLength
 }
 
@@ -327,6 +448,28 @@ func (o *IPAMIPAddressesListParams) WithTenant(tenant *string) *IPAMIPAddressesL
 // SetTenant adds the tenant to the ipam ip addresses list params
 func (o *IPAMIPAddressesListParams) SetTenant(tenant *string) {
 	o.Tenant = tenant
+}
+
+// WithTenantGroup adds the tenantGroup to the ipam ip addresses list params
+func (o *IPAMIPAddressesListParams) WithTenantGroup(tenantGroup *string) *IPAMIPAddressesListParams {
+	o.SetTenantGroup(tenantGroup)
+	return o
+}
+
+// SetTenantGroup adds the tenantGroup to the ipam ip addresses list params
+func (o *IPAMIPAddressesListParams) SetTenantGroup(tenantGroup *string) {
+	o.TenantGroup = tenantGroup
+}
+
+// WithTenantGroupID adds the tenantGroupID to the ipam ip addresses list params
+func (o *IPAMIPAddressesListParams) WithTenantGroupID(tenantGroupID *int64) *IPAMIPAddressesListParams {
+	o.SetTenantGroupID(tenantGroupID)
+	return o
+}
+
+// SetTenantGroupID adds the tenantGroupId to the ipam ip addresses list params
+func (o *IPAMIPAddressesListParams) SetTenantGroupID(tenantGroupID *int64) {
+	o.TenantGroupID = tenantGroupID
 }
 
 // WithTenantID adds the tenantID to the ipam ip addresses list params
@@ -408,6 +551,70 @@ func (o *IPAMIPAddressesListParams) WriteToRequest(r runtime.ClientRequest, reg 
 
 	}
 
+	if o.AssignedToInterface != nil {
+
+		// query param assigned_to_interface
+		var qrAssignedToInterface string
+		if o.AssignedToInterface != nil {
+			qrAssignedToInterface = *o.AssignedToInterface
+		}
+		qAssignedToInterface := qrAssignedToInterface
+		if qAssignedToInterface != "" {
+			if err := r.SetQueryParam("assigned_to_interface", qAssignedToInterface); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Created != nil {
+
+		// query param created
+		var qrCreated string
+		if o.Created != nil {
+			qrCreated = *o.Created
+		}
+		qCreated := qrCreated
+		if qCreated != "" {
+			if err := r.SetQueryParam("created", qCreated); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.CreatedGte != nil {
+
+		// query param created__gte
+		var qrCreatedGte string
+		if o.CreatedGte != nil {
+			qrCreatedGte = *o.CreatedGte
+		}
+		qCreatedGte := qrCreatedGte
+		if qCreatedGte != "" {
+			if err := r.SetQueryParam("created__gte", qCreatedGte); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.CreatedLte != nil {
+
+		// query param created__lte
+		var qrCreatedLte string
+		if o.CreatedLte != nil {
+			qrCreatedLte = *o.CreatedLte
+		}
+		qCreatedLte := qrCreatedLte
+		if qCreatedLte != "" {
+			if err := r.SetQueryParam("created__lte", qCreatedLte); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.Device != nil {
 
 		// query param device
@@ -434,6 +641,22 @@ func (o *IPAMIPAddressesListParams) WriteToRequest(r runtime.ClientRequest, reg 
 		qDeviceID := swag.FormatInt64(qrDeviceID)
 		if qDeviceID != "" {
 			if err := r.SetQueryParam("device_id", qDeviceID); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.DNSName != nil {
+
+		// query param dns_name
+		var qrDNSName string
+		if o.DNSName != nil {
+			qrDNSName = *o.DNSName
+		}
+		qDNSName := qrDNSName
+		if qDNSName != "" {
+			if err := r.SetQueryParam("dns_name", qDNSName); err != nil {
 				return err
 			}
 		}
@@ -472,6 +695,22 @@ func (o *IPAMIPAddressesListParams) WriteToRequest(r runtime.ClientRequest, reg 
 
 	}
 
+	if o.Interface != nil {
+
+		// query param interface
+		var qrInterface string
+		if o.Interface != nil {
+			qrInterface = *o.Interface
+		}
+		qInterface := qrInterface
+		if qInterface != "" {
+			if err := r.SetQueryParam("interface", qInterface); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.InterfaceID != nil {
 
 		// query param interface_id
@@ -482,6 +721,54 @@ func (o *IPAMIPAddressesListParams) WriteToRequest(r runtime.ClientRequest, reg 
 		qInterfaceID := swag.FormatInt64(qrInterfaceID)
 		if qInterfaceID != "" {
 			if err := r.SetQueryParam("interface_id", qInterfaceID); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.LastUpdated != nil {
+
+		// query param last_updated
+		var qrLastUpdated string
+		if o.LastUpdated != nil {
+			qrLastUpdated = *o.LastUpdated
+		}
+		qLastUpdated := qrLastUpdated
+		if qLastUpdated != "" {
+			if err := r.SetQueryParam("last_updated", qLastUpdated); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.LastUpdatedGte != nil {
+
+		// query param last_updated__gte
+		var qrLastUpdatedGte string
+		if o.LastUpdatedGte != nil {
+			qrLastUpdatedGte = *o.LastUpdatedGte
+		}
+		qLastUpdatedGte := qrLastUpdatedGte
+		if qLastUpdatedGte != "" {
+			if err := r.SetQueryParam("last_updated__gte", qLastUpdatedGte); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.LastUpdatedLte != nil {
+
+		// query param last_updated__lte
+		var qrLastUpdatedLte string
+		if o.LastUpdatedLte != nil {
+			qrLastUpdatedLte = *o.LastUpdatedLte
+		}
+		qLastUpdatedLte := qrLastUpdatedLte
+		if qLastUpdatedLte != "" {
+			if err := r.SetQueryParam("last_updated__lte", qLastUpdatedLte); err != nil {
 				return err
 			}
 		}
@@ -507,11 +794,11 @@ func (o *IPAMIPAddressesListParams) WriteToRequest(r runtime.ClientRequest, reg 
 	if o.MaskLength != nil {
 
 		// query param mask_length
-		var qrMaskLength int64
+		var qrMaskLength float64
 		if o.MaskLength != nil {
 			qrMaskLength = *o.MaskLength
 		}
-		qMaskLength := swag.FormatInt64(qrMaskLength)
+		qMaskLength := swag.FormatFloat64(qrMaskLength)
 		if qMaskLength != "" {
 			if err := r.SetQueryParam("mask_length", qMaskLength); err != nil {
 				return err
@@ -626,6 +913,38 @@ func (o *IPAMIPAddressesListParams) WriteToRequest(r runtime.ClientRequest, reg 
 		qTenant := qrTenant
 		if qTenant != "" {
 			if err := r.SetQueryParam("tenant", qTenant); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.TenantGroup != nil {
+
+		// query param tenant_group
+		var qrTenantGroup string
+		if o.TenantGroup != nil {
+			qrTenantGroup = *o.TenantGroup
+		}
+		qTenantGroup := qrTenantGroup
+		if qTenantGroup != "" {
+			if err := r.SetQueryParam("tenant_group", qTenantGroup); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.TenantGroupID != nil {
+
+		// query param tenant_group_id
+		var qrTenantGroupID int64
+		if o.TenantGroupID != nil {
+			qrTenantGroupID = *o.TenantGroupID
+		}
+		qTenantGroupID := swag.FormatInt64(qrTenantGroupID)
+		if qTenantGroupID != "" {
+			if err := r.SetQueryParam("tenant_group_id", qTenantGroupID); err != nil {
 				return err
 			}
 		}

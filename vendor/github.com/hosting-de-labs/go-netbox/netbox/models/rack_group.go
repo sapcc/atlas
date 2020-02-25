@@ -41,6 +41,10 @@ type RackGroup struct {
 	// Min Length: 1
 	Name *string `json:"name"`
 
+	// Rack count
+	// Read Only: true
+	RackCount int64 `json:"rack_count,omitempty"`
+
 	// site
 	// Required: true
 	Site *NestedSite `json:"site"`

@@ -80,14 +80,18 @@ type DcimInterfacesListParams struct {
 	Cabled *string
 	/*ConnectionStatus*/
 	ConnectionStatus *string
+	/*Description*/
+	Description *string
 	/*Device*/
 	Device *string
 	/*DeviceID*/
 	DeviceID *int64
 	/*Enabled*/
 	Enabled *string
-	/*FormFactor*/
-	FormFactor *string
+	/*ID*/
+	ID *int64
+	/*Kind*/
+	Kind *string
 	/*LagID*/
 	LagID *int64
 	/*Limit
@@ -99,8 +103,10 @@ type DcimInterfacesListParams struct {
 	MacAddress *string
 	/*MgmtOnly*/
 	MgmtOnly *string
+	/*Mode*/
+	Mode *string
 	/*Mtu*/
-	Mtu *int64
+	Mtu *float64
 	/*Name*/
 	Name *string
 	/*Offset
@@ -110,6 +116,14 @@ type DcimInterfacesListParams struct {
 	Offset *int64
 	/*Q*/
 	Q *string
+	/*Region*/
+	Region *string
+	/*RegionID*/
+	RegionID *int64
+	/*Site*/
+	Site *string
+	/*SiteID*/
+	SiteID *int64
 	/*Tag*/
 	Tag *string
 	/*Type*/
@@ -179,6 +193,17 @@ func (o *DcimInterfacesListParams) SetConnectionStatus(connectionStatus *string)
 	o.ConnectionStatus = connectionStatus
 }
 
+// WithDescription adds the description to the dcim interfaces list params
+func (o *DcimInterfacesListParams) WithDescription(description *string) *DcimInterfacesListParams {
+	o.SetDescription(description)
+	return o
+}
+
+// SetDescription adds the description to the dcim interfaces list params
+func (o *DcimInterfacesListParams) SetDescription(description *string) {
+	o.Description = description
+}
+
 // WithDevice adds the device to the dcim interfaces list params
 func (o *DcimInterfacesListParams) WithDevice(device *string) *DcimInterfacesListParams {
 	o.SetDevice(device)
@@ -212,15 +237,26 @@ func (o *DcimInterfacesListParams) SetEnabled(enabled *string) {
 	o.Enabled = enabled
 }
 
-// WithFormFactor adds the formFactor to the dcim interfaces list params
-func (o *DcimInterfacesListParams) WithFormFactor(formFactor *string) *DcimInterfacesListParams {
-	o.SetFormFactor(formFactor)
+// WithID adds the id to the dcim interfaces list params
+func (o *DcimInterfacesListParams) WithID(id *int64) *DcimInterfacesListParams {
+	o.SetID(id)
 	return o
 }
 
-// SetFormFactor adds the formFactor to the dcim interfaces list params
-func (o *DcimInterfacesListParams) SetFormFactor(formFactor *string) {
-	o.FormFactor = formFactor
+// SetID adds the id to the dcim interfaces list params
+func (o *DcimInterfacesListParams) SetID(id *int64) {
+	o.ID = id
+}
+
+// WithKind adds the kind to the dcim interfaces list params
+func (o *DcimInterfacesListParams) WithKind(kind *string) *DcimInterfacesListParams {
+	o.SetKind(kind)
+	return o
+}
+
+// SetKind adds the kind to the dcim interfaces list params
+func (o *DcimInterfacesListParams) SetKind(kind *string) {
+	o.Kind = kind
 }
 
 // WithLagID adds the lagID to the dcim interfaces list params
@@ -267,14 +303,25 @@ func (o *DcimInterfacesListParams) SetMgmtOnly(mgmtOnly *string) {
 	o.MgmtOnly = mgmtOnly
 }
 
+// WithMode adds the mode to the dcim interfaces list params
+func (o *DcimInterfacesListParams) WithMode(mode *string) *DcimInterfacesListParams {
+	o.SetMode(mode)
+	return o
+}
+
+// SetMode adds the mode to the dcim interfaces list params
+func (o *DcimInterfacesListParams) SetMode(mode *string) {
+	o.Mode = mode
+}
+
 // WithMtu adds the mtu to the dcim interfaces list params
-func (o *DcimInterfacesListParams) WithMtu(mtu *int64) *DcimInterfacesListParams {
+func (o *DcimInterfacesListParams) WithMtu(mtu *float64) *DcimInterfacesListParams {
 	o.SetMtu(mtu)
 	return o
 }
 
 // SetMtu adds the mtu to the dcim interfaces list params
-func (o *DcimInterfacesListParams) SetMtu(mtu *int64) {
+func (o *DcimInterfacesListParams) SetMtu(mtu *float64) {
 	o.Mtu = mtu
 }
 
@@ -309,6 +356,50 @@ func (o *DcimInterfacesListParams) WithQ(q *string) *DcimInterfacesListParams {
 // SetQ adds the q to the dcim interfaces list params
 func (o *DcimInterfacesListParams) SetQ(q *string) {
 	o.Q = q
+}
+
+// WithRegion adds the region to the dcim interfaces list params
+func (o *DcimInterfacesListParams) WithRegion(region *string) *DcimInterfacesListParams {
+	o.SetRegion(region)
+	return o
+}
+
+// SetRegion adds the region to the dcim interfaces list params
+func (o *DcimInterfacesListParams) SetRegion(region *string) {
+	o.Region = region
+}
+
+// WithRegionID adds the regionID to the dcim interfaces list params
+func (o *DcimInterfacesListParams) WithRegionID(regionID *int64) *DcimInterfacesListParams {
+	o.SetRegionID(regionID)
+	return o
+}
+
+// SetRegionID adds the regionId to the dcim interfaces list params
+func (o *DcimInterfacesListParams) SetRegionID(regionID *int64) {
+	o.RegionID = regionID
+}
+
+// WithSite adds the site to the dcim interfaces list params
+func (o *DcimInterfacesListParams) WithSite(site *string) *DcimInterfacesListParams {
+	o.SetSite(site)
+	return o
+}
+
+// SetSite adds the site to the dcim interfaces list params
+func (o *DcimInterfacesListParams) SetSite(site *string) {
+	o.Site = site
+}
+
+// WithSiteID adds the siteID to the dcim interfaces list params
+func (o *DcimInterfacesListParams) WithSiteID(siteID *int64) *DcimInterfacesListParams {
+	o.SetSiteID(siteID)
+	return o
+}
+
+// SetSiteID adds the siteId to the dcim interfaces list params
+func (o *DcimInterfacesListParams) SetSiteID(siteID *int64) {
+	o.SiteID = siteID
 }
 
 // WithTag adds the tag to the dcim interfaces list params
@@ -395,6 +486,22 @@ func (o *DcimInterfacesListParams) WriteToRequest(r runtime.ClientRequest, reg s
 
 	}
 
+	if o.Description != nil {
+
+		// query param description
+		var qrDescription string
+		if o.Description != nil {
+			qrDescription = *o.Description
+		}
+		qDescription := qrDescription
+		if qDescription != "" {
+			if err := r.SetQueryParam("description", qDescription); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.Device != nil {
 
 		// query param device
@@ -443,16 +550,32 @@ func (o *DcimInterfacesListParams) WriteToRequest(r runtime.ClientRequest, reg s
 
 	}
 
-	if o.FormFactor != nil {
+	if o.ID != nil {
 
-		// query param form_factor
-		var qrFormFactor string
-		if o.FormFactor != nil {
-			qrFormFactor = *o.FormFactor
+		// query param id
+		var qrID int64
+		if o.ID != nil {
+			qrID = *o.ID
 		}
-		qFormFactor := qrFormFactor
-		if qFormFactor != "" {
-			if err := r.SetQueryParam("form_factor", qFormFactor); err != nil {
+		qID := swag.FormatInt64(qrID)
+		if qID != "" {
+			if err := r.SetQueryParam("id", qID); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Kind != nil {
+
+		// query param kind
+		var qrKind string
+		if o.Kind != nil {
+			qrKind = *o.Kind
+		}
+		qKind := qrKind
+		if qKind != "" {
+			if err := r.SetQueryParam("kind", qKind); err != nil {
 				return err
 			}
 		}
@@ -523,14 +646,30 @@ func (o *DcimInterfacesListParams) WriteToRequest(r runtime.ClientRequest, reg s
 
 	}
 
+	if o.Mode != nil {
+
+		// query param mode
+		var qrMode string
+		if o.Mode != nil {
+			qrMode = *o.Mode
+		}
+		qMode := qrMode
+		if qMode != "" {
+			if err := r.SetQueryParam("mode", qMode); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.Mtu != nil {
 
 		// query param mtu
-		var qrMtu int64
+		var qrMtu float64
 		if o.Mtu != nil {
 			qrMtu = *o.Mtu
 		}
-		qMtu := swag.FormatInt64(qrMtu)
+		qMtu := swag.FormatFloat64(qrMtu)
 		if qMtu != "" {
 			if err := r.SetQueryParam("mtu", qMtu); err != nil {
 				return err
@@ -581,6 +720,70 @@ func (o *DcimInterfacesListParams) WriteToRequest(r runtime.ClientRequest, reg s
 		qQ := qrQ
 		if qQ != "" {
 			if err := r.SetQueryParam("q", qQ); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Region != nil {
+
+		// query param region
+		var qrRegion string
+		if o.Region != nil {
+			qrRegion = *o.Region
+		}
+		qRegion := qrRegion
+		if qRegion != "" {
+			if err := r.SetQueryParam("region", qRegion); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.RegionID != nil {
+
+		// query param region_id
+		var qrRegionID int64
+		if o.RegionID != nil {
+			qrRegionID = *o.RegionID
+		}
+		qRegionID := swag.FormatInt64(qrRegionID)
+		if qRegionID != "" {
+			if err := r.SetQueryParam("region_id", qRegionID); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Site != nil {
+
+		// query param site
+		var qrSite string
+		if o.Site != nil {
+			qrSite = *o.Site
+		}
+		qSite := qrSite
+		if qSite != "" {
+			if err := r.SetQueryParam("site", qSite); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.SiteID != nil {
+
+		// query param site_id
+		var qrSiteID int64
+		if o.SiteID != nil {
+			qrSiteID = *o.SiteID
+		}
+		qSiteID := swag.FormatInt64(qrSiteID)
+		if qSiteID != "" {
+			if err := r.SetQueryParam("site_id", qSiteID); err != nil {
 				return err
 			}
 		}

@@ -116,8 +116,8 @@ func (nb *Netbox) Racks(role string, siteID int64) ([]models.Rack, error) {
 }
 
 // Servers retrieves all the servers in the rack
-func (nb *Netbox) Servers(rackID int64) ([]models.Device, error) {
-	result := make([]models.Device, 0)
+func (nb *Netbox) Servers(rackID int64) ([]models.DeviceWithConfigContext, error) {
+	result := make([]models.DeviceWithConfigContext, 0)
 	params := dcim.NewDcimDevicesListParams()
 	params.RackID = &rackID
 	role := "server"
@@ -148,8 +148,8 @@ func (nb *Netbox) Servers(rackID int64) ([]models.Device, error) {
 }
 
 //DevicesByRegion retrieves devices by region, manufacturer and status
-func (nb *Netbox) DevicesByRegion(query, manufacturer, region, status string) (res []models.Device, err error) {
-	res = make([]models.Device, 0)
+func (nb *Netbox) DevicesByRegion(query, manufacturer, region, status string) (res []models.DeviceWithConfigContext, err error) {
+	res = make([]models.DeviceWithConfigContext, 0)
 	params := dcim.NewDcimDevicesListParams()
 	params.WithQ(&query)
 	params.WithRegion(&region)
@@ -179,8 +179,8 @@ func (nb *Netbox) DevicesByRegion(query, manufacturer, region, status string) (r
 }
 
 //DevicesByRegion retrieves devices by region, manufacturer and status
-func (nb *Netbox) DevicesByParams(params dcim.DcimDevicesListParams) (res []models.Device, err error) {
-	res = make([]models.Device, 0)
+func (nb *Netbox) DevicesByParams(params dcim.DcimDevicesListParams) (res []models.DeviceWithConfigContext, err error) {
+	res = make([]models.DeviceWithConfigContext, 0)
 	limit := int64(100)
 	params.WithLimit(&limit)
 	params.WithTimeout(30 * time.Second)
@@ -206,8 +206,8 @@ func (nb *Netbox) DevicesByParams(params dcim.DcimDevicesListParams) (res []mode
 }
 
 //VMsByTag retrieves devices by region, manufacturer and status
-func (nb *Netbox) VMsByParams(params virtualization.VirtualizationVirtualMachinesListParams) (res []models.VirtualMachine, err error) {
-	res = make([]models.VirtualMachine, 0)
+func (nb *Netbox) VMsByParams(params virtualization.VirtualizationVirtualMachinesListParams) (res []models.VirtualMachineWithConfigContext, err error) {
+	res = make([]models.VirtualMachineWithConfigContext, 0)
 	params.WithTimeout(30 * time.Second)
 	limit := int64(100)
 	params.WithLimit(&limit)
@@ -232,8 +232,8 @@ func (nb *Netbox) VMsByParams(params virtualization.VirtualizationVirtualMachine
 }
 
 //VMsByTag retrieves devices by region, manufacturer and status
-func (nb *Netbox) VMsByTag(query, status, tag string) (res []models.VirtualMachine, err error) {
-	res = make([]models.VirtualMachine, 0)
+func (nb *Netbox) VMsByTag(query, status, tag string) (res []models.VirtualMachineWithConfigContext, err error) {
+	res = make([]models.VirtualMachineWithConfigContext, 0)
 	params := virtualization.NewVirtualizationVirtualMachinesListParams()
 	params.WithQ(&query)
 	params.WithStatus(&status)
@@ -342,7 +342,6 @@ func (nb *Netbox) IPAddressByDeviceAndIntefrace(deviceID int64, interfaceID int6
 
 	limit := int64(1)
 	params.Limit = &limit
-
 	list, err := nb.client.IPAM.IPAMIPAddressesList(params, nil)
 	if err != nil {
 		return nil, err
@@ -415,13 +414,13 @@ func (nb *Netbox) RacksByRegion(role string, region string) ([]models.Rack, erro
 }
 
 // ServersByRegion retrieves all the servers in the region with the specified rack role
-func (nb *Netbox) ServersByRegion(rackRole string, region string) ([]models.Device, error) {
+func (nb *Netbox) ServersByRegion(rackRole string, region string) ([]models.DeviceWithConfigContext, error) {
 	racks, err := nb.RacksByRegion(rackRole, region)
 	if err != nil {
 		return nil, err
 	}
 
-	results := make([]models.Device, 0)
+	results := make([]models.DeviceWithConfigContext, 0)
 
 	for _, rack := range racks {
 
@@ -436,8 +435,8 @@ func (nb *Netbox) ServersByRegion(rackRole string, region string) ([]models.Devi
 }
 
 // AcitveDevicesByCustomParameters retrievs all active devices with custom parameters
-func (nb *Netbox) ActiveDevicesByCustomParameters(query string, params *dcim.DcimDevicesListParams) ([]models.Device, error) {
-	res := make([]models.Device, 0)
+func (nb *Netbox) ActiveDevicesByCustomParameters(query string, params *dcim.DcimDevicesListParams) ([]models.DeviceWithConfigContext, error) {
+	res := make([]models.DeviceWithConfigContext, 0)
 	activeStatus := "1"
 	limit := int64(100)
 	params.WithStatus(&activeStatus)

@@ -653,6 +653,35 @@ func (a *Client) DcimConsolePortsRead(params *DcimConsolePortsReadParams, authIn
 }
 
 /*
+DcimConsolePortsTrace Trace a complete cable path and return each segment as a three-tuple of (termination, cable, termination).
+*/
+func (a *Client) DcimConsolePortsTrace(params *DcimConsolePortsTraceParams, authInfo runtime.ClientAuthInfoWriter) (*DcimConsolePortsTraceOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDcimConsolePortsTraceParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "dcim_console-ports_trace",
+		Method:             "GET",
+		PathPattern:        "/dcim/console-ports/{id}/trace/",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &DcimConsolePortsTraceReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DcimConsolePortsTraceOK), nil
+
+}
+
+/*
 DcimConsolePortsUpdate dcim console ports update API
 */
 func (a *Client) DcimConsolePortsUpdate(params *DcimConsolePortsUpdateParams, authInfo runtime.ClientAuthInfoWriter) (*DcimConsolePortsUpdateOK, error) {
@@ -1809,6 +1838,35 @@ func (a *Client) DcimDevicesDelete(params *DcimDevicesDeleteParams, authInfo run
 		return nil, err
 	}
 	return result.(*DcimDevicesDeleteNoContent), nil
+
+}
+
+/*
+DcimDevicesGraphs A convenience method for rendering graphs for a particular Device.
+*/
+func (a *Client) DcimDevicesGraphs(params *DcimDevicesGraphsParams, authInfo runtime.ClientAuthInfoWriter) (*DcimDevicesGraphsOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDcimDevicesGraphsParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "dcim_devices_graphs",
+		Method:             "GET",
+		PathPattern:        "/dcim/devices/{id}/graphs/",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &DcimDevicesGraphsReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DcimDevicesGraphsOK), nil
 
 }
 
@@ -3292,6 +3350,180 @@ func (a *Client) DcimPowerConnectionsList(params *DcimPowerConnectionsListParams
 }
 
 /*
+DcimPowerFeedsCreate dcim power feeds create API
+*/
+func (a *Client) DcimPowerFeedsCreate(params *DcimPowerFeedsCreateParams, authInfo runtime.ClientAuthInfoWriter) (*DcimPowerFeedsCreateCreated, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDcimPowerFeedsCreateParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "dcim_power-feeds_create",
+		Method:             "POST",
+		PathPattern:        "/dcim/power-feeds/",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &DcimPowerFeedsCreateReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DcimPowerFeedsCreateCreated), nil
+
+}
+
+/*
+DcimPowerFeedsDelete dcim power feeds delete API
+*/
+func (a *Client) DcimPowerFeedsDelete(params *DcimPowerFeedsDeleteParams, authInfo runtime.ClientAuthInfoWriter) (*DcimPowerFeedsDeleteNoContent, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDcimPowerFeedsDeleteParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "dcim_power-feeds_delete",
+		Method:             "DELETE",
+		PathPattern:        "/dcim/power-feeds/{id}/",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &DcimPowerFeedsDeleteReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DcimPowerFeedsDeleteNoContent), nil
+
+}
+
+/*
+DcimPowerFeedsList dcim power feeds list API
+*/
+func (a *Client) DcimPowerFeedsList(params *DcimPowerFeedsListParams, authInfo runtime.ClientAuthInfoWriter) (*DcimPowerFeedsListOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDcimPowerFeedsListParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "dcim_power-feeds_list",
+		Method:             "GET",
+		PathPattern:        "/dcim/power-feeds/",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &DcimPowerFeedsListReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DcimPowerFeedsListOK), nil
+
+}
+
+/*
+DcimPowerFeedsPartialUpdate dcim power feeds partial update API
+*/
+func (a *Client) DcimPowerFeedsPartialUpdate(params *DcimPowerFeedsPartialUpdateParams, authInfo runtime.ClientAuthInfoWriter) (*DcimPowerFeedsPartialUpdateOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDcimPowerFeedsPartialUpdateParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "dcim_power-feeds_partial_update",
+		Method:             "PATCH",
+		PathPattern:        "/dcim/power-feeds/{id}/",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &DcimPowerFeedsPartialUpdateReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DcimPowerFeedsPartialUpdateOK), nil
+
+}
+
+/*
+DcimPowerFeedsRead dcim power feeds read API
+*/
+func (a *Client) DcimPowerFeedsRead(params *DcimPowerFeedsReadParams, authInfo runtime.ClientAuthInfoWriter) (*DcimPowerFeedsReadOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDcimPowerFeedsReadParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "dcim_power-feeds_read",
+		Method:             "GET",
+		PathPattern:        "/dcim/power-feeds/{id}/",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &DcimPowerFeedsReadReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DcimPowerFeedsReadOK), nil
+
+}
+
+/*
+DcimPowerFeedsUpdate dcim power feeds update API
+*/
+func (a *Client) DcimPowerFeedsUpdate(params *DcimPowerFeedsUpdateParams, authInfo runtime.ClientAuthInfoWriter) (*DcimPowerFeedsUpdateOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDcimPowerFeedsUpdateParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "dcim_power-feeds_update",
+		Method:             "PUT",
+		PathPattern:        "/dcim/power-feeds/{id}/",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &DcimPowerFeedsUpdateReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DcimPowerFeedsUpdateOK), nil
+
+}
+
+/*
 DcimPowerOutletTemplatesCreate dcim power outlet templates create API
 */
 func (a *Client) DcimPowerOutletTemplatesCreate(params *DcimPowerOutletTemplatesCreateParams, authInfo runtime.ClientAuthInfoWriter) (*DcimPowerOutletTemplatesCreateCreated, error) {
@@ -3665,6 +3897,180 @@ func (a *Client) DcimPowerOutletsUpdate(params *DcimPowerOutletsUpdateParams, au
 		return nil, err
 	}
 	return result.(*DcimPowerOutletsUpdateOK), nil
+
+}
+
+/*
+DcimPowerPanelsCreate dcim power panels create API
+*/
+func (a *Client) DcimPowerPanelsCreate(params *DcimPowerPanelsCreateParams, authInfo runtime.ClientAuthInfoWriter) (*DcimPowerPanelsCreateCreated, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDcimPowerPanelsCreateParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "dcim_power-panels_create",
+		Method:             "POST",
+		PathPattern:        "/dcim/power-panels/",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &DcimPowerPanelsCreateReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DcimPowerPanelsCreateCreated), nil
+
+}
+
+/*
+DcimPowerPanelsDelete dcim power panels delete API
+*/
+func (a *Client) DcimPowerPanelsDelete(params *DcimPowerPanelsDeleteParams, authInfo runtime.ClientAuthInfoWriter) (*DcimPowerPanelsDeleteNoContent, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDcimPowerPanelsDeleteParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "dcim_power-panels_delete",
+		Method:             "DELETE",
+		PathPattern:        "/dcim/power-panels/{id}/",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &DcimPowerPanelsDeleteReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DcimPowerPanelsDeleteNoContent), nil
+
+}
+
+/*
+DcimPowerPanelsList dcim power panels list API
+*/
+func (a *Client) DcimPowerPanelsList(params *DcimPowerPanelsListParams, authInfo runtime.ClientAuthInfoWriter) (*DcimPowerPanelsListOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDcimPowerPanelsListParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "dcim_power-panels_list",
+		Method:             "GET",
+		PathPattern:        "/dcim/power-panels/",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &DcimPowerPanelsListReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DcimPowerPanelsListOK), nil
+
+}
+
+/*
+DcimPowerPanelsPartialUpdate dcim power panels partial update API
+*/
+func (a *Client) DcimPowerPanelsPartialUpdate(params *DcimPowerPanelsPartialUpdateParams, authInfo runtime.ClientAuthInfoWriter) (*DcimPowerPanelsPartialUpdateOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDcimPowerPanelsPartialUpdateParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "dcim_power-panels_partial_update",
+		Method:             "PATCH",
+		PathPattern:        "/dcim/power-panels/{id}/",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &DcimPowerPanelsPartialUpdateReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DcimPowerPanelsPartialUpdateOK), nil
+
+}
+
+/*
+DcimPowerPanelsRead dcim power panels read API
+*/
+func (a *Client) DcimPowerPanelsRead(params *DcimPowerPanelsReadParams, authInfo runtime.ClientAuthInfoWriter) (*DcimPowerPanelsReadOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDcimPowerPanelsReadParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "dcim_power-panels_read",
+		Method:             "GET",
+		PathPattern:        "/dcim/power-panels/{id}/",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &DcimPowerPanelsReadReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DcimPowerPanelsReadOK), nil
+
+}
+
+/*
+DcimPowerPanelsUpdate dcim power panels update API
+*/
+func (a *Client) DcimPowerPanelsUpdate(params *DcimPowerPanelsUpdateParams, authInfo runtime.ClientAuthInfoWriter) (*DcimPowerPanelsUpdateOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDcimPowerPanelsUpdateParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "dcim_power-panels_update",
+		Method:             "PUT",
+		PathPattern:        "/dcim/power-panels/{id}/",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &DcimPowerPanelsUpdateReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DcimPowerPanelsUpdateOK), nil
 
 }
 
@@ -4622,6 +5028,35 @@ func (a *Client) DcimRacksDelete(params *DcimRacksDeleteParams, authInfo runtime
 		return nil, err
 	}
 	return result.(*DcimRacksDeleteNoContent), nil
+
+}
+
+/*
+DcimRacksElevation Rack elevation representing the list of rack units. Also supports rendering the elevation as an SVG.
+*/
+func (a *Client) DcimRacksElevation(params *DcimRacksElevationParams, authInfo runtime.ClientAuthInfoWriter) (*DcimRacksElevationOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDcimRacksElevationParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "dcim_racks_elevation",
+		Method:             "GET",
+		PathPattern:        "/dcim/racks/{id}/elevation/",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &DcimRacksElevationReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DcimRacksElevationOK), nil
 
 }
 

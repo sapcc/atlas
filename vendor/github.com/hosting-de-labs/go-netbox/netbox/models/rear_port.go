@@ -251,7 +251,7 @@ type RearPortType struct {
 
 	// value
 	// Required: true
-	Value *int64 `json:"value"`
+	Value *string `json:"value"`
 }
 
 // Validate validates this rear port type

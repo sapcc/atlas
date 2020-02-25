@@ -39,6 +39,10 @@ type NestedVirtualChassis struct {
 	// Required: true
 	Master *NestedDevice `json:"master"`
 
+	// Member count
+	// Read Only: true
+	MemberCount int64 `json:"member_count,omitempty"`
+
 	// Url
 	// Read Only: true
 	// Format: uri

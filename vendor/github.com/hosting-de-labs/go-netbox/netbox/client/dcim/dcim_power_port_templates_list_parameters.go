@@ -76,13 +76,19 @@ for the dcim power port templates list operation typically these are written to 
 */
 type DcimPowerPortTemplatesListParams struct {
 
+	/*AllocatedDraw*/
+	AllocatedDraw *string
 	/*DevicetypeID*/
 	DevicetypeID *int64
+	/*ID*/
+	ID *int64
 	/*Limit
 	  Number of results to return per page.
 
 	*/
 	Limit *int64
+	/*MaximumDraw*/
+	MaximumDraw *string
 	/*Name*/
 	Name *string
 	/*Offset
@@ -92,6 +98,8 @@ type DcimPowerPortTemplatesListParams struct {
 	Offset *int64
 	/*Q*/
 	Q *string
+	/*Type*/
+	Type *string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -131,6 +139,17 @@ func (o *DcimPowerPortTemplatesListParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
+// WithAllocatedDraw adds the allocatedDraw to the dcim power port templates list params
+func (o *DcimPowerPortTemplatesListParams) WithAllocatedDraw(allocatedDraw *string) *DcimPowerPortTemplatesListParams {
+	o.SetAllocatedDraw(allocatedDraw)
+	return o
+}
+
+// SetAllocatedDraw adds the allocatedDraw to the dcim power port templates list params
+func (o *DcimPowerPortTemplatesListParams) SetAllocatedDraw(allocatedDraw *string) {
+	o.AllocatedDraw = allocatedDraw
+}
+
 // WithDevicetypeID adds the devicetypeID to the dcim power port templates list params
 func (o *DcimPowerPortTemplatesListParams) WithDevicetypeID(devicetypeID *int64) *DcimPowerPortTemplatesListParams {
 	o.SetDevicetypeID(devicetypeID)
@@ -142,6 +161,17 @@ func (o *DcimPowerPortTemplatesListParams) SetDevicetypeID(devicetypeID *int64) 
 	o.DevicetypeID = devicetypeID
 }
 
+// WithID adds the id to the dcim power port templates list params
+func (o *DcimPowerPortTemplatesListParams) WithID(id *int64) *DcimPowerPortTemplatesListParams {
+	o.SetID(id)
+	return o
+}
+
+// SetID adds the id to the dcim power port templates list params
+func (o *DcimPowerPortTemplatesListParams) SetID(id *int64) {
+	o.ID = id
+}
+
 // WithLimit adds the limit to the dcim power port templates list params
 func (o *DcimPowerPortTemplatesListParams) WithLimit(limit *int64) *DcimPowerPortTemplatesListParams {
 	o.SetLimit(limit)
@@ -151,6 +181,17 @@ func (o *DcimPowerPortTemplatesListParams) WithLimit(limit *int64) *DcimPowerPor
 // SetLimit adds the limit to the dcim power port templates list params
 func (o *DcimPowerPortTemplatesListParams) SetLimit(limit *int64) {
 	o.Limit = limit
+}
+
+// WithMaximumDraw adds the maximumDraw to the dcim power port templates list params
+func (o *DcimPowerPortTemplatesListParams) WithMaximumDraw(maximumDraw *string) *DcimPowerPortTemplatesListParams {
+	o.SetMaximumDraw(maximumDraw)
+	return o
+}
+
+// SetMaximumDraw adds the maximumDraw to the dcim power port templates list params
+func (o *DcimPowerPortTemplatesListParams) SetMaximumDraw(maximumDraw *string) {
+	o.MaximumDraw = maximumDraw
 }
 
 // WithName adds the name to the dcim power port templates list params
@@ -186,6 +227,17 @@ func (o *DcimPowerPortTemplatesListParams) SetQ(q *string) {
 	o.Q = q
 }
 
+// WithType adds the typeVar to the dcim power port templates list params
+func (o *DcimPowerPortTemplatesListParams) WithType(typeVar *string) *DcimPowerPortTemplatesListParams {
+	o.SetType(typeVar)
+	return o
+}
+
+// SetType adds the type to the dcim power port templates list params
+func (o *DcimPowerPortTemplatesListParams) SetType(typeVar *string) {
+	o.Type = typeVar
+}
+
 // WriteToRequest writes these params to a swagger request
 func (o *DcimPowerPortTemplatesListParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -193,6 +245,22 @@ func (o *DcimPowerPortTemplatesListParams) WriteToRequest(r runtime.ClientReques
 		return err
 	}
 	var res []error
+
+	if o.AllocatedDraw != nil {
+
+		// query param allocated_draw
+		var qrAllocatedDraw string
+		if o.AllocatedDraw != nil {
+			qrAllocatedDraw = *o.AllocatedDraw
+		}
+		qAllocatedDraw := qrAllocatedDraw
+		if qAllocatedDraw != "" {
+			if err := r.SetQueryParam("allocated_draw", qAllocatedDraw); err != nil {
+				return err
+			}
+		}
+
+	}
 
 	if o.DevicetypeID != nil {
 
@@ -210,6 +278,22 @@ func (o *DcimPowerPortTemplatesListParams) WriteToRequest(r runtime.ClientReques
 
 	}
 
+	if o.ID != nil {
+
+		// query param id
+		var qrID int64
+		if o.ID != nil {
+			qrID = *o.ID
+		}
+		qID := swag.FormatInt64(qrID)
+		if qID != "" {
+			if err := r.SetQueryParam("id", qID); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.Limit != nil {
 
 		// query param limit
@@ -220,6 +304,22 @@ func (o *DcimPowerPortTemplatesListParams) WriteToRequest(r runtime.ClientReques
 		qLimit := swag.FormatInt64(qrLimit)
 		if qLimit != "" {
 			if err := r.SetQueryParam("limit", qLimit); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.MaximumDraw != nil {
+
+		// query param maximum_draw
+		var qrMaximumDraw string
+		if o.MaximumDraw != nil {
+			qrMaximumDraw = *o.MaximumDraw
+		}
+		qMaximumDraw := qrMaximumDraw
+		if qMaximumDraw != "" {
+			if err := r.SetQueryParam("maximum_draw", qMaximumDraw); err != nil {
 				return err
 			}
 		}
@@ -268,6 +368,22 @@ func (o *DcimPowerPortTemplatesListParams) WriteToRequest(r runtime.ClientReques
 		qQ := qrQ
 		if qQ != "" {
 			if err := r.SetQueryParam("q", qQ); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Type != nil {
+
+		// query param type
+		var qrType string
+		if o.Type != nil {
+			qrType = *o.Type
+		}
+		qType := qrType
+		if qType != "" {
+			if err := r.SetQueryParam("type", qType); err != nil {
 				return err
 			}
 		}

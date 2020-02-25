@@ -31,6 +31,10 @@ import (
 // swagger:model NestedRack
 type NestedRack struct {
 
+	// Device count
+	// Read Only: true
+	DeviceCount int64 `json:"device_count,omitempty"`
+
 	// Display name
 	// Read Only: true
 	DisplayName string `json:"display_name,omitempty"`

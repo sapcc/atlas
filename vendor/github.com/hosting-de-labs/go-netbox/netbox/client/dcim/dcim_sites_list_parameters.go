@@ -77,25 +77,43 @@ for the dcim sites list operation typically these are written to a http.Request
 type DcimSitesListParams struct {
 
 	/*Asn*/
-	Asn *int64
+	Asn *float64
 	/*ContactEmail*/
 	ContactEmail *string
 	/*ContactName*/
 	ContactName *string
 	/*ContactPhone*/
 	ContactPhone *string
+	/*Created*/
+	Created *string
+	/*CreatedGte*/
+	CreatedGte *string
+	/*CreatedLte*/
+	CreatedLte *string
 	/*Facility*/
 	Facility *string
+	/*ID*/
+	ID *int64
 	/*IDIn
 	  Multiple values may be separated by commas.
 
 	*/
 	IDIn *string
+	/*LastUpdated*/
+	LastUpdated *string
+	/*LastUpdatedGte*/
+	LastUpdatedGte *string
+	/*LastUpdatedLte*/
+	LastUpdatedLte *string
+	/*Latitude*/
+	Latitude *string
 	/*Limit
 	  Number of results to return per page.
 
 	*/
 	Limit *int64
+	/*Longitude*/
+	Longitude *string
 	/*Name*/
 	Name *string
 	/*Offset
@@ -117,6 +135,10 @@ type DcimSitesListParams struct {
 	Tag *string
 	/*Tenant*/
 	Tenant *string
+	/*TenantGroup*/
+	TenantGroup *string
+	/*TenantGroupID*/
+	TenantGroupID *int64
 	/*TenantID*/
 	TenantID *int64
 
@@ -159,13 +181,13 @@ func (o *DcimSitesListParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithAsn adds the asn to the dcim sites list params
-func (o *DcimSitesListParams) WithAsn(asn *int64) *DcimSitesListParams {
+func (o *DcimSitesListParams) WithAsn(asn *float64) *DcimSitesListParams {
 	o.SetAsn(asn)
 	return o
 }
 
 // SetAsn adds the asn to the dcim sites list params
-func (o *DcimSitesListParams) SetAsn(asn *int64) {
+func (o *DcimSitesListParams) SetAsn(asn *float64) {
 	o.Asn = asn
 }
 
@@ -202,6 +224,39 @@ func (o *DcimSitesListParams) SetContactPhone(contactPhone *string) {
 	o.ContactPhone = contactPhone
 }
 
+// WithCreated adds the created to the dcim sites list params
+func (o *DcimSitesListParams) WithCreated(created *string) *DcimSitesListParams {
+	o.SetCreated(created)
+	return o
+}
+
+// SetCreated adds the created to the dcim sites list params
+func (o *DcimSitesListParams) SetCreated(created *string) {
+	o.Created = created
+}
+
+// WithCreatedGte adds the createdGte to the dcim sites list params
+func (o *DcimSitesListParams) WithCreatedGte(createdGte *string) *DcimSitesListParams {
+	o.SetCreatedGte(createdGte)
+	return o
+}
+
+// SetCreatedGte adds the createdGte to the dcim sites list params
+func (o *DcimSitesListParams) SetCreatedGte(createdGte *string) {
+	o.CreatedGte = createdGte
+}
+
+// WithCreatedLte adds the createdLte to the dcim sites list params
+func (o *DcimSitesListParams) WithCreatedLte(createdLte *string) *DcimSitesListParams {
+	o.SetCreatedLte(createdLte)
+	return o
+}
+
+// SetCreatedLte adds the createdLte to the dcim sites list params
+func (o *DcimSitesListParams) SetCreatedLte(createdLte *string) {
+	o.CreatedLte = createdLte
+}
+
 // WithFacility adds the facility to the dcim sites list params
 func (o *DcimSitesListParams) WithFacility(facility *string) *DcimSitesListParams {
 	o.SetFacility(facility)
@@ -211,6 +266,17 @@ func (o *DcimSitesListParams) WithFacility(facility *string) *DcimSitesListParam
 // SetFacility adds the facility to the dcim sites list params
 func (o *DcimSitesListParams) SetFacility(facility *string) {
 	o.Facility = facility
+}
+
+// WithID adds the id to the dcim sites list params
+func (o *DcimSitesListParams) WithID(id *int64) *DcimSitesListParams {
+	o.SetID(id)
+	return o
+}
+
+// SetID adds the id to the dcim sites list params
+func (o *DcimSitesListParams) SetID(id *int64) {
+	o.ID = id
 }
 
 // WithIDIn adds the iDIn to the dcim sites list params
@@ -224,6 +290,50 @@ func (o *DcimSitesListParams) SetIDIn(iDIn *string) {
 	o.IDIn = iDIn
 }
 
+// WithLastUpdated adds the lastUpdated to the dcim sites list params
+func (o *DcimSitesListParams) WithLastUpdated(lastUpdated *string) *DcimSitesListParams {
+	o.SetLastUpdated(lastUpdated)
+	return o
+}
+
+// SetLastUpdated adds the lastUpdated to the dcim sites list params
+func (o *DcimSitesListParams) SetLastUpdated(lastUpdated *string) {
+	o.LastUpdated = lastUpdated
+}
+
+// WithLastUpdatedGte adds the lastUpdatedGte to the dcim sites list params
+func (o *DcimSitesListParams) WithLastUpdatedGte(lastUpdatedGte *string) *DcimSitesListParams {
+	o.SetLastUpdatedGte(lastUpdatedGte)
+	return o
+}
+
+// SetLastUpdatedGte adds the lastUpdatedGte to the dcim sites list params
+func (o *DcimSitesListParams) SetLastUpdatedGte(lastUpdatedGte *string) {
+	o.LastUpdatedGte = lastUpdatedGte
+}
+
+// WithLastUpdatedLte adds the lastUpdatedLte to the dcim sites list params
+func (o *DcimSitesListParams) WithLastUpdatedLte(lastUpdatedLte *string) *DcimSitesListParams {
+	o.SetLastUpdatedLte(lastUpdatedLte)
+	return o
+}
+
+// SetLastUpdatedLte adds the lastUpdatedLte to the dcim sites list params
+func (o *DcimSitesListParams) SetLastUpdatedLte(lastUpdatedLte *string) {
+	o.LastUpdatedLte = lastUpdatedLte
+}
+
+// WithLatitude adds the latitude to the dcim sites list params
+func (o *DcimSitesListParams) WithLatitude(latitude *string) *DcimSitesListParams {
+	o.SetLatitude(latitude)
+	return o
+}
+
+// SetLatitude adds the latitude to the dcim sites list params
+func (o *DcimSitesListParams) SetLatitude(latitude *string) {
+	o.Latitude = latitude
+}
+
 // WithLimit adds the limit to the dcim sites list params
 func (o *DcimSitesListParams) WithLimit(limit *int64) *DcimSitesListParams {
 	o.SetLimit(limit)
@@ -233,6 +343,17 @@ func (o *DcimSitesListParams) WithLimit(limit *int64) *DcimSitesListParams {
 // SetLimit adds the limit to the dcim sites list params
 func (o *DcimSitesListParams) SetLimit(limit *int64) {
 	o.Limit = limit
+}
+
+// WithLongitude adds the longitude to the dcim sites list params
+func (o *DcimSitesListParams) WithLongitude(longitude *string) *DcimSitesListParams {
+	o.SetLongitude(longitude)
+	return o
+}
+
+// SetLongitude adds the longitude to the dcim sites list params
+func (o *DcimSitesListParams) SetLongitude(longitude *string) {
+	o.Longitude = longitude
 }
 
 // WithName adds the name to the dcim sites list params
@@ -334,6 +455,28 @@ func (o *DcimSitesListParams) SetTenant(tenant *string) {
 	o.Tenant = tenant
 }
 
+// WithTenantGroup adds the tenantGroup to the dcim sites list params
+func (o *DcimSitesListParams) WithTenantGroup(tenantGroup *string) *DcimSitesListParams {
+	o.SetTenantGroup(tenantGroup)
+	return o
+}
+
+// SetTenantGroup adds the tenantGroup to the dcim sites list params
+func (o *DcimSitesListParams) SetTenantGroup(tenantGroup *string) {
+	o.TenantGroup = tenantGroup
+}
+
+// WithTenantGroupID adds the tenantGroupID to the dcim sites list params
+func (o *DcimSitesListParams) WithTenantGroupID(tenantGroupID *int64) *DcimSitesListParams {
+	o.SetTenantGroupID(tenantGroupID)
+	return o
+}
+
+// SetTenantGroupID adds the tenantGroupId to the dcim sites list params
+func (o *DcimSitesListParams) SetTenantGroupID(tenantGroupID *int64) {
+	o.TenantGroupID = tenantGroupID
+}
+
 // WithTenantID adds the tenantID to the dcim sites list params
 func (o *DcimSitesListParams) WithTenantID(tenantID *int64) *DcimSitesListParams {
 	o.SetTenantID(tenantID)
@@ -356,11 +499,11 @@ func (o *DcimSitesListParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 	if o.Asn != nil {
 
 		// query param asn
-		var qrAsn int64
+		var qrAsn float64
 		if o.Asn != nil {
 			qrAsn = *o.Asn
 		}
-		qAsn := swag.FormatInt64(qrAsn)
+		qAsn := swag.FormatFloat64(qrAsn)
 		if qAsn != "" {
 			if err := r.SetQueryParam("asn", qAsn); err != nil {
 				return err
@@ -417,6 +560,54 @@ func (o *DcimSitesListParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 
 	}
 
+	if o.Created != nil {
+
+		// query param created
+		var qrCreated string
+		if o.Created != nil {
+			qrCreated = *o.Created
+		}
+		qCreated := qrCreated
+		if qCreated != "" {
+			if err := r.SetQueryParam("created", qCreated); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.CreatedGte != nil {
+
+		// query param created__gte
+		var qrCreatedGte string
+		if o.CreatedGte != nil {
+			qrCreatedGte = *o.CreatedGte
+		}
+		qCreatedGte := qrCreatedGte
+		if qCreatedGte != "" {
+			if err := r.SetQueryParam("created__gte", qCreatedGte); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.CreatedLte != nil {
+
+		// query param created__lte
+		var qrCreatedLte string
+		if o.CreatedLte != nil {
+			qrCreatedLte = *o.CreatedLte
+		}
+		qCreatedLte := qrCreatedLte
+		if qCreatedLte != "" {
+			if err := r.SetQueryParam("created__lte", qCreatedLte); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.Facility != nil {
 
 		// query param facility
@@ -427,6 +618,22 @@ func (o *DcimSitesListParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		qFacility := qrFacility
 		if qFacility != "" {
 			if err := r.SetQueryParam("facility", qFacility); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.ID != nil {
+
+		// query param id
+		var qrID int64
+		if o.ID != nil {
+			qrID = *o.ID
+		}
+		qID := swag.FormatInt64(qrID)
+		if qID != "" {
+			if err := r.SetQueryParam("id", qID); err != nil {
 				return err
 			}
 		}
@@ -449,6 +656,70 @@ func (o *DcimSitesListParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 
 	}
 
+	if o.LastUpdated != nil {
+
+		// query param last_updated
+		var qrLastUpdated string
+		if o.LastUpdated != nil {
+			qrLastUpdated = *o.LastUpdated
+		}
+		qLastUpdated := qrLastUpdated
+		if qLastUpdated != "" {
+			if err := r.SetQueryParam("last_updated", qLastUpdated); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.LastUpdatedGte != nil {
+
+		// query param last_updated__gte
+		var qrLastUpdatedGte string
+		if o.LastUpdatedGte != nil {
+			qrLastUpdatedGte = *o.LastUpdatedGte
+		}
+		qLastUpdatedGte := qrLastUpdatedGte
+		if qLastUpdatedGte != "" {
+			if err := r.SetQueryParam("last_updated__gte", qLastUpdatedGte); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.LastUpdatedLte != nil {
+
+		// query param last_updated__lte
+		var qrLastUpdatedLte string
+		if o.LastUpdatedLte != nil {
+			qrLastUpdatedLte = *o.LastUpdatedLte
+		}
+		qLastUpdatedLte := qrLastUpdatedLte
+		if qLastUpdatedLte != "" {
+			if err := r.SetQueryParam("last_updated__lte", qLastUpdatedLte); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Latitude != nil {
+
+		// query param latitude
+		var qrLatitude string
+		if o.Latitude != nil {
+			qrLatitude = *o.Latitude
+		}
+		qLatitude := qrLatitude
+		if qLatitude != "" {
+			if err := r.SetQueryParam("latitude", qLatitude); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.Limit != nil {
 
 		// query param limit
@@ -459,6 +730,22 @@ func (o *DcimSitesListParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		qLimit := swag.FormatInt64(qrLimit)
 		if qLimit != "" {
 			if err := r.SetQueryParam("limit", qLimit); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Longitude != nil {
+
+		// query param longitude
+		var qrLongitude string
+		if o.Longitude != nil {
+			qrLongitude = *o.Longitude
+		}
+		qLongitude := qrLongitude
+		if qLongitude != "" {
+			if err := r.SetQueryParam("longitude", qLongitude); err != nil {
 				return err
 			}
 		}
@@ -603,6 +890,38 @@ func (o *DcimSitesListParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		qTenant := qrTenant
 		if qTenant != "" {
 			if err := r.SetQueryParam("tenant", qTenant); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.TenantGroup != nil {
+
+		// query param tenant_group
+		var qrTenantGroup string
+		if o.TenantGroup != nil {
+			qrTenantGroup = *o.TenantGroup
+		}
+		qTenantGroup := qrTenantGroup
+		if qTenantGroup != "" {
+			if err := r.SetQueryParam("tenant_group", qTenantGroup); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.TenantGroupID != nil {
+
+		// query param tenant_group_id
+		var qrTenantGroupID int64
+		if o.TenantGroupID != nil {
+			qrTenantGroupID = *o.TenantGroupID
+		}
+		qTenantGroupID := swag.FormatInt64(qrTenantGroupID)
+		if qTenantGroupID != "" {
+			if err := r.SetQueryParam("tenant_group_id", qTenantGroupID); err != nil {
 				return err
 			}
 		}

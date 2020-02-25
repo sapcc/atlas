@@ -44,6 +44,10 @@ type WritableRegion struct {
 	// Parent
 	Parent *int64 `json:"parent,omitempty"`
 
+	// Site count
+	// Read Only: true
+	SiteCount int64 `json:"site_count,omitempty"`
+
 	// Slug
 	// Required: true
 	// Max Length: 50

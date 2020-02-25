@@ -78,6 +78,10 @@ type DcimPowerOutletTemplatesListParams struct {
 
 	/*DevicetypeID*/
 	DevicetypeID *int64
+	/*FeedLeg*/
+	FeedLeg *string
+	/*ID*/
+	ID *int64
 	/*Limit
 	  Number of results to return per page.
 
@@ -92,6 +96,8 @@ type DcimPowerOutletTemplatesListParams struct {
 	Offset *int64
 	/*Q*/
 	Q *string
+	/*Type*/
+	Type *string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -142,6 +148,28 @@ func (o *DcimPowerOutletTemplatesListParams) SetDevicetypeID(devicetypeID *int64
 	o.DevicetypeID = devicetypeID
 }
 
+// WithFeedLeg adds the feedLeg to the dcim power outlet templates list params
+func (o *DcimPowerOutletTemplatesListParams) WithFeedLeg(feedLeg *string) *DcimPowerOutletTemplatesListParams {
+	o.SetFeedLeg(feedLeg)
+	return o
+}
+
+// SetFeedLeg adds the feedLeg to the dcim power outlet templates list params
+func (o *DcimPowerOutletTemplatesListParams) SetFeedLeg(feedLeg *string) {
+	o.FeedLeg = feedLeg
+}
+
+// WithID adds the id to the dcim power outlet templates list params
+func (o *DcimPowerOutletTemplatesListParams) WithID(id *int64) *DcimPowerOutletTemplatesListParams {
+	o.SetID(id)
+	return o
+}
+
+// SetID adds the id to the dcim power outlet templates list params
+func (o *DcimPowerOutletTemplatesListParams) SetID(id *int64) {
+	o.ID = id
+}
+
 // WithLimit adds the limit to the dcim power outlet templates list params
 func (o *DcimPowerOutletTemplatesListParams) WithLimit(limit *int64) *DcimPowerOutletTemplatesListParams {
 	o.SetLimit(limit)
@@ -186,6 +214,17 @@ func (o *DcimPowerOutletTemplatesListParams) SetQ(q *string) {
 	o.Q = q
 }
 
+// WithType adds the typeVar to the dcim power outlet templates list params
+func (o *DcimPowerOutletTemplatesListParams) WithType(typeVar *string) *DcimPowerOutletTemplatesListParams {
+	o.SetType(typeVar)
+	return o
+}
+
+// SetType adds the type to the dcim power outlet templates list params
+func (o *DcimPowerOutletTemplatesListParams) SetType(typeVar *string) {
+	o.Type = typeVar
+}
+
 // WriteToRequest writes these params to a swagger request
 func (o *DcimPowerOutletTemplatesListParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -204,6 +243,38 @@ func (o *DcimPowerOutletTemplatesListParams) WriteToRequest(r runtime.ClientRequ
 		qDevicetypeID := swag.FormatInt64(qrDevicetypeID)
 		if qDevicetypeID != "" {
 			if err := r.SetQueryParam("devicetype_id", qDevicetypeID); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.FeedLeg != nil {
+
+		// query param feed_leg
+		var qrFeedLeg string
+		if o.FeedLeg != nil {
+			qrFeedLeg = *o.FeedLeg
+		}
+		qFeedLeg := qrFeedLeg
+		if qFeedLeg != "" {
+			if err := r.SetQueryParam("feed_leg", qFeedLeg); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.ID != nil {
+
+		// query param id
+		var qrID int64
+		if o.ID != nil {
+			qrID = *o.ID
+		}
+		qID := swag.FormatInt64(qrID)
+		if qID != "" {
+			if err := r.SetQueryParam("id", qID); err != nil {
 				return err
 			}
 		}
@@ -268,6 +339,22 @@ func (o *DcimPowerOutletTemplatesListParams) WriteToRequest(r runtime.ClientRequ
 		qQ := qrQ
 		if qQ != "" {
 			if err := r.SetQueryParam("q", qQ); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Type != nil {
+
+		// query param type
+		var qrType string
+		if o.Type != nil {
+			qrType = *o.Type
+		}
+		qType := qrType
+		if qType != "" {
+			if err := r.SetQueryParam("type", qType); err != nil {
 				return err
 			}
 		}

@@ -76,6 +76,8 @@ for the virtualization cluster types list operation typically these are written 
 */
 type VirtualizationClusterTypesListParams struct {
 
+	/*ID*/
+	ID *int64
 	/*Limit
 	  Number of results to return per page.
 
@@ -129,6 +131,17 @@ func (o *VirtualizationClusterTypesListParams) WithHTTPClient(client *http.Clien
 // SetHTTPClient adds the HTTPClient to the virtualization cluster types list params
 func (o *VirtualizationClusterTypesListParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithID adds the id to the virtualization cluster types list params
+func (o *VirtualizationClusterTypesListParams) WithID(id *int64) *VirtualizationClusterTypesListParams {
+	o.SetID(id)
+	return o
+}
+
+// SetID adds the id to the virtualization cluster types list params
+func (o *VirtualizationClusterTypesListParams) SetID(id *int64) {
+	o.ID = id
 }
 
 // WithLimit adds the limit to the virtualization cluster types list params
@@ -193,6 +206,22 @@ func (o *VirtualizationClusterTypesListParams) WriteToRequest(r runtime.ClientRe
 		return err
 	}
 	var res []error
+
+	if o.ID != nil {
+
+		// query param id
+		var qrID int64
+		if o.ID != nil {
+			qrID = *o.ID
+		}
+		qID := swag.FormatInt64(qrID)
+		if qID != "" {
+			if err := r.SetQueryParam("id", qID); err != nil {
+				return err
+			}
+		}
+
+	}
 
 	if o.Limit != nil {
 

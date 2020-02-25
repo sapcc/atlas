@@ -59,7 +59,7 @@ type Cable struct {
 
 	// Termination a
 	// Read Only: true
-	TerminationA string `json:"termination_a,omitempty"`
+	TerminationA map[string]string `json:"termination_a,omitempty"`
 
 	// Termination a id
 	// Required: true
@@ -73,7 +73,7 @@ type Cable struct {
 
 	// Termination b
 	// Read Only: true
-	TerminationB string `json:"termination_b,omitempty"`
+	TerminationB map[string]string `json:"termination_b,omitempty"`
 
 	// Termination b id
 	// Required: true
@@ -86,8 +86,8 @@ type Cable struct {
 	TerminationBType *string `json:"termination_b_type"`
 
 	// Type
-	// Enum: [1300 1500 1510 1600 1610 1700 1800 1810 3000 3010 3020 3030 3040 3500 3510 3520 3800 5000]
-	Type *int64 `json:"type,omitempty"`
+	// Enum: [cat3 cat5 cat5e cat6 cat6a cat7 dac-active dac-passive coaxial mmf mmf-om1 mmf-om2 mmf-om3 mmf-om4 smf smf-os1 smf-os2 aoc power]
+	Type string `json:"type,omitempty"`
 }
 
 // Validate validates this cable
@@ -278,8 +278,8 @@ func (m *Cable) validateTerminationBType(formats strfmt.Registry) error {
 var cableTypeTypePropEnum []interface{}
 
 func init() {
-	var res []int64
-	if err := json.Unmarshal([]byte(`[1300,1500,1510,1600,1610,1700,1800,1810,3000,3010,3020,3030,3040,3500,3510,3520,3800,5000]`), &res); err != nil {
+	var res []string
+	if err := json.Unmarshal([]byte(`["cat3","cat5","cat5e","cat6","cat6a","cat7","dac-active","dac-passive","coaxial","mmf","mmf-om1","mmf-om2","mmf-om3","mmf-om4","smf","smf-os1","smf-os2","aoc","power"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -287,8 +287,68 @@ func init() {
 	}
 }
 
+const (
+
+	// CableTypeCat3 captures enum value "cat3"
+	CableTypeCat3 string = "cat3"
+
+	// CableTypeCat5 captures enum value "cat5"
+	CableTypeCat5 string = "cat5"
+
+	// CableTypeCat5e captures enum value "cat5e"
+	CableTypeCat5e string = "cat5e"
+
+	// CableTypeCat6 captures enum value "cat6"
+	CableTypeCat6 string = "cat6"
+
+	// CableTypeCat6a captures enum value "cat6a"
+	CableTypeCat6a string = "cat6a"
+
+	// CableTypeCat7 captures enum value "cat7"
+	CableTypeCat7 string = "cat7"
+
+	// CableTypeDacActive captures enum value "dac-active"
+	CableTypeDacActive string = "dac-active"
+
+	// CableTypeDacPassive captures enum value "dac-passive"
+	CableTypeDacPassive string = "dac-passive"
+
+	// CableTypeCoaxial captures enum value "coaxial"
+	CableTypeCoaxial string = "coaxial"
+
+	// CableTypeMmf captures enum value "mmf"
+	CableTypeMmf string = "mmf"
+
+	// CableTypeMmfOm1 captures enum value "mmf-om1"
+	CableTypeMmfOm1 string = "mmf-om1"
+
+	// CableTypeMmfOm2 captures enum value "mmf-om2"
+	CableTypeMmfOm2 string = "mmf-om2"
+
+	// CableTypeMmfOm3 captures enum value "mmf-om3"
+	CableTypeMmfOm3 string = "mmf-om3"
+
+	// CableTypeMmfOm4 captures enum value "mmf-om4"
+	CableTypeMmfOm4 string = "mmf-om4"
+
+	// CableTypeSmf captures enum value "smf"
+	CableTypeSmf string = "smf"
+
+	// CableTypeSmfOs1 captures enum value "smf-os1"
+	CableTypeSmfOs1 string = "smf-os1"
+
+	// CableTypeSmfOs2 captures enum value "smf-os2"
+	CableTypeSmfOs2 string = "smf-os2"
+
+	// CableTypeAoc captures enum value "aoc"
+	CableTypeAoc string = "aoc"
+
+	// CableTypePower captures enum value "power"
+	CableTypePower string = "power"
+)
+
 // prop value enum
-func (m *Cable) validateTypeEnum(path, location string, value int64) error {
+func (m *Cable) validateTypeEnum(path, location string, value string) error {
 	if err := validate.Enum(path, location, value, cableTypeTypePropEnum); err != nil {
 		return err
 	}
@@ -302,7 +362,7 @@ func (m *Cable) validateType(formats strfmt.Registry) error {
 	}
 
 	// value enum
-	if err := m.validateTypeEnum("type", "body", *m.Type); err != nil {
+	if err := m.validateTypeEnum("type", "body", m.Type); err != nil {
 		return err
 	}
 
@@ -337,7 +397,7 @@ type CableLengthUnit struct {
 
 	// value
 	// Required: true
-	Value *int64 `json:"value"`
+	Value *string `json:"value"`
 }
 
 // Validate validates this cable length unit
@@ -404,7 +464,7 @@ type CableStatus struct {
 
 	// value
 	// Required: true
-	Value *bool `json:"value"`
+	Value *string `json:"value"`
 }
 
 // Validate validates this cable status

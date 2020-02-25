@@ -34,9 +34,8 @@ type InterfaceConnection struct {
 	// connection status
 	ConnectionStatus *InterfaceConnectionConnectionStatus `json:"connection_status,omitempty"`
 
-	// Interface a
-	// Read Only: true
-	InterfaceA string `json:"interface_a,omitempty"`
+	// interface a
+	InterfaceA *NestedInterface `json:"interface_a,omitempty"`
 
 	// interface b
 	// Required: true
@@ -48,6 +47,10 @@ func (m *InterfaceConnection) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateConnectionStatus(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateInterfaceA(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -71,6 +74,24 @@ func (m *InterfaceConnection) validateConnectionStatus(formats strfmt.Registry) 
 		if err := m.ConnectionStatus.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("connection_status")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *InterfaceConnection) validateInterfaceA(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.InterfaceA) { // not required
+		return nil
+	}
+
+	if m.InterfaceA != nil {
+		if err := m.InterfaceA.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("interface_a")
 			}
 			return err
 		}

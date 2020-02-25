@@ -88,6 +88,8 @@ type ExtrasGraphsListParams struct {
 
 	*/
 	Offset *int64
+	/*TemplateLanguage*/
+	TemplateLanguage *string
 	/*Type*/
 	Type *string
 
@@ -162,6 +164,17 @@ func (o *ExtrasGraphsListParams) SetOffset(offset *int64) {
 	o.Offset = offset
 }
 
+// WithTemplateLanguage adds the templateLanguage to the extras graphs list params
+func (o *ExtrasGraphsListParams) WithTemplateLanguage(templateLanguage *string) *ExtrasGraphsListParams {
+	o.SetTemplateLanguage(templateLanguage)
+	return o
+}
+
+// SetTemplateLanguage adds the templateLanguage to the extras graphs list params
+func (o *ExtrasGraphsListParams) SetTemplateLanguage(templateLanguage *string) {
+	o.TemplateLanguage = templateLanguage
+}
+
 // WithType adds the typeVar to the extras graphs list params
 func (o *ExtrasGraphsListParams) WithType(typeVar *string) *ExtrasGraphsListParams {
 	o.SetType(typeVar)
@@ -223,6 +236,22 @@ func (o *ExtrasGraphsListParams) WriteToRequest(r runtime.ClientRequest, reg str
 		qOffset := swag.FormatInt64(qrOffset)
 		if qOffset != "" {
 			if err := r.SetQueryParam("offset", qOffset); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.TemplateLanguage != nil {
+
+		// query param template_language
+		var qrTemplateLanguage string
+		if o.TemplateLanguage != nil {
+			qrTemplateLanguage = *o.TemplateLanguage
+		}
+		qTemplateLanguage := qrTemplateLanguage
+		if qTemplateLanguage != "" {
+			if err := r.SetQueryParam("template_language", qTemplateLanguage); err != nil {
 				return err
 			}
 		}

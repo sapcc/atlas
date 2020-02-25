@@ -78,7 +78,7 @@ for the extras graphs create operation typically these are written to a http.Req
 type ExtrasGraphsCreateParams struct {
 
 	/*Data*/
-	Data *models.WritableGraph
+	Data *models.Graph
 
 	timeout    time.Duration
 	Context    context.Context
@@ -119,13 +119,13 @@ func (o *ExtrasGraphsCreateParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithData adds the data to the extras graphs create params
-func (o *ExtrasGraphsCreateParams) WithData(data *models.WritableGraph) *ExtrasGraphsCreateParams {
+func (o *ExtrasGraphsCreateParams) WithData(data *models.Graph) *ExtrasGraphsCreateParams {
 	o.SetData(data)
 	return o
 }
 
 // SetData adds the data to the extras graphs create params
-func (o *ExtrasGraphsCreateParams) SetData(data *models.WritableGraph) {
+func (o *ExtrasGraphsCreateParams) SetData(data *models.Graph) {
 	o.Data = data
 }
 

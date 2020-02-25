@@ -78,6 +78,8 @@ type ExtrasObjectChangesListParams struct {
 
 	/*Action*/
 	Action *string
+	/*ChangedObjectID*/
+	ChangedObjectID *float64
 	/*ChangedObjectType*/
 	ChangedObjectType *string
 	/*Limit
@@ -150,6 +152,17 @@ func (o *ExtrasObjectChangesListParams) WithAction(action *string) *ExtrasObject
 // SetAction adds the action to the extras object changes list params
 func (o *ExtrasObjectChangesListParams) SetAction(action *string) {
 	o.Action = action
+}
+
+// WithChangedObjectID adds the changedObjectID to the extras object changes list params
+func (o *ExtrasObjectChangesListParams) WithChangedObjectID(changedObjectID *float64) *ExtrasObjectChangesListParams {
+	o.SetChangedObjectID(changedObjectID)
+	return o
+}
+
+// SetChangedObjectID adds the changedObjectId to the extras object changes list params
+func (o *ExtrasObjectChangesListParams) SetChangedObjectID(changedObjectID *float64) {
+	o.ChangedObjectID = changedObjectID
 }
 
 // WithChangedObjectType adds the changedObjectType to the extras object changes list params
@@ -269,6 +282,22 @@ func (o *ExtrasObjectChangesListParams) WriteToRequest(r runtime.ClientRequest, 
 		qAction := qrAction
 		if qAction != "" {
 			if err := r.SetQueryParam("action", qAction); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.ChangedObjectID != nil {
+
+		// query param changed_object_id
+		var qrChangedObjectID float64
+		if o.ChangedObjectID != nil {
+			qrChangedObjectID = *o.ChangedObjectID
+		}
+		qChangedObjectID := swag.FormatFloat64(qrChangedObjectID)
+		if qChangedObjectID != "" {
+			if err := r.SetQueryParam("changed_object_id", qChangedObjectID); err != nil {
 				return err
 			}
 		}

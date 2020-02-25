@@ -78,7 +78,7 @@ for the virtualization virtual machines create operation typically these are wri
 type VirtualizationVirtualMachinesCreateParams struct {
 
 	/*Data*/
-	Data *models.WritableVirtualMachine
+	Data *models.WritableVirtualMachineWithConfigContext
 
 	timeout    time.Duration
 	Context    context.Context
@@ -119,13 +119,13 @@ func (o *VirtualizationVirtualMachinesCreateParams) SetHTTPClient(client *http.C
 }
 
 // WithData adds the data to the virtualization virtual machines create params
-func (o *VirtualizationVirtualMachinesCreateParams) WithData(data *models.WritableVirtualMachine) *VirtualizationVirtualMachinesCreateParams {
+func (o *VirtualizationVirtualMachinesCreateParams) WithData(data *models.WritableVirtualMachineWithConfigContext) *VirtualizationVirtualMachinesCreateParams {
 	o.SetData(data)
 	return o
 }
 
 // SetData adds the data to the virtualization virtual machines create params
-func (o *VirtualizationVirtualMachinesCreateParams) SetData(data *models.WritableVirtualMachine) {
+func (o *VirtualizationVirtualMachinesCreateParams) SetData(data *models.WritableVirtualMachineWithConfigContext) {
 	o.Data = data
 }
 

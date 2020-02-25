@@ -80,6 +80,8 @@ type DcimPowerConnectionsListParams struct {
 	ConnectionStatus *string
 	/*Device*/
 	Device *string
+	/*DeviceID*/
+	DeviceID *int64
 	/*Limit
 	  Number of results to return per page.
 
@@ -153,6 +155,17 @@ func (o *DcimPowerConnectionsListParams) WithDevice(device *string) *DcimPowerCo
 // SetDevice adds the device to the dcim power connections list params
 func (o *DcimPowerConnectionsListParams) SetDevice(device *string) {
 	o.Device = device
+}
+
+// WithDeviceID adds the deviceID to the dcim power connections list params
+func (o *DcimPowerConnectionsListParams) WithDeviceID(deviceID *int64) *DcimPowerConnectionsListParams {
+	o.SetDeviceID(deviceID)
+	return o
+}
+
+// SetDeviceID adds the deviceId to the dcim power connections list params
+func (o *DcimPowerConnectionsListParams) SetDeviceID(deviceID *int64) {
+	o.DeviceID = deviceID
 }
 
 // WithLimit adds the limit to the dcim power connections list params
@@ -233,6 +246,22 @@ func (o *DcimPowerConnectionsListParams) WriteToRequest(r runtime.ClientRequest,
 		qDevice := qrDevice
 		if qDevice != "" {
 			if err := r.SetQueryParam("device", qDevice); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.DeviceID != nil {
+
+		// query param device_id
+		var qrDeviceID int64
+		if o.DeviceID != nil {
+			qrDeviceID = *o.DeviceID
+		}
+		qDeviceID := swag.FormatInt64(qrDeviceID)
+		if qDeviceID != "" {
+			if err := r.SetQueryParam("device_id", qDeviceID); err != nil {
 				return err
 			}
 		}

@@ -78,6 +78,8 @@ type DcimFrontPortTemplatesListParams struct {
 
 	/*DevicetypeID*/
 	DevicetypeID *int64
+	/*ID*/
+	ID *int64
 	/*Limit
 	  Number of results to return per page.
 
@@ -142,6 +144,17 @@ func (o *DcimFrontPortTemplatesListParams) WithDevicetypeID(devicetypeID *int64)
 // SetDevicetypeID adds the devicetypeId to the dcim front port templates list params
 func (o *DcimFrontPortTemplatesListParams) SetDevicetypeID(devicetypeID *int64) {
 	o.DevicetypeID = devicetypeID
+}
+
+// WithID adds the id to the dcim front port templates list params
+func (o *DcimFrontPortTemplatesListParams) WithID(id *int64) *DcimFrontPortTemplatesListParams {
+	o.SetID(id)
+	return o
+}
+
+// SetID adds the id to the dcim front port templates list params
+func (o *DcimFrontPortTemplatesListParams) SetID(id *int64) {
+	o.ID = id
 }
 
 // WithLimit adds the limit to the dcim front port templates list params
@@ -217,6 +230,22 @@ func (o *DcimFrontPortTemplatesListParams) WriteToRequest(r runtime.ClientReques
 		qDevicetypeID := swag.FormatInt64(qrDevicetypeID)
 		if qDevicetypeID != "" {
 			if err := r.SetQueryParam("devicetype_id", qDevicetypeID); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.ID != nil {
+
+		// query param id
+		var qrID int64
+		if o.ID != nil {
+			qrID = *o.ID
+		}
+		qID := swag.FormatInt64(qrID)
+		if qID != "" {
+			if err := r.SetQueryParam("id", qID); err != nil {
 				return err
 			}
 		}

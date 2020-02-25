@@ -76,6 +76,8 @@ for the ipam roles list operation typically these are written to a http.Request
 */
 type IPAMRolesListParams struct {
 
+	/*ID*/
+	ID *int64
 	/*Limit
 	  Number of results to return per page.
 
@@ -129,6 +131,17 @@ func (o *IPAMRolesListParams) WithHTTPClient(client *http.Client) *IPAMRolesList
 // SetHTTPClient adds the HTTPClient to the ipam roles list params
 func (o *IPAMRolesListParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithID adds the id to the ipam roles list params
+func (o *IPAMRolesListParams) WithID(id *int64) *IPAMRolesListParams {
+	o.SetID(id)
+	return o
+}
+
+// SetID adds the id to the ipam roles list params
+func (o *IPAMRolesListParams) SetID(id *int64) {
+	o.ID = id
 }
 
 // WithLimit adds the limit to the ipam roles list params
@@ -193,6 +206,22 @@ func (o *IPAMRolesListParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		return err
 	}
 	var res []error
+
+	if o.ID != nil {
+
+		// query param id
+		var qrID int64
+		if o.ID != nil {
+			qrID = *o.ID
+		}
+		qID := swag.FormatInt64(qrID)
+		if qID != "" {
+			if err := r.SetQueryParam("id", qID); err != nil {
+				return err
+			}
+		}
+
+	}
 
 	if o.Limit != nil {
 

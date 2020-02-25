@@ -76,10 +76,24 @@ for the ipam services list operation typically these are written to a http.Reque
 */
 type IPAMServicesListParams struct {
 
+	/*Created*/
+	Created *string
+	/*CreatedGte*/
+	CreatedGte *string
+	/*CreatedLte*/
+	CreatedLte *string
 	/*Device*/
 	Device *string
 	/*DeviceID*/
 	DeviceID *int64
+	/*ID*/
+	ID *int64
+	/*LastUpdated*/
+	LastUpdated *string
+	/*LastUpdatedGte*/
+	LastUpdatedGte *string
+	/*LastUpdatedLte*/
+	LastUpdatedLte *string
 	/*Limit
 	  Number of results to return per page.
 
@@ -93,7 +107,7 @@ type IPAMServicesListParams struct {
 	*/
 	Offset *int64
 	/*Port*/
-	Port *int64
+	Port *string
 	/*Protocol*/
 	Protocol *string
 	/*Q*/
@@ -143,6 +157,39 @@ func (o *IPAMServicesListParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
+// WithCreated adds the created to the ipam services list params
+func (o *IPAMServicesListParams) WithCreated(created *string) *IPAMServicesListParams {
+	o.SetCreated(created)
+	return o
+}
+
+// SetCreated adds the created to the ipam services list params
+func (o *IPAMServicesListParams) SetCreated(created *string) {
+	o.Created = created
+}
+
+// WithCreatedGte adds the createdGte to the ipam services list params
+func (o *IPAMServicesListParams) WithCreatedGte(createdGte *string) *IPAMServicesListParams {
+	o.SetCreatedGte(createdGte)
+	return o
+}
+
+// SetCreatedGte adds the createdGte to the ipam services list params
+func (o *IPAMServicesListParams) SetCreatedGte(createdGte *string) {
+	o.CreatedGte = createdGte
+}
+
+// WithCreatedLte adds the createdLte to the ipam services list params
+func (o *IPAMServicesListParams) WithCreatedLte(createdLte *string) *IPAMServicesListParams {
+	o.SetCreatedLte(createdLte)
+	return o
+}
+
+// SetCreatedLte adds the createdLte to the ipam services list params
+func (o *IPAMServicesListParams) SetCreatedLte(createdLte *string) {
+	o.CreatedLte = createdLte
+}
+
 // WithDevice adds the device to the ipam services list params
 func (o *IPAMServicesListParams) WithDevice(device *string) *IPAMServicesListParams {
 	o.SetDevice(device)
@@ -163,6 +210,50 @@ func (o *IPAMServicesListParams) WithDeviceID(deviceID *int64) *IPAMServicesList
 // SetDeviceID adds the deviceId to the ipam services list params
 func (o *IPAMServicesListParams) SetDeviceID(deviceID *int64) {
 	o.DeviceID = deviceID
+}
+
+// WithID adds the id to the ipam services list params
+func (o *IPAMServicesListParams) WithID(id *int64) *IPAMServicesListParams {
+	o.SetID(id)
+	return o
+}
+
+// SetID adds the id to the ipam services list params
+func (o *IPAMServicesListParams) SetID(id *int64) {
+	o.ID = id
+}
+
+// WithLastUpdated adds the lastUpdated to the ipam services list params
+func (o *IPAMServicesListParams) WithLastUpdated(lastUpdated *string) *IPAMServicesListParams {
+	o.SetLastUpdated(lastUpdated)
+	return o
+}
+
+// SetLastUpdated adds the lastUpdated to the ipam services list params
+func (o *IPAMServicesListParams) SetLastUpdated(lastUpdated *string) {
+	o.LastUpdated = lastUpdated
+}
+
+// WithLastUpdatedGte adds the lastUpdatedGte to the ipam services list params
+func (o *IPAMServicesListParams) WithLastUpdatedGte(lastUpdatedGte *string) *IPAMServicesListParams {
+	o.SetLastUpdatedGte(lastUpdatedGte)
+	return o
+}
+
+// SetLastUpdatedGte adds the lastUpdatedGte to the ipam services list params
+func (o *IPAMServicesListParams) SetLastUpdatedGte(lastUpdatedGte *string) {
+	o.LastUpdatedGte = lastUpdatedGte
+}
+
+// WithLastUpdatedLte adds the lastUpdatedLte to the ipam services list params
+func (o *IPAMServicesListParams) WithLastUpdatedLte(lastUpdatedLte *string) *IPAMServicesListParams {
+	o.SetLastUpdatedLte(lastUpdatedLte)
+	return o
+}
+
+// SetLastUpdatedLte adds the lastUpdatedLte to the ipam services list params
+func (o *IPAMServicesListParams) SetLastUpdatedLte(lastUpdatedLte *string) {
+	o.LastUpdatedLte = lastUpdatedLte
 }
 
 // WithLimit adds the limit to the ipam services list params
@@ -199,13 +290,13 @@ func (o *IPAMServicesListParams) SetOffset(offset *int64) {
 }
 
 // WithPort adds the port to the ipam services list params
-func (o *IPAMServicesListParams) WithPort(port *int64) *IPAMServicesListParams {
+func (o *IPAMServicesListParams) WithPort(port *string) *IPAMServicesListParams {
 	o.SetPort(port)
 	return o
 }
 
 // SetPort adds the port to the ipam services list params
-func (o *IPAMServicesListParams) SetPort(port *int64) {
+func (o *IPAMServicesListParams) SetPort(port *string) {
 	o.Port = port
 }
 
@@ -272,6 +363,54 @@ func (o *IPAMServicesListParams) WriteToRequest(r runtime.ClientRequest, reg str
 	}
 	var res []error
 
+	if o.Created != nil {
+
+		// query param created
+		var qrCreated string
+		if o.Created != nil {
+			qrCreated = *o.Created
+		}
+		qCreated := qrCreated
+		if qCreated != "" {
+			if err := r.SetQueryParam("created", qCreated); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.CreatedGte != nil {
+
+		// query param created__gte
+		var qrCreatedGte string
+		if o.CreatedGte != nil {
+			qrCreatedGte = *o.CreatedGte
+		}
+		qCreatedGte := qrCreatedGte
+		if qCreatedGte != "" {
+			if err := r.SetQueryParam("created__gte", qCreatedGte); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.CreatedLte != nil {
+
+		// query param created__lte
+		var qrCreatedLte string
+		if o.CreatedLte != nil {
+			qrCreatedLte = *o.CreatedLte
+		}
+		qCreatedLte := qrCreatedLte
+		if qCreatedLte != "" {
+			if err := r.SetQueryParam("created__lte", qCreatedLte); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.Device != nil {
 
 		// query param device
@@ -298,6 +437,70 @@ func (o *IPAMServicesListParams) WriteToRequest(r runtime.ClientRequest, reg str
 		qDeviceID := swag.FormatInt64(qrDeviceID)
 		if qDeviceID != "" {
 			if err := r.SetQueryParam("device_id", qDeviceID); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.ID != nil {
+
+		// query param id
+		var qrID int64
+		if o.ID != nil {
+			qrID = *o.ID
+		}
+		qID := swag.FormatInt64(qrID)
+		if qID != "" {
+			if err := r.SetQueryParam("id", qID); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.LastUpdated != nil {
+
+		// query param last_updated
+		var qrLastUpdated string
+		if o.LastUpdated != nil {
+			qrLastUpdated = *o.LastUpdated
+		}
+		qLastUpdated := qrLastUpdated
+		if qLastUpdated != "" {
+			if err := r.SetQueryParam("last_updated", qLastUpdated); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.LastUpdatedGte != nil {
+
+		// query param last_updated__gte
+		var qrLastUpdatedGte string
+		if o.LastUpdatedGte != nil {
+			qrLastUpdatedGte = *o.LastUpdatedGte
+		}
+		qLastUpdatedGte := qrLastUpdatedGte
+		if qLastUpdatedGte != "" {
+			if err := r.SetQueryParam("last_updated__gte", qLastUpdatedGte); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.LastUpdatedLte != nil {
+
+		// query param last_updated__lte
+		var qrLastUpdatedLte string
+		if o.LastUpdatedLte != nil {
+			qrLastUpdatedLte = *o.LastUpdatedLte
+		}
+		qLastUpdatedLte := qrLastUpdatedLte
+		if qLastUpdatedLte != "" {
+			if err := r.SetQueryParam("last_updated__lte", qLastUpdatedLte); err != nil {
 				return err
 			}
 		}
@@ -355,11 +558,11 @@ func (o *IPAMServicesListParams) WriteToRequest(r runtime.ClientRequest, reg str
 	if o.Port != nil {
 
 		// query param port
-		var qrPort int64
+		var qrPort string
 		if o.Port != nil {
 			qrPort = *o.Port
 		}
-		qPort := swag.FormatInt64(qrPort)
+		qPort := qrPort
 		if qPort != "" {
 			if err := r.SetQueryParam("port", qPort); err != nil {
 				return err

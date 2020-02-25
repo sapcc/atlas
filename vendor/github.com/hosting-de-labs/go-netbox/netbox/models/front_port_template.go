@@ -205,7 +205,7 @@ type FrontPortTemplateType struct {
 
 	// value
 	// Required: true
-	Value *int64 `json:"value"`
+	Value *string `json:"value"`
 }
 
 // Validate validates this front port template type

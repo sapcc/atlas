@@ -78,6 +78,8 @@ type DcimConsolePortTemplatesListParams struct {
 
 	/*DevicetypeID*/
 	DevicetypeID *int64
+	/*ID*/
+	ID *int64
 	/*Limit
 	  Number of results to return per page.
 
@@ -92,6 +94,8 @@ type DcimConsolePortTemplatesListParams struct {
 	Offset *int64
 	/*Q*/
 	Q *string
+	/*Type*/
+	Type *string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -142,6 +146,17 @@ func (o *DcimConsolePortTemplatesListParams) SetDevicetypeID(devicetypeID *int64
 	o.DevicetypeID = devicetypeID
 }
 
+// WithID adds the id to the dcim console port templates list params
+func (o *DcimConsolePortTemplatesListParams) WithID(id *int64) *DcimConsolePortTemplatesListParams {
+	o.SetID(id)
+	return o
+}
+
+// SetID adds the id to the dcim console port templates list params
+func (o *DcimConsolePortTemplatesListParams) SetID(id *int64) {
+	o.ID = id
+}
+
 // WithLimit adds the limit to the dcim console port templates list params
 func (o *DcimConsolePortTemplatesListParams) WithLimit(limit *int64) *DcimConsolePortTemplatesListParams {
 	o.SetLimit(limit)
@@ -186,6 +201,17 @@ func (o *DcimConsolePortTemplatesListParams) SetQ(q *string) {
 	o.Q = q
 }
 
+// WithType adds the typeVar to the dcim console port templates list params
+func (o *DcimConsolePortTemplatesListParams) WithType(typeVar *string) *DcimConsolePortTemplatesListParams {
+	o.SetType(typeVar)
+	return o
+}
+
+// SetType adds the type to the dcim console port templates list params
+func (o *DcimConsolePortTemplatesListParams) SetType(typeVar *string) {
+	o.Type = typeVar
+}
+
 // WriteToRequest writes these params to a swagger request
 func (o *DcimConsolePortTemplatesListParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -204,6 +230,22 @@ func (o *DcimConsolePortTemplatesListParams) WriteToRequest(r runtime.ClientRequ
 		qDevicetypeID := swag.FormatInt64(qrDevicetypeID)
 		if qDevicetypeID != "" {
 			if err := r.SetQueryParam("devicetype_id", qDevicetypeID); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.ID != nil {
+
+		// query param id
+		var qrID int64
+		if o.ID != nil {
+			qrID = *o.ID
+		}
+		qID := swag.FormatInt64(qrID)
+		if qID != "" {
+			if err := r.SetQueryParam("id", qID); err != nil {
 				return err
 			}
 		}
@@ -268,6 +310,22 @@ func (o *DcimConsolePortTemplatesListParams) WriteToRequest(r runtime.ClientRequ
 		qQ := qrQ
 		if qQ != "" {
 			if err := r.SetQueryParam("q", qQ); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Type != nil {
+
+		// query param type
+		var qrType string
+		if o.Type != nil {
+			qrType = *o.Type
+		}
+		qType := qrType
+		if qType != "" {
+			if err := r.SetQueryParam("type", qType); err != nil {
 				return err
 			}
 		}

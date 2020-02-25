@@ -68,6 +68,10 @@ type WritableVLAN struct {
 	// Min Length: 1
 	Name *string `json:"name"`
 
+	// Prefix count
+	// Read Only: true
+	PrefixCount int64 `json:"prefix_count,omitempty"`
+
 	// Role
 	Role *int64 `json:"role,omitempty"`
 
@@ -75,8 +79,8 @@ type WritableVLAN struct {
 	Site *int64 `json:"site,omitempty"`
 
 	// Status
-	// Enum: [1 2 3]
-	Status int64 `json:"status,omitempty"`
+	// Enum: [active reserved deprecated]
+	Status string `json:"status,omitempty"`
 
 	// tags
 	Tags []string `json:"tags"`
@@ -188,8 +192,8 @@ func (m *WritableVLAN) validateName(formats strfmt.Registry) error {
 var writableVLANTypeStatusPropEnum []interface{}
 
 func init() {
-	var res []int64
-	if err := json.Unmarshal([]byte(`[1,2,3]`), &res); err != nil {
+	var res []string
+	if err := json.Unmarshal([]byte(`["active","reserved","deprecated"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -197,8 +201,20 @@ func init() {
 	}
 }
 
+const (
+
+	// WritableVLANStatusActive captures enum value "active"
+	WritableVLANStatusActive string = "active"
+
+	// WritableVLANStatusReserved captures enum value "reserved"
+	WritableVLANStatusReserved string = "reserved"
+
+	// WritableVLANStatusDeprecated captures enum value "deprecated"
+	WritableVLANStatusDeprecated string = "deprecated"
+)
+
 // prop value enum
-func (m *WritableVLAN) validateStatusEnum(path, location string, value int64) error {
+func (m *WritableVLAN) validateStatusEnum(path, location string, value string) error {
 	if err := validate.Enum(path, location, value, writableVLANTypeStatusPropEnum); err != nil {
 		return err
 	}

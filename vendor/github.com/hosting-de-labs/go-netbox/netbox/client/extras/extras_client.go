@@ -97,6 +97,64 @@ func (a *Client) ExtrasChoicesRead(params *ExtrasChoicesReadParams, authInfo run
 }
 
 /*
+ExtrasCustomFieldChoicesList extras custom field choices list API
+*/
+func (a *Client) ExtrasCustomFieldChoicesList(params *ExtrasCustomFieldChoicesListParams, authInfo runtime.ClientAuthInfoWriter) (*ExtrasCustomFieldChoicesListOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewExtrasCustomFieldChoicesListParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "extras__custom_field_choices_list",
+		Method:             "GET",
+		PathPattern:        "/extras/_custom_field_choices/",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &ExtrasCustomFieldChoicesListReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*ExtrasCustomFieldChoicesListOK), nil
+
+}
+
+/*
+ExtrasCustomFieldChoicesRead extras custom field choices read API
+*/
+func (a *Client) ExtrasCustomFieldChoicesRead(params *ExtrasCustomFieldChoicesReadParams, authInfo runtime.ClientAuthInfoWriter) (*ExtrasCustomFieldChoicesReadOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewExtrasCustomFieldChoicesReadParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "extras__custom_field_choices_read",
+		Method:             "GET",
+		PathPattern:        "/extras/_custom_field_choices/{id}/",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &ExtrasCustomFieldChoicesReadReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*ExtrasCustomFieldChoicesReadOK), nil
+
+}
+
+/*
 ExtrasConfigContextsCreate extras config contexts create API
 */
 func (a *Client) ExtrasConfigContextsCreate(params *ExtrasConfigContextsCreateParams, authInfo runtime.ClientAuthInfoWriter) (*ExtrasConfigContextsCreateCreated, error) {
@@ -938,6 +996,64 @@ func (a *Client) ExtrasReportsRun(params *ExtrasReportsRunParams, authInfo runti
 }
 
 /*
+ExtrasScriptsList extras scripts list API
+*/
+func (a *Client) ExtrasScriptsList(params *ExtrasScriptsListParams, authInfo runtime.ClientAuthInfoWriter) (*ExtrasScriptsListOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewExtrasScriptsListParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "extras_scripts_list",
+		Method:             "GET",
+		PathPattern:        "/extras/scripts/",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &ExtrasScriptsListReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*ExtrasScriptsListOK), nil
+
+}
+
+/*
+ExtrasScriptsRead extras scripts read API
+*/
+func (a *Client) ExtrasScriptsRead(params *ExtrasScriptsReadParams, authInfo runtime.ClientAuthInfoWriter) (*ExtrasScriptsReadOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewExtrasScriptsReadParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "extras_scripts_read",
+		Method:             "GET",
+		PathPattern:        "/extras/scripts/{id}/",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &ExtrasScriptsReadReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*ExtrasScriptsReadOK), nil
+
+}
+
+/*
 ExtrasTagsCreate extras tags create API
 */
 func (a *Client) ExtrasTagsCreate(params *ExtrasTagsCreateParams, authInfo runtime.ClientAuthInfoWriter) (*ExtrasTagsCreateCreated, error) {
@@ -996,7 +1112,7 @@ func (a *Client) ExtrasTagsDelete(params *ExtrasTagsDeleteParams, authInfo runti
 }
 
 /*
-ExtrasTagsList extras tags list API
+ExtrasTagsList Call to super to allow for caching
 */
 func (a *Client) ExtrasTagsList(params *ExtrasTagsListParams, authInfo runtime.ClientAuthInfoWriter) (*ExtrasTagsListOK, error) {
 	// TODO: Validate the params before sending
@@ -1054,7 +1170,7 @@ func (a *Client) ExtrasTagsPartialUpdate(params *ExtrasTagsPartialUpdateParams, 
 }
 
 /*
-ExtrasTagsRead extras tags read API
+ExtrasTagsRead Call to super to allow for caching
 */
 func (a *Client) ExtrasTagsRead(params *ExtrasTagsReadParams, authInfo runtime.ClientAuthInfoWriter) (*ExtrasTagsReadOK, error) {
 	// TODO: Validate the params before sending
@@ -1108,209 +1224,6 @@ func (a *Client) ExtrasTagsUpdate(params *ExtrasTagsUpdateParams, authInfo runti
 		return nil, err
 	}
 	return result.(*ExtrasTagsUpdateOK), nil
-
-}
-
-/*
-ExtrasTopologyMapsCreate extras topology maps create API
-*/
-func (a *Client) ExtrasTopologyMapsCreate(params *ExtrasTopologyMapsCreateParams, authInfo runtime.ClientAuthInfoWriter) (*ExtrasTopologyMapsCreateCreated, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewExtrasTopologyMapsCreateParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "extras_topology-maps_create",
-		Method:             "POST",
-		PathPattern:        "/extras/topology-maps/",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http"},
-		Params:             params,
-		Reader:             &ExtrasTopologyMapsCreateReader{formats: a.formats},
-		AuthInfo:           authInfo,
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return result.(*ExtrasTopologyMapsCreateCreated), nil
-
-}
-
-/*
-ExtrasTopologyMapsDelete extras topology maps delete API
-*/
-func (a *Client) ExtrasTopologyMapsDelete(params *ExtrasTopologyMapsDeleteParams, authInfo runtime.ClientAuthInfoWriter) (*ExtrasTopologyMapsDeleteNoContent, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewExtrasTopologyMapsDeleteParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "extras_topology-maps_delete",
-		Method:             "DELETE",
-		PathPattern:        "/extras/topology-maps/{id}/",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http"},
-		Params:             params,
-		Reader:             &ExtrasTopologyMapsDeleteReader{formats: a.formats},
-		AuthInfo:           authInfo,
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return result.(*ExtrasTopologyMapsDeleteNoContent), nil
-
-}
-
-/*
-ExtrasTopologyMapsList extras topology maps list API
-*/
-func (a *Client) ExtrasTopologyMapsList(params *ExtrasTopologyMapsListParams, authInfo runtime.ClientAuthInfoWriter) (*ExtrasTopologyMapsListOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewExtrasTopologyMapsListParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "extras_topology-maps_list",
-		Method:             "GET",
-		PathPattern:        "/extras/topology-maps/",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http"},
-		Params:             params,
-		Reader:             &ExtrasTopologyMapsListReader{formats: a.formats},
-		AuthInfo:           authInfo,
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return result.(*ExtrasTopologyMapsListOK), nil
-
-}
-
-/*
-ExtrasTopologyMapsPartialUpdate extras topology maps partial update API
-*/
-func (a *Client) ExtrasTopologyMapsPartialUpdate(params *ExtrasTopologyMapsPartialUpdateParams, authInfo runtime.ClientAuthInfoWriter) (*ExtrasTopologyMapsPartialUpdateOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewExtrasTopologyMapsPartialUpdateParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "extras_topology-maps_partial_update",
-		Method:             "PATCH",
-		PathPattern:        "/extras/topology-maps/{id}/",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http"},
-		Params:             params,
-		Reader:             &ExtrasTopologyMapsPartialUpdateReader{formats: a.formats},
-		AuthInfo:           authInfo,
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return result.(*ExtrasTopologyMapsPartialUpdateOK), nil
-
-}
-
-/*
-ExtrasTopologyMapsRead extras topology maps read API
-*/
-func (a *Client) ExtrasTopologyMapsRead(params *ExtrasTopologyMapsReadParams, authInfo runtime.ClientAuthInfoWriter) (*ExtrasTopologyMapsReadOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewExtrasTopologyMapsReadParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "extras_topology-maps_read",
-		Method:             "GET",
-		PathPattern:        "/extras/topology-maps/{id}/",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http"},
-		Params:             params,
-		Reader:             &ExtrasTopologyMapsReadReader{formats: a.formats},
-		AuthInfo:           authInfo,
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return result.(*ExtrasTopologyMapsReadOK), nil
-
-}
-
-/*
-ExtrasTopologyMapsRender extras topology maps render API
-*/
-func (a *Client) ExtrasTopologyMapsRender(params *ExtrasTopologyMapsRenderParams, authInfo runtime.ClientAuthInfoWriter) (*ExtrasTopologyMapsRenderOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewExtrasTopologyMapsRenderParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "extras_topology-maps_render",
-		Method:             "GET",
-		PathPattern:        "/extras/topology-maps/{id}/render/",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http"},
-		Params:             params,
-		Reader:             &ExtrasTopologyMapsRenderReader{formats: a.formats},
-		AuthInfo:           authInfo,
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return result.(*ExtrasTopologyMapsRenderOK), nil
-
-}
-
-/*
-ExtrasTopologyMapsUpdate extras topology maps update API
-*/
-func (a *Client) ExtrasTopologyMapsUpdate(params *ExtrasTopologyMapsUpdateParams, authInfo runtime.ClientAuthInfoWriter) (*ExtrasTopologyMapsUpdateOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewExtrasTopologyMapsUpdateParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "extras_topology-maps_update",
-		Method:             "PUT",
-		PathPattern:        "/extras/topology-maps/{id}/",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http"},
-		Params:             params,
-		Reader:             &ExtrasTopologyMapsUpdateReader{formats: a.formats},
-		AuthInfo:           authInfo,
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return result.(*ExtrasTopologyMapsUpdateOK), nil
 
 }
 

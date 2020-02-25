@@ -38,7 +38,7 @@ type ConsolePort struct {
 
 	// Connected endpoint
 	// Read Only: true
-	ConnectedEndpoint interface{} `json:"connected_endpoint,omitempty"`
+	ConnectedEndpoint map[string]string `json:"connected_endpoint,omitempty"`
 
 	// Connected endpoint type
 	// Read Only: true
@@ -46,6 +46,10 @@ type ConsolePort struct {
 
 	// connection status
 	ConnectionStatus *ConsolePortConnectionStatus `json:"connection_status,omitempty"`
+
+	// Description
+	// Max Length: 100
+	Description string `json:"description,omitempty"`
 
 	// device
 	// Required: true
@@ -63,6 +67,9 @@ type ConsolePort struct {
 
 	// tags
 	Tags []string `json:"tags"`
+
+	// type
+	Type *ConsolePortType `json:"type,omitempty"`
 }
 
 // Validate validates this console port
@@ -77,6 +84,10 @@ func (m *ConsolePort) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateDescription(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateDevice(formats); err != nil {
 		res = append(res, err)
 	}
@@ -86,6 +97,10 @@ func (m *ConsolePort) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateTags(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateType(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -126,6 +141,19 @@ func (m *ConsolePort) validateConnectionStatus(formats strfmt.Registry) error {
 			}
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (m *ConsolePort) validateDescription(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Description) { // not required
+		return nil
+	}
+
+	if err := validate.MaxLength("description", "body", string(m.Description), 100); err != nil {
+		return err
 	}
 
 	return nil
@@ -178,6 +206,24 @@ func (m *ConsolePort) validateTags(formats strfmt.Registry) error {
 			return err
 		}
 
+	}
+
+	return nil
+}
+
+func (m *ConsolePort) validateType(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Type) { // not required
+		return nil
+	}
+
+	if m.Type != nil {
+		if err := m.Type.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("type")
+			}
+			return err
+		}
 	}
 
 	return nil
@@ -261,6 +307,73 @@ func (m *ConsolePortConnectionStatus) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *ConsolePortConnectionStatus) UnmarshalBinary(b []byte) error {
 	var res ConsolePortConnectionStatus
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// ConsolePortType Type
+// swagger:model ConsolePortType
+type ConsolePortType struct {
+
+	// label
+	// Required: true
+	Label *string `json:"label"`
+
+	// value
+	// Required: true
+	Value *string `json:"value"`
+}
+
+// Validate validates this console port type
+func (m *ConsolePortType) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateLabel(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateValue(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ConsolePortType) validateLabel(formats strfmt.Registry) error {
+
+	if err := validate.Required("type"+"."+"label", "body", m.Label); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *ConsolePortType) validateValue(formats strfmt.Registry) error {
+
+	if err := validate.Required("type"+"."+"value", "body", m.Value); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *ConsolePortType) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *ConsolePortType) UnmarshalBinary(b []byte) error {
+	var res ConsolePortType
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

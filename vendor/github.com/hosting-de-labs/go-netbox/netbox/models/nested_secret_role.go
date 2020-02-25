@@ -41,6 +41,10 @@ type NestedSecretRole struct {
 	// Min Length: 1
 	Name *string `json:"name"`
 
+	// Secret count
+	// Read Only: true
+	SecretCount int64 `json:"secret_count,omitempty"`
+
 	// Slug
 	// Required: true
 	// Max Length: 50

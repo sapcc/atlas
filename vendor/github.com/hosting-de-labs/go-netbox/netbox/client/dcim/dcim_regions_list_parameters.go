@@ -76,6 +76,8 @@ for the dcim regions list operation typically these are written to a http.Reques
 */
 type DcimRegionsListParams struct {
 
+	/*ID*/
+	ID *int64
 	/*Limit
 	  Number of results to return per page.
 
@@ -133,6 +135,17 @@ func (o *DcimRegionsListParams) WithHTTPClient(client *http.Client) *DcimRegions
 // SetHTTPClient adds the HTTPClient to the dcim regions list params
 func (o *DcimRegionsListParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithID adds the id to the dcim regions list params
+func (o *DcimRegionsListParams) WithID(id *int64) *DcimRegionsListParams {
+	o.SetID(id)
+	return o
+}
+
+// SetID adds the id to the dcim regions list params
+func (o *DcimRegionsListParams) SetID(id *int64) {
+	o.ID = id
 }
 
 // WithLimit adds the limit to the dcim regions list params
@@ -219,6 +232,22 @@ func (o *DcimRegionsListParams) WriteToRequest(r runtime.ClientRequest, reg strf
 		return err
 	}
 	var res []error
+
+	if o.ID != nil {
+
+		// query param id
+		var qrID int64
+		if o.ID != nil {
+			qrID = *o.ID
+		}
+		qID := swag.FormatInt64(qrID)
+		if qID != "" {
+			if err := r.SetQueryParam("id", qID); err != nil {
+				return err
+			}
+		}
+
+	}
 
 	if o.Limit != nil {
 

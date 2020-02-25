@@ -76,6 +76,12 @@ for the extras config contexts list operation typically these are written to a h
 */
 type ExtrasConfigContextsListParams struct {
 
+	/*ClusterGroup*/
+	ClusterGroup *string
+	/*ClusterGroupID*/
+	ClusterGroupID *int64
+	/*ClusterID*/
+	ClusterID *string
 	/*IsActive*/
 	IsActive *string
 	/*Limit
@@ -107,7 +113,9 @@ type ExtrasConfigContextsListParams struct {
 	/*Site*/
 	Site *string
 	/*SiteID*/
-	SiteID *string
+	SiteID *int64
+	/*Tag*/
+	Tag *string
 	/*Tenant*/
 	Tenant *string
 	/*TenantGroup*/
@@ -153,6 +161,39 @@ func (o *ExtrasConfigContextsListParams) WithHTTPClient(client *http.Client) *Ex
 // SetHTTPClient adds the HTTPClient to the extras config contexts list params
 func (o *ExtrasConfigContextsListParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithClusterGroup adds the clusterGroup to the extras config contexts list params
+func (o *ExtrasConfigContextsListParams) WithClusterGroup(clusterGroup *string) *ExtrasConfigContextsListParams {
+	o.SetClusterGroup(clusterGroup)
+	return o
+}
+
+// SetClusterGroup adds the clusterGroup to the extras config contexts list params
+func (o *ExtrasConfigContextsListParams) SetClusterGroup(clusterGroup *string) {
+	o.ClusterGroup = clusterGroup
+}
+
+// WithClusterGroupID adds the clusterGroupID to the extras config contexts list params
+func (o *ExtrasConfigContextsListParams) WithClusterGroupID(clusterGroupID *int64) *ExtrasConfigContextsListParams {
+	o.SetClusterGroupID(clusterGroupID)
+	return o
+}
+
+// SetClusterGroupID adds the clusterGroupId to the extras config contexts list params
+func (o *ExtrasConfigContextsListParams) SetClusterGroupID(clusterGroupID *int64) {
+	o.ClusterGroupID = clusterGroupID
+}
+
+// WithClusterID adds the clusterID to the extras config contexts list params
+func (o *ExtrasConfigContextsListParams) WithClusterID(clusterID *string) *ExtrasConfigContextsListParams {
+	o.SetClusterID(clusterID)
+	return o
+}
+
+// SetClusterID adds the clusterId to the extras config contexts list params
+func (o *ExtrasConfigContextsListParams) SetClusterID(clusterID *string) {
+	o.ClusterID = clusterID
 }
 
 // WithIsActive adds the isActive to the extras config contexts list params
@@ -288,14 +329,25 @@ func (o *ExtrasConfigContextsListParams) SetSite(site *string) {
 }
 
 // WithSiteID adds the siteID to the extras config contexts list params
-func (o *ExtrasConfigContextsListParams) WithSiteID(siteID *string) *ExtrasConfigContextsListParams {
+func (o *ExtrasConfigContextsListParams) WithSiteID(siteID *int64) *ExtrasConfigContextsListParams {
 	o.SetSiteID(siteID)
 	return o
 }
 
 // SetSiteID adds the siteId to the extras config contexts list params
-func (o *ExtrasConfigContextsListParams) SetSiteID(siteID *string) {
+func (o *ExtrasConfigContextsListParams) SetSiteID(siteID *int64) {
 	o.SiteID = siteID
+}
+
+// WithTag adds the tag to the extras config contexts list params
+func (o *ExtrasConfigContextsListParams) WithTag(tag *string) *ExtrasConfigContextsListParams {
+	o.SetTag(tag)
+	return o
+}
+
+// SetTag adds the tag to the extras config contexts list params
+func (o *ExtrasConfigContextsListParams) SetTag(tag *string) {
+	o.Tag = tag
 }
 
 // WithTenant adds the tenant to the extras config contexts list params
@@ -349,6 +401,54 @@ func (o *ExtrasConfigContextsListParams) WriteToRequest(r runtime.ClientRequest,
 		return err
 	}
 	var res []error
+
+	if o.ClusterGroup != nil {
+
+		// query param cluster_group
+		var qrClusterGroup string
+		if o.ClusterGroup != nil {
+			qrClusterGroup = *o.ClusterGroup
+		}
+		qClusterGroup := qrClusterGroup
+		if qClusterGroup != "" {
+			if err := r.SetQueryParam("cluster_group", qClusterGroup); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.ClusterGroupID != nil {
+
+		// query param cluster_group_id
+		var qrClusterGroupID int64
+		if o.ClusterGroupID != nil {
+			qrClusterGroupID = *o.ClusterGroupID
+		}
+		qClusterGroupID := swag.FormatInt64(qrClusterGroupID)
+		if qClusterGroupID != "" {
+			if err := r.SetQueryParam("cluster_group_id", qClusterGroupID); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.ClusterID != nil {
+
+		// query param cluster_id
+		var qrClusterID string
+		if o.ClusterID != nil {
+			qrClusterID = *o.ClusterID
+		}
+		qClusterID := qrClusterID
+		if qClusterID != "" {
+			if err := r.SetQueryParam("cluster_id", qClusterID); err != nil {
+				return err
+			}
+		}
+
+	}
 
 	if o.IsActive != nil {
 
@@ -545,13 +645,29 @@ func (o *ExtrasConfigContextsListParams) WriteToRequest(r runtime.ClientRequest,
 	if o.SiteID != nil {
 
 		// query param site_id
-		var qrSiteID string
+		var qrSiteID int64
 		if o.SiteID != nil {
 			qrSiteID = *o.SiteID
 		}
-		qSiteID := qrSiteID
+		qSiteID := swag.FormatInt64(qrSiteID)
 		if qSiteID != "" {
 			if err := r.SetQueryParam("site_id", qSiteID); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Tag != nil {
+
+		// query param tag
+		var qrTag string
+		if o.Tag != nil {
+			qrTag = *o.Tag
+		}
+		qTag := qrTag
+		if qTag != "" {
+			if err := r.SetQueryParam("tag", qTag); err != nil {
 				return err
 			}
 		}

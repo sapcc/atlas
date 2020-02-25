@@ -45,6 +45,10 @@ type WritableVirtualChassis struct {
 	// Required: true
 	Master *int64 `json:"master"`
 
+	// Member count
+	// Read Only: true
+	MemberCount int64 `json:"member_count,omitempty"`
+
 	// tags
 	Tags []string `json:"tags"`
 }

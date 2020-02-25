@@ -76,6 +76,10 @@ for the dcim virtual chassis list operation typically these are written to a htt
 */
 type DcimVirtualChassisListParams struct {
 
+	/*Domain*/
+	Domain *string
+	/*ID*/
+	ID *int64
 	/*Limit
 	  Number of results to return per page.
 
@@ -86,6 +90,22 @@ type DcimVirtualChassisListParams struct {
 
 	*/
 	Offset *int64
+	/*Q*/
+	Q *string
+	/*Region*/
+	Region *string
+	/*RegionID*/
+	RegionID *int64
+	/*Site*/
+	Site *string
+	/*SiteID*/
+	SiteID *int64
+	/*Tag*/
+	Tag *string
+	/*Tenant*/
+	Tenant *string
+	/*TenantID*/
+	TenantID *int64
 
 	timeout    time.Duration
 	Context    context.Context
@@ -125,6 +145,28 @@ func (o *DcimVirtualChassisListParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
+// WithDomain adds the domain to the dcim virtual chassis list params
+func (o *DcimVirtualChassisListParams) WithDomain(domain *string) *DcimVirtualChassisListParams {
+	o.SetDomain(domain)
+	return o
+}
+
+// SetDomain adds the domain to the dcim virtual chassis list params
+func (o *DcimVirtualChassisListParams) SetDomain(domain *string) {
+	o.Domain = domain
+}
+
+// WithID adds the id to the dcim virtual chassis list params
+func (o *DcimVirtualChassisListParams) WithID(id *int64) *DcimVirtualChassisListParams {
+	o.SetID(id)
+	return o
+}
+
+// SetID adds the id to the dcim virtual chassis list params
+func (o *DcimVirtualChassisListParams) SetID(id *int64) {
+	o.ID = id
+}
+
 // WithLimit adds the limit to the dcim virtual chassis list params
 func (o *DcimVirtualChassisListParams) WithLimit(limit *int64) *DcimVirtualChassisListParams {
 	o.SetLimit(limit)
@@ -147,6 +189,94 @@ func (o *DcimVirtualChassisListParams) SetOffset(offset *int64) {
 	o.Offset = offset
 }
 
+// WithQ adds the q to the dcim virtual chassis list params
+func (o *DcimVirtualChassisListParams) WithQ(q *string) *DcimVirtualChassisListParams {
+	o.SetQ(q)
+	return o
+}
+
+// SetQ adds the q to the dcim virtual chassis list params
+func (o *DcimVirtualChassisListParams) SetQ(q *string) {
+	o.Q = q
+}
+
+// WithRegion adds the region to the dcim virtual chassis list params
+func (o *DcimVirtualChassisListParams) WithRegion(region *string) *DcimVirtualChassisListParams {
+	o.SetRegion(region)
+	return o
+}
+
+// SetRegion adds the region to the dcim virtual chassis list params
+func (o *DcimVirtualChassisListParams) SetRegion(region *string) {
+	o.Region = region
+}
+
+// WithRegionID adds the regionID to the dcim virtual chassis list params
+func (o *DcimVirtualChassisListParams) WithRegionID(regionID *int64) *DcimVirtualChassisListParams {
+	o.SetRegionID(regionID)
+	return o
+}
+
+// SetRegionID adds the regionId to the dcim virtual chassis list params
+func (o *DcimVirtualChassisListParams) SetRegionID(regionID *int64) {
+	o.RegionID = regionID
+}
+
+// WithSite adds the site to the dcim virtual chassis list params
+func (o *DcimVirtualChassisListParams) WithSite(site *string) *DcimVirtualChassisListParams {
+	o.SetSite(site)
+	return o
+}
+
+// SetSite adds the site to the dcim virtual chassis list params
+func (o *DcimVirtualChassisListParams) SetSite(site *string) {
+	o.Site = site
+}
+
+// WithSiteID adds the siteID to the dcim virtual chassis list params
+func (o *DcimVirtualChassisListParams) WithSiteID(siteID *int64) *DcimVirtualChassisListParams {
+	o.SetSiteID(siteID)
+	return o
+}
+
+// SetSiteID adds the siteId to the dcim virtual chassis list params
+func (o *DcimVirtualChassisListParams) SetSiteID(siteID *int64) {
+	o.SiteID = siteID
+}
+
+// WithTag adds the tag to the dcim virtual chassis list params
+func (o *DcimVirtualChassisListParams) WithTag(tag *string) *DcimVirtualChassisListParams {
+	o.SetTag(tag)
+	return o
+}
+
+// SetTag adds the tag to the dcim virtual chassis list params
+func (o *DcimVirtualChassisListParams) SetTag(tag *string) {
+	o.Tag = tag
+}
+
+// WithTenant adds the tenant to the dcim virtual chassis list params
+func (o *DcimVirtualChassisListParams) WithTenant(tenant *string) *DcimVirtualChassisListParams {
+	o.SetTenant(tenant)
+	return o
+}
+
+// SetTenant adds the tenant to the dcim virtual chassis list params
+func (o *DcimVirtualChassisListParams) SetTenant(tenant *string) {
+	o.Tenant = tenant
+}
+
+// WithTenantID adds the tenantID to the dcim virtual chassis list params
+func (o *DcimVirtualChassisListParams) WithTenantID(tenantID *int64) *DcimVirtualChassisListParams {
+	o.SetTenantID(tenantID)
+	return o
+}
+
+// SetTenantID adds the tenantId to the dcim virtual chassis list params
+func (o *DcimVirtualChassisListParams) SetTenantID(tenantID *int64) {
+	o.TenantID = tenantID
+}
+
 // WriteToRequest writes these params to a swagger request
 func (o *DcimVirtualChassisListParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -154,6 +284,38 @@ func (o *DcimVirtualChassisListParams) WriteToRequest(r runtime.ClientRequest, r
 		return err
 	}
 	var res []error
+
+	if o.Domain != nil {
+
+		// query param domain
+		var qrDomain string
+		if o.Domain != nil {
+			qrDomain = *o.Domain
+		}
+		qDomain := qrDomain
+		if qDomain != "" {
+			if err := r.SetQueryParam("domain", qDomain); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.ID != nil {
+
+		// query param id
+		var qrID int64
+		if o.ID != nil {
+			qrID = *o.ID
+		}
+		qID := swag.FormatInt64(qrID)
+		if qID != "" {
+			if err := r.SetQueryParam("id", qID); err != nil {
+				return err
+			}
+		}
+
+	}
 
 	if o.Limit != nil {
 
@@ -181,6 +343,134 @@ func (o *DcimVirtualChassisListParams) WriteToRequest(r runtime.ClientRequest, r
 		qOffset := swag.FormatInt64(qrOffset)
 		if qOffset != "" {
 			if err := r.SetQueryParam("offset", qOffset); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Q != nil {
+
+		// query param q
+		var qrQ string
+		if o.Q != nil {
+			qrQ = *o.Q
+		}
+		qQ := qrQ
+		if qQ != "" {
+			if err := r.SetQueryParam("q", qQ); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Region != nil {
+
+		// query param region
+		var qrRegion string
+		if o.Region != nil {
+			qrRegion = *o.Region
+		}
+		qRegion := qrRegion
+		if qRegion != "" {
+			if err := r.SetQueryParam("region", qRegion); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.RegionID != nil {
+
+		// query param region_id
+		var qrRegionID int64
+		if o.RegionID != nil {
+			qrRegionID = *o.RegionID
+		}
+		qRegionID := swag.FormatInt64(qrRegionID)
+		if qRegionID != "" {
+			if err := r.SetQueryParam("region_id", qRegionID); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Site != nil {
+
+		// query param site
+		var qrSite string
+		if o.Site != nil {
+			qrSite = *o.Site
+		}
+		qSite := qrSite
+		if qSite != "" {
+			if err := r.SetQueryParam("site", qSite); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.SiteID != nil {
+
+		// query param site_id
+		var qrSiteID int64
+		if o.SiteID != nil {
+			qrSiteID = *o.SiteID
+		}
+		qSiteID := swag.FormatInt64(qrSiteID)
+		if qSiteID != "" {
+			if err := r.SetQueryParam("site_id", qSiteID); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Tag != nil {
+
+		// query param tag
+		var qrTag string
+		if o.Tag != nil {
+			qrTag = *o.Tag
+		}
+		qTag := qrTag
+		if qTag != "" {
+			if err := r.SetQueryParam("tag", qTag); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Tenant != nil {
+
+		// query param tenant
+		var qrTenant string
+		if o.Tenant != nil {
+			qrTenant = *o.Tenant
+		}
+		qTenant := qrTenant
+		if qTenant != "" {
+			if err := r.SetQueryParam("tenant", qTenant); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.TenantID != nil {
+
+		// query param tenant_id
+		var qrTenantID int64
+		if o.TenantID != nil {
+			qrTenantID = *o.TenantID
+		}
+		qTenantID := swag.FormatInt64(qrTenantID)
+		if qTenantID != "" {
+			if err := r.SetQueryParam("tenant_id", qTenantID); err != nil {
 				return err
 			}
 		}

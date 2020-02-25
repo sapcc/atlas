@@ -76,6 +76,12 @@ for the ipam vrfs list operation typically these are written to a http.Request
 */
 type IPAMVrfsListParams struct {
 
+	/*Created*/
+	Created *string
+	/*CreatedGte*/
+	CreatedGte *string
+	/*CreatedLte*/
+	CreatedLte *string
 	/*EnforceUnique*/
 	EnforceUnique *string
 	/*IDIn
@@ -83,6 +89,12 @@ type IPAMVrfsListParams struct {
 
 	*/
 	IDIn *string
+	/*LastUpdated*/
+	LastUpdated *string
+	/*LastUpdatedGte*/
+	LastUpdatedGte *string
+	/*LastUpdatedLte*/
+	LastUpdatedLte *string
 	/*Limit
 	  Number of results to return per page.
 
@@ -103,8 +115,12 @@ type IPAMVrfsListParams struct {
 	Tag *string
 	/*Tenant*/
 	Tenant *string
+	/*TenantGroup*/
+	TenantGroup *string
+	/*TenantGroupID*/
+	TenantGroupID *int64
 	/*TenantID*/
-	TenantID *int64
+	TenantID *string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -144,6 +160,39 @@ func (o *IPAMVrfsListParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
+// WithCreated adds the created to the ipam vrfs list params
+func (o *IPAMVrfsListParams) WithCreated(created *string) *IPAMVrfsListParams {
+	o.SetCreated(created)
+	return o
+}
+
+// SetCreated adds the created to the ipam vrfs list params
+func (o *IPAMVrfsListParams) SetCreated(created *string) {
+	o.Created = created
+}
+
+// WithCreatedGte adds the createdGte to the ipam vrfs list params
+func (o *IPAMVrfsListParams) WithCreatedGte(createdGte *string) *IPAMVrfsListParams {
+	o.SetCreatedGte(createdGte)
+	return o
+}
+
+// SetCreatedGte adds the createdGte to the ipam vrfs list params
+func (o *IPAMVrfsListParams) SetCreatedGte(createdGte *string) {
+	o.CreatedGte = createdGte
+}
+
+// WithCreatedLte adds the createdLte to the ipam vrfs list params
+func (o *IPAMVrfsListParams) WithCreatedLte(createdLte *string) *IPAMVrfsListParams {
+	o.SetCreatedLte(createdLte)
+	return o
+}
+
+// SetCreatedLte adds the createdLte to the ipam vrfs list params
+func (o *IPAMVrfsListParams) SetCreatedLte(createdLte *string) {
+	o.CreatedLte = createdLte
+}
+
 // WithEnforceUnique adds the enforceUnique to the ipam vrfs list params
 func (o *IPAMVrfsListParams) WithEnforceUnique(enforceUnique *string) *IPAMVrfsListParams {
 	o.SetEnforceUnique(enforceUnique)
@@ -164,6 +213,39 @@ func (o *IPAMVrfsListParams) WithIDIn(iDIn *string) *IPAMVrfsListParams {
 // SetIDIn adds the idIn to the ipam vrfs list params
 func (o *IPAMVrfsListParams) SetIDIn(iDIn *string) {
 	o.IDIn = iDIn
+}
+
+// WithLastUpdated adds the lastUpdated to the ipam vrfs list params
+func (o *IPAMVrfsListParams) WithLastUpdated(lastUpdated *string) *IPAMVrfsListParams {
+	o.SetLastUpdated(lastUpdated)
+	return o
+}
+
+// SetLastUpdated adds the lastUpdated to the ipam vrfs list params
+func (o *IPAMVrfsListParams) SetLastUpdated(lastUpdated *string) {
+	o.LastUpdated = lastUpdated
+}
+
+// WithLastUpdatedGte adds the lastUpdatedGte to the ipam vrfs list params
+func (o *IPAMVrfsListParams) WithLastUpdatedGte(lastUpdatedGte *string) *IPAMVrfsListParams {
+	o.SetLastUpdatedGte(lastUpdatedGte)
+	return o
+}
+
+// SetLastUpdatedGte adds the lastUpdatedGte to the ipam vrfs list params
+func (o *IPAMVrfsListParams) SetLastUpdatedGte(lastUpdatedGte *string) {
+	o.LastUpdatedGte = lastUpdatedGte
+}
+
+// WithLastUpdatedLte adds the lastUpdatedLte to the ipam vrfs list params
+func (o *IPAMVrfsListParams) WithLastUpdatedLte(lastUpdatedLte *string) *IPAMVrfsListParams {
+	o.SetLastUpdatedLte(lastUpdatedLte)
+	return o
+}
+
+// SetLastUpdatedLte adds the lastUpdatedLte to the ipam vrfs list params
+func (o *IPAMVrfsListParams) SetLastUpdatedLte(lastUpdatedLte *string) {
+	o.LastUpdatedLte = lastUpdatedLte
 }
 
 // WithLimit adds the limit to the ipam vrfs list params
@@ -243,14 +325,36 @@ func (o *IPAMVrfsListParams) SetTenant(tenant *string) {
 	o.Tenant = tenant
 }
 
+// WithTenantGroup adds the tenantGroup to the ipam vrfs list params
+func (o *IPAMVrfsListParams) WithTenantGroup(tenantGroup *string) *IPAMVrfsListParams {
+	o.SetTenantGroup(tenantGroup)
+	return o
+}
+
+// SetTenantGroup adds the tenantGroup to the ipam vrfs list params
+func (o *IPAMVrfsListParams) SetTenantGroup(tenantGroup *string) {
+	o.TenantGroup = tenantGroup
+}
+
+// WithTenantGroupID adds the tenantGroupID to the ipam vrfs list params
+func (o *IPAMVrfsListParams) WithTenantGroupID(tenantGroupID *int64) *IPAMVrfsListParams {
+	o.SetTenantGroupID(tenantGroupID)
+	return o
+}
+
+// SetTenantGroupID adds the tenantGroupId to the ipam vrfs list params
+func (o *IPAMVrfsListParams) SetTenantGroupID(tenantGroupID *int64) {
+	o.TenantGroupID = tenantGroupID
+}
+
 // WithTenantID adds the tenantID to the ipam vrfs list params
-func (o *IPAMVrfsListParams) WithTenantID(tenantID *int64) *IPAMVrfsListParams {
+func (o *IPAMVrfsListParams) WithTenantID(tenantID *string) *IPAMVrfsListParams {
 	o.SetTenantID(tenantID)
 	return o
 }
 
 // SetTenantID adds the tenantId to the ipam vrfs list params
-func (o *IPAMVrfsListParams) SetTenantID(tenantID *int64) {
+func (o *IPAMVrfsListParams) SetTenantID(tenantID *string) {
 	o.TenantID = tenantID
 }
 
@@ -261,6 +365,54 @@ func (o *IPAMVrfsListParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 		return err
 	}
 	var res []error
+
+	if o.Created != nil {
+
+		// query param created
+		var qrCreated string
+		if o.Created != nil {
+			qrCreated = *o.Created
+		}
+		qCreated := qrCreated
+		if qCreated != "" {
+			if err := r.SetQueryParam("created", qCreated); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.CreatedGte != nil {
+
+		// query param created__gte
+		var qrCreatedGte string
+		if o.CreatedGte != nil {
+			qrCreatedGte = *o.CreatedGte
+		}
+		qCreatedGte := qrCreatedGte
+		if qCreatedGte != "" {
+			if err := r.SetQueryParam("created__gte", qCreatedGte); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.CreatedLte != nil {
+
+		// query param created__lte
+		var qrCreatedLte string
+		if o.CreatedLte != nil {
+			qrCreatedLte = *o.CreatedLte
+		}
+		qCreatedLte := qrCreatedLte
+		if qCreatedLte != "" {
+			if err := r.SetQueryParam("created__lte", qCreatedLte); err != nil {
+				return err
+			}
+		}
+
+	}
 
 	if o.EnforceUnique != nil {
 
@@ -288,6 +440,54 @@ func (o *IPAMVrfsListParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 		qIDIn := qrIDIn
 		if qIDIn != "" {
 			if err := r.SetQueryParam("id__in", qIDIn); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.LastUpdated != nil {
+
+		// query param last_updated
+		var qrLastUpdated string
+		if o.LastUpdated != nil {
+			qrLastUpdated = *o.LastUpdated
+		}
+		qLastUpdated := qrLastUpdated
+		if qLastUpdated != "" {
+			if err := r.SetQueryParam("last_updated", qLastUpdated); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.LastUpdatedGte != nil {
+
+		// query param last_updated__gte
+		var qrLastUpdatedGte string
+		if o.LastUpdatedGte != nil {
+			qrLastUpdatedGte = *o.LastUpdatedGte
+		}
+		qLastUpdatedGte := qrLastUpdatedGte
+		if qLastUpdatedGte != "" {
+			if err := r.SetQueryParam("last_updated__gte", qLastUpdatedGte); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.LastUpdatedLte != nil {
+
+		// query param last_updated__lte
+		var qrLastUpdatedLte string
+		if o.LastUpdatedLte != nil {
+			qrLastUpdatedLte = *o.LastUpdatedLte
+		}
+		qLastUpdatedLte := qrLastUpdatedLte
+		if qLastUpdatedLte != "" {
+			if err := r.SetQueryParam("last_updated__lte", qLastUpdatedLte); err != nil {
 				return err
 			}
 		}
@@ -406,14 +606,46 @@ func (o *IPAMVrfsListParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 
 	}
 
+	if o.TenantGroup != nil {
+
+		// query param tenant_group
+		var qrTenantGroup string
+		if o.TenantGroup != nil {
+			qrTenantGroup = *o.TenantGroup
+		}
+		qTenantGroup := qrTenantGroup
+		if qTenantGroup != "" {
+			if err := r.SetQueryParam("tenant_group", qTenantGroup); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.TenantGroupID != nil {
+
+		// query param tenant_group_id
+		var qrTenantGroupID int64
+		if o.TenantGroupID != nil {
+			qrTenantGroupID = *o.TenantGroupID
+		}
+		qTenantGroupID := swag.FormatInt64(qrTenantGroupID)
+		if qTenantGroupID != "" {
+			if err := r.SetQueryParam("tenant_group_id", qTenantGroupID); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.TenantID != nil {
 
 		// query param tenant_id
-		var qrTenantID int64
+		var qrTenantID string
 		if o.TenantID != nil {
 			qrTenantID = *o.TenantID
 		}
-		qTenantID := swag.FormatInt64(qrTenantID)
+		qTenantID := qrTenantID
 		if qTenantID != "" {
 			if err := r.SetQueryParam("tenant_id", qTenantID); err != nil {
 				return err

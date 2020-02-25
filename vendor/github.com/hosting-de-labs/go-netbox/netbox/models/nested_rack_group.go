@@ -27,7 +27,7 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// NestedRackGroup Group
+// NestedRackGroup Rack group
 // swagger:model NestedRackGroup
 type NestedRackGroup struct {
 
@@ -40,6 +40,10 @@ type NestedRackGroup struct {
 	// Max Length: 50
 	// Min Length: 1
 	Name *string `json:"name"`
+
+	// Rack count
+	// Read Only: true
+	RackCount int64 `json:"rack_count,omitempty"`
 
 	// Slug
 	// Required: true

@@ -52,16 +52,16 @@ type WritableCable struct {
 	Length *int64 `json:"length,omitempty"`
 
 	// Length unit
-	// Enum: [1200 1100 2100 2000]
-	LengthUnit *int64 `json:"length_unit,omitempty"`
+	// Enum: [m cm ft in]
+	LengthUnit string `json:"length_unit,omitempty"`
 
 	// Status
-	// Enum: [false true]
-	Status bool `json:"status,omitempty"`
+	// Enum: [connected planned]
+	Status string `json:"status,omitempty"`
 
 	// Termination a
 	// Read Only: true
-	TerminationA string `json:"termination_a,omitempty"`
+	TerminationA map[string]string `json:"termination_a,omitempty"`
 
 	// Termination a id
 	// Required: true
@@ -75,7 +75,7 @@ type WritableCable struct {
 
 	// Termination b
 	// Read Only: true
-	TerminationB string `json:"termination_b,omitempty"`
+	TerminationB map[string]string `json:"termination_b,omitempty"`
 
 	// Termination b id
 	// Required: true
@@ -88,8 +88,8 @@ type WritableCable struct {
 	TerminationBType *string `json:"termination_b_type"`
 
 	// Type
-	// Enum: [1300 1500 1510 1600 1610 1700 1800 1810 3000 3010 3020 3030 3040 3500 3510 3520 3800 5000]
-	Type *int64 `json:"type,omitempty"`
+	// Enum: [cat3 cat5 cat5e cat6 cat6a cat7 dac-active dac-passive coaxial mmf mmf-om1 mmf-om2 mmf-om3 mmf-om4 smf smf-os1 smf-os2 aoc power]
+	Type string `json:"type,omitempty"`
 }
 
 // Validate validates this writable cable
@@ -192,8 +192,8 @@ func (m *WritableCable) validateLength(formats strfmt.Registry) error {
 var writableCableTypeLengthUnitPropEnum []interface{}
 
 func init() {
-	var res []int64
-	if err := json.Unmarshal([]byte(`[1200,1100,2100,2000]`), &res); err != nil {
+	var res []string
+	if err := json.Unmarshal([]byte(`["m","cm","ft","in"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -201,8 +201,23 @@ func init() {
 	}
 }
 
+const (
+
+	// WritableCableLengthUnitM captures enum value "m"
+	WritableCableLengthUnitM string = "m"
+
+	// WritableCableLengthUnitCm captures enum value "cm"
+	WritableCableLengthUnitCm string = "cm"
+
+	// WritableCableLengthUnitFt captures enum value "ft"
+	WritableCableLengthUnitFt string = "ft"
+
+	// WritableCableLengthUnitIn captures enum value "in"
+	WritableCableLengthUnitIn string = "in"
+)
+
 // prop value enum
-func (m *WritableCable) validateLengthUnitEnum(path, location string, value int64) error {
+func (m *WritableCable) validateLengthUnitEnum(path, location string, value string) error {
 	if err := validate.Enum(path, location, value, writableCableTypeLengthUnitPropEnum); err != nil {
 		return err
 	}
@@ -216,7 +231,7 @@ func (m *WritableCable) validateLengthUnit(formats strfmt.Registry) error {
 	}
 
 	// value enum
-	if err := m.validateLengthUnitEnum("length_unit", "body", *m.LengthUnit); err != nil {
+	if err := m.validateLengthUnitEnum("length_unit", "body", m.LengthUnit); err != nil {
 		return err
 	}
 
@@ -226,8 +241,8 @@ func (m *WritableCable) validateLengthUnit(formats strfmt.Registry) error {
 var writableCableTypeStatusPropEnum []interface{}
 
 func init() {
-	var res []bool
-	if err := json.Unmarshal([]byte(`[false,true]`), &res); err != nil {
+	var res []string
+	if err := json.Unmarshal([]byte(`["connected","planned"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -235,8 +250,17 @@ func init() {
 	}
 }
 
+const (
+
+	// WritableCableStatusConnected captures enum value "connected"
+	WritableCableStatusConnected string = "connected"
+
+	// WritableCableStatusPlanned captures enum value "planned"
+	WritableCableStatusPlanned string = "planned"
+)
+
 // prop value enum
-func (m *WritableCable) validateStatusEnum(path, location string, value bool) error {
+func (m *WritableCable) validateStatusEnum(path, location string, value string) error {
 	if err := validate.Enum(path, location, value, writableCableTypeStatusPropEnum); err != nil {
 		return err
 	}
@@ -312,8 +336,8 @@ func (m *WritableCable) validateTerminationBType(formats strfmt.Registry) error 
 var writableCableTypeTypePropEnum []interface{}
 
 func init() {
-	var res []int64
-	if err := json.Unmarshal([]byte(`[1300,1500,1510,1600,1610,1700,1800,1810,3000,3010,3020,3030,3040,3500,3510,3520,3800,5000]`), &res); err != nil {
+	var res []string
+	if err := json.Unmarshal([]byte(`["cat3","cat5","cat5e","cat6","cat6a","cat7","dac-active","dac-passive","coaxial","mmf","mmf-om1","mmf-om2","mmf-om3","mmf-om4","smf","smf-os1","smf-os2","aoc","power"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -321,8 +345,68 @@ func init() {
 	}
 }
 
+const (
+
+	// WritableCableTypeCat3 captures enum value "cat3"
+	WritableCableTypeCat3 string = "cat3"
+
+	// WritableCableTypeCat5 captures enum value "cat5"
+	WritableCableTypeCat5 string = "cat5"
+
+	// WritableCableTypeCat5e captures enum value "cat5e"
+	WritableCableTypeCat5e string = "cat5e"
+
+	// WritableCableTypeCat6 captures enum value "cat6"
+	WritableCableTypeCat6 string = "cat6"
+
+	// WritableCableTypeCat6a captures enum value "cat6a"
+	WritableCableTypeCat6a string = "cat6a"
+
+	// WritableCableTypeCat7 captures enum value "cat7"
+	WritableCableTypeCat7 string = "cat7"
+
+	// WritableCableTypeDacActive captures enum value "dac-active"
+	WritableCableTypeDacActive string = "dac-active"
+
+	// WritableCableTypeDacPassive captures enum value "dac-passive"
+	WritableCableTypeDacPassive string = "dac-passive"
+
+	// WritableCableTypeCoaxial captures enum value "coaxial"
+	WritableCableTypeCoaxial string = "coaxial"
+
+	// WritableCableTypeMmf captures enum value "mmf"
+	WritableCableTypeMmf string = "mmf"
+
+	// WritableCableTypeMmfOm1 captures enum value "mmf-om1"
+	WritableCableTypeMmfOm1 string = "mmf-om1"
+
+	// WritableCableTypeMmfOm2 captures enum value "mmf-om2"
+	WritableCableTypeMmfOm2 string = "mmf-om2"
+
+	// WritableCableTypeMmfOm3 captures enum value "mmf-om3"
+	WritableCableTypeMmfOm3 string = "mmf-om3"
+
+	// WritableCableTypeMmfOm4 captures enum value "mmf-om4"
+	WritableCableTypeMmfOm4 string = "mmf-om4"
+
+	// WritableCableTypeSmf captures enum value "smf"
+	WritableCableTypeSmf string = "smf"
+
+	// WritableCableTypeSmfOs1 captures enum value "smf-os1"
+	WritableCableTypeSmfOs1 string = "smf-os1"
+
+	// WritableCableTypeSmfOs2 captures enum value "smf-os2"
+	WritableCableTypeSmfOs2 string = "smf-os2"
+
+	// WritableCableTypeAoc captures enum value "aoc"
+	WritableCableTypeAoc string = "aoc"
+
+	// WritableCableTypePower captures enum value "power"
+	WritableCableTypePower string = "power"
+)
+
 // prop value enum
-func (m *WritableCable) validateTypeEnum(path, location string, value int64) error {
+func (m *WritableCable) validateTypeEnum(path, location string, value string) error {
 	if err := validate.Enum(path, location, value, writableCableTypeTypePropEnum); err != nil {
 		return err
 	}
@@ -336,7 +420,7 @@ func (m *WritableCable) validateType(formats strfmt.Registry) error {
 	}
 
 	// value enum
-	if err := m.validateTypeEnum("type", "body", *m.Type); err != nil {
+	if err := m.validateTypeEnum("type", "body", m.Type); err != nil {
 		return err
 	}
 

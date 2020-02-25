@@ -76,6 +76,12 @@ for the ipam aggregates list operation typically these are written to a http.Req
 */
 type IPAMAggregatesListParams struct {
 
+	/*Created*/
+	Created *string
+	/*CreatedGte*/
+	CreatedGte *string
+	/*CreatedLte*/
+	CreatedLte *string
 	/*DateAdded*/
 	DateAdded *string
 	/*Family*/
@@ -85,6 +91,12 @@ type IPAMAggregatesListParams struct {
 
 	*/
 	IDIn *string
+	/*LastUpdated*/
+	LastUpdated *string
+	/*LastUpdatedGte*/
+	LastUpdatedGte *string
+	/*LastUpdatedLte*/
+	LastUpdatedLte *string
 	/*Limit
 	  Number of results to return per page.
 
@@ -95,6 +107,8 @@ type IPAMAggregatesListParams struct {
 
 	*/
 	Offset *int64
+	/*Prefix*/
+	Prefix *string
 	/*Q*/
 	Q *string
 	/*Rir*/
@@ -142,6 +156,39 @@ func (o *IPAMAggregatesListParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
+// WithCreated adds the created to the ipam aggregates list params
+func (o *IPAMAggregatesListParams) WithCreated(created *string) *IPAMAggregatesListParams {
+	o.SetCreated(created)
+	return o
+}
+
+// SetCreated adds the created to the ipam aggregates list params
+func (o *IPAMAggregatesListParams) SetCreated(created *string) {
+	o.Created = created
+}
+
+// WithCreatedGte adds the createdGte to the ipam aggregates list params
+func (o *IPAMAggregatesListParams) WithCreatedGte(createdGte *string) *IPAMAggregatesListParams {
+	o.SetCreatedGte(createdGte)
+	return o
+}
+
+// SetCreatedGte adds the createdGte to the ipam aggregates list params
+func (o *IPAMAggregatesListParams) SetCreatedGte(createdGte *string) {
+	o.CreatedGte = createdGte
+}
+
+// WithCreatedLte adds the createdLte to the ipam aggregates list params
+func (o *IPAMAggregatesListParams) WithCreatedLte(createdLte *string) *IPAMAggregatesListParams {
+	o.SetCreatedLte(createdLte)
+	return o
+}
+
+// SetCreatedLte adds the createdLte to the ipam aggregates list params
+func (o *IPAMAggregatesListParams) SetCreatedLte(createdLte *string) {
+	o.CreatedLte = createdLte
+}
+
 // WithDateAdded adds the dateAdded to the ipam aggregates list params
 func (o *IPAMAggregatesListParams) WithDateAdded(dateAdded *string) *IPAMAggregatesListParams {
 	o.SetDateAdded(dateAdded)
@@ -175,6 +222,39 @@ func (o *IPAMAggregatesListParams) SetIDIn(iDIn *string) {
 	o.IDIn = iDIn
 }
 
+// WithLastUpdated adds the lastUpdated to the ipam aggregates list params
+func (o *IPAMAggregatesListParams) WithLastUpdated(lastUpdated *string) *IPAMAggregatesListParams {
+	o.SetLastUpdated(lastUpdated)
+	return o
+}
+
+// SetLastUpdated adds the lastUpdated to the ipam aggregates list params
+func (o *IPAMAggregatesListParams) SetLastUpdated(lastUpdated *string) {
+	o.LastUpdated = lastUpdated
+}
+
+// WithLastUpdatedGte adds the lastUpdatedGte to the ipam aggregates list params
+func (o *IPAMAggregatesListParams) WithLastUpdatedGte(lastUpdatedGte *string) *IPAMAggregatesListParams {
+	o.SetLastUpdatedGte(lastUpdatedGte)
+	return o
+}
+
+// SetLastUpdatedGte adds the lastUpdatedGte to the ipam aggregates list params
+func (o *IPAMAggregatesListParams) SetLastUpdatedGte(lastUpdatedGte *string) {
+	o.LastUpdatedGte = lastUpdatedGte
+}
+
+// WithLastUpdatedLte adds the lastUpdatedLte to the ipam aggregates list params
+func (o *IPAMAggregatesListParams) WithLastUpdatedLte(lastUpdatedLte *string) *IPAMAggregatesListParams {
+	o.SetLastUpdatedLte(lastUpdatedLte)
+	return o
+}
+
+// SetLastUpdatedLte adds the lastUpdatedLte to the ipam aggregates list params
+func (o *IPAMAggregatesListParams) SetLastUpdatedLte(lastUpdatedLte *string) {
+	o.LastUpdatedLte = lastUpdatedLte
+}
+
 // WithLimit adds the limit to the ipam aggregates list params
 func (o *IPAMAggregatesListParams) WithLimit(limit *int64) *IPAMAggregatesListParams {
 	o.SetLimit(limit)
@@ -195,6 +275,17 @@ func (o *IPAMAggregatesListParams) WithOffset(offset *int64) *IPAMAggregatesList
 // SetOffset adds the offset to the ipam aggregates list params
 func (o *IPAMAggregatesListParams) SetOffset(offset *int64) {
 	o.Offset = offset
+}
+
+// WithPrefix adds the prefix to the ipam aggregates list params
+func (o *IPAMAggregatesListParams) WithPrefix(prefix *string) *IPAMAggregatesListParams {
+	o.SetPrefix(prefix)
+	return o
+}
+
+// SetPrefix adds the prefix to the ipam aggregates list params
+func (o *IPAMAggregatesListParams) SetPrefix(prefix *string) {
+	o.Prefix = prefix
 }
 
 // WithQ adds the q to the ipam aggregates list params
@@ -249,6 +340,54 @@ func (o *IPAMAggregatesListParams) WriteToRequest(r runtime.ClientRequest, reg s
 	}
 	var res []error
 
+	if o.Created != nil {
+
+		// query param created
+		var qrCreated string
+		if o.Created != nil {
+			qrCreated = *o.Created
+		}
+		qCreated := qrCreated
+		if qCreated != "" {
+			if err := r.SetQueryParam("created", qCreated); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.CreatedGte != nil {
+
+		// query param created__gte
+		var qrCreatedGte string
+		if o.CreatedGte != nil {
+			qrCreatedGte = *o.CreatedGte
+		}
+		qCreatedGte := qrCreatedGte
+		if qCreatedGte != "" {
+			if err := r.SetQueryParam("created__gte", qCreatedGte); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.CreatedLte != nil {
+
+		// query param created__lte
+		var qrCreatedLte string
+		if o.CreatedLte != nil {
+			qrCreatedLte = *o.CreatedLte
+		}
+		qCreatedLte := qrCreatedLte
+		if qCreatedLte != "" {
+			if err := r.SetQueryParam("created__lte", qCreatedLte); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.DateAdded != nil {
 
 		// query param date_added
@@ -297,6 +436,54 @@ func (o *IPAMAggregatesListParams) WriteToRequest(r runtime.ClientRequest, reg s
 
 	}
 
+	if o.LastUpdated != nil {
+
+		// query param last_updated
+		var qrLastUpdated string
+		if o.LastUpdated != nil {
+			qrLastUpdated = *o.LastUpdated
+		}
+		qLastUpdated := qrLastUpdated
+		if qLastUpdated != "" {
+			if err := r.SetQueryParam("last_updated", qLastUpdated); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.LastUpdatedGte != nil {
+
+		// query param last_updated__gte
+		var qrLastUpdatedGte string
+		if o.LastUpdatedGte != nil {
+			qrLastUpdatedGte = *o.LastUpdatedGte
+		}
+		qLastUpdatedGte := qrLastUpdatedGte
+		if qLastUpdatedGte != "" {
+			if err := r.SetQueryParam("last_updated__gte", qLastUpdatedGte); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.LastUpdatedLte != nil {
+
+		// query param last_updated__lte
+		var qrLastUpdatedLte string
+		if o.LastUpdatedLte != nil {
+			qrLastUpdatedLte = *o.LastUpdatedLte
+		}
+		qLastUpdatedLte := qrLastUpdatedLte
+		if qLastUpdatedLte != "" {
+			if err := r.SetQueryParam("last_updated__lte", qLastUpdatedLte); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.Limit != nil {
 
 		// query param limit
@@ -323,6 +510,22 @@ func (o *IPAMAggregatesListParams) WriteToRequest(r runtime.ClientRequest, reg s
 		qOffset := swag.FormatInt64(qrOffset)
 		if qOffset != "" {
 			if err := r.SetQueryParam("offset", qOffset); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Prefix != nil {
+
+		// query param prefix
+		var qrPrefix string
+		if o.Prefix != nil {
+			qrPrefix = *o.Prefix
+		}
+		qPrefix := qrPrefix
+		if qPrefix != "" {
+			if err := r.SetQueryParam("prefix", qPrefix); err != nil {
 				return err
 			}
 		}

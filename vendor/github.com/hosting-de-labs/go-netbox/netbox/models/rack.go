@@ -55,6 +55,10 @@ type Rack struct {
 	// Units are numbered top-to-bottom
 	DescUnits bool `json:"desc_units,omitempty"`
 
+	// Device count
+	// Read Only: true
+	DeviceCount int64 `json:"device_count,omitempty"`
+
 	// Display name
 	// Read Only: true
 	DisplayName string `json:"display_name,omitempty"`
@@ -93,6 +97,10 @@ type Rack struct {
 	// Maximum: 32767
 	// Minimum: 0
 	OuterWidth *int64 `json:"outer_width,omitempty"`
+
+	// Powerfeed count
+	// Read Only: true
+	PowerfeedCount int64 `json:"powerfeed_count,omitempty"`
 
 	// role
 	Role *NestedRackRole `json:"role,omitempty"`
@@ -530,7 +538,7 @@ type RackOuterUnit struct {
 
 	// value
 	// Required: true
-	Value *int64 `json:"value"`
+	Value *string `json:"value"`
 }
 
 // Validate validates this rack outer unit
@@ -597,7 +605,7 @@ type RackStatus struct {
 
 	// value
 	// Required: true
-	Value *int64 `json:"value"`
+	Value *string `json:"value"`
 }
 
 // Validate validates this rack status
@@ -664,7 +672,7 @@ type RackType struct {
 
 	// value
 	// Required: true
-	Value *int64 `json:"value"`
+	Value *string `json:"value"`
 }
 
 // Validate validates this rack type
@@ -731,7 +739,7 @@ type RackWidth struct {
 
 	// value
 	// Required: true
-	Value *int64 `json:"value"`
+	Value *string `json:"value"`
 }
 
 // Validate validates this rack width

@@ -41,6 +41,10 @@ type NestedRegion struct {
 	// Min Length: 1
 	Name *string `json:"name"`
 
+	// Site count
+	// Read Only: true
+	SiteCount int64 `json:"site_count,omitempty"`
+
 	// Slug
 	// Required: true
 	// Max Length: 50

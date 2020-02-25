@@ -78,6 +78,8 @@ type DcimRackRolesListParams struct {
 
 	/*Color*/
 	Color *string
+	/*ID*/
+	ID *int64
 	/*Limit
 	  Number of results to return per page.
 
@@ -142,6 +144,17 @@ func (o *DcimRackRolesListParams) WithColor(color *string) *DcimRackRolesListPar
 // SetColor adds the color to the dcim rack roles list params
 func (o *DcimRackRolesListParams) SetColor(color *string) {
 	o.Color = color
+}
+
+// WithID adds the id to the dcim rack roles list params
+func (o *DcimRackRolesListParams) WithID(id *int64) *DcimRackRolesListParams {
+	o.SetID(id)
+	return o
+}
+
+// SetID adds the id to the dcim rack roles list params
+func (o *DcimRackRolesListParams) SetID(id *int64) {
+	o.ID = id
 }
 
 // WithLimit adds the limit to the dcim rack roles list params
@@ -217,6 +230,22 @@ func (o *DcimRackRolesListParams) WriteToRequest(r runtime.ClientRequest, reg st
 		qColor := qrColor
 		if qColor != "" {
 			if err := r.SetQueryParam("color", qColor); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.ID != nil {
+
+		// query param id
+		var qrID int64
+		if o.ID != nil {
+			qrID = *o.ID
+		}
+		qID := swag.FormatInt64(qrID)
+		if qID != "" {
+			if err := r.SetQueryParam("id", qID); err != nil {
 				return err
 			}
 		}

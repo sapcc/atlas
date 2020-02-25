@@ -85,6 +85,12 @@ type Circuit struct {
 	// tenant
 	Tenant *NestedTenant `json:"tenant,omitempty"`
 
+	// termination a
+	TerminationA *CircuitCircuitTermination `json:"termination_a,omitempty"`
+
+	// termination z
+	TerminationZ *CircuitCircuitTermination `json:"termination_z,omitempty"`
+
 	// type
 	// Required: true
 	Type *NestedCircuitType `json:"type"`
@@ -131,6 +137,14 @@ func (m *Circuit) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateTenant(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateTerminationA(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateTerminationZ(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -301,6 +315,42 @@ func (m *Circuit) validateTenant(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *Circuit) validateTerminationA(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.TerminationA) { // not required
+		return nil
+	}
+
+	if m.TerminationA != nil {
+		if err := m.TerminationA.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("termination_a")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Circuit) validateTerminationZ(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.TerminationZ) { // not required
+		return nil
+	}
+
+	if m.TerminationZ != nil {
+		if err := m.TerminationZ.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("termination_z")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *Circuit) validateType(formats strfmt.Registry) error {
 
 	if err := validate.Required("type", "body", m.Type); err != nil {
@@ -347,7 +397,7 @@ type CircuitStatus struct {
 
 	// value
 	// Required: true
-	Value *int64 `json:"value"`
+	Value *string `json:"value"`
 }
 
 // Validate validates this circuit status

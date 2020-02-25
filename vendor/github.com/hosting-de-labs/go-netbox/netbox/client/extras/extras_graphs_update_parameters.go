@@ -79,7 +79,7 @@ for the extras graphs update operation typically these are written to a http.Req
 type ExtrasGraphsUpdateParams struct {
 
 	/*Data*/
-	Data *models.WritableGraph
+	Data *models.Graph
 	/*ID
 	  A unique integer value identifying this graph.
 
@@ -125,13 +125,13 @@ func (o *ExtrasGraphsUpdateParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithData adds the data to the extras graphs update params
-func (o *ExtrasGraphsUpdateParams) WithData(data *models.WritableGraph) *ExtrasGraphsUpdateParams {
+func (o *ExtrasGraphsUpdateParams) WithData(data *models.Graph) *ExtrasGraphsUpdateParams {
 	o.SetData(data)
 	return o
 }
 
 // SetData adds the data to the extras graphs update params
-func (o *ExtrasGraphsUpdateParams) SetData(data *models.WritableGraph) {
+func (o *ExtrasGraphsUpdateParams) SetData(data *models.Graph) {
 	o.Data = data
 }
 

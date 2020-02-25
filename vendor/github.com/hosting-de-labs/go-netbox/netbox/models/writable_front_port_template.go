@@ -58,8 +58,8 @@ type WritableFrontPortTemplate struct {
 
 	// Type
 	// Required: true
-	// Enum: [1000 1100 2200 2300 2310 2600 2610 2500 2400 2100 2110 2000]
-	Type *int64 `json:"type"`
+	// Enum: [8p8c 110-punch bnc fc lc lc-apc lsh lsh-apc mpo mtrj sc sc-apc st]
+	Type *string `json:"type"`
 }
 
 // Validate validates this writable front port template
@@ -147,8 +147,8 @@ func (m *WritableFrontPortTemplate) validateRearPortPosition(formats strfmt.Regi
 var writableFrontPortTemplateTypeTypePropEnum []interface{}
 
 func init() {
-	var res []int64
-	if err := json.Unmarshal([]byte(`[1000,1100,2200,2300,2310,2600,2610,2500,2400,2100,2110,2000]`), &res); err != nil {
+	var res []string
+	if err := json.Unmarshal([]byte(`["8p8c","110-punch","bnc","fc","lc","lc-apc","lsh","lsh-apc","mpo","mtrj","sc","sc-apc","st"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -156,8 +156,50 @@ func init() {
 	}
 }
 
+const (
+
+	// WritableFrontPortTemplateTypeNr8p8c captures enum value "8p8c"
+	WritableFrontPortTemplateTypeNr8p8c string = "8p8c"
+
+	// WritableFrontPortTemplateTypeNr110Punch captures enum value "110-punch"
+	WritableFrontPortTemplateTypeNr110Punch string = "110-punch"
+
+	// WritableFrontPortTemplateTypeBnc captures enum value "bnc"
+	WritableFrontPortTemplateTypeBnc string = "bnc"
+
+	// WritableFrontPortTemplateTypeFc captures enum value "fc"
+	WritableFrontPortTemplateTypeFc string = "fc"
+
+	// WritableFrontPortTemplateTypeLc captures enum value "lc"
+	WritableFrontPortTemplateTypeLc string = "lc"
+
+	// WritableFrontPortTemplateTypeLcApc captures enum value "lc-apc"
+	WritableFrontPortTemplateTypeLcApc string = "lc-apc"
+
+	// WritableFrontPortTemplateTypeLsh captures enum value "lsh"
+	WritableFrontPortTemplateTypeLsh string = "lsh"
+
+	// WritableFrontPortTemplateTypeLshApc captures enum value "lsh-apc"
+	WritableFrontPortTemplateTypeLshApc string = "lsh-apc"
+
+	// WritableFrontPortTemplateTypeMpo captures enum value "mpo"
+	WritableFrontPortTemplateTypeMpo string = "mpo"
+
+	// WritableFrontPortTemplateTypeMtrj captures enum value "mtrj"
+	WritableFrontPortTemplateTypeMtrj string = "mtrj"
+
+	// WritableFrontPortTemplateTypeSc captures enum value "sc"
+	WritableFrontPortTemplateTypeSc string = "sc"
+
+	// WritableFrontPortTemplateTypeScApc captures enum value "sc-apc"
+	WritableFrontPortTemplateTypeScApc string = "sc-apc"
+
+	// WritableFrontPortTemplateTypeSt captures enum value "st"
+	WritableFrontPortTemplateTypeSt string = "st"
+)
+
 // prop value enum
-func (m *WritableFrontPortTemplate) validateTypeEnum(path, location string, value int64) error {
+func (m *WritableFrontPortTemplate) validateTypeEnum(path, location string, value string) error {
 	if err := validate.Enum(path, location, value, writableFrontPortTemplateTypeTypePropEnum); err != nil {
 		return err
 	}

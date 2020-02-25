@@ -81,6 +81,8 @@ type DcimDevicesNapalmParams struct {
 
 	*/
 	ID int64
+	/*Method*/
+	Method string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -131,6 +133,17 @@ func (o *DcimDevicesNapalmParams) SetID(id int64) {
 	o.ID = id
 }
 
+// WithMethod adds the method to the dcim devices napalm params
+func (o *DcimDevicesNapalmParams) WithMethod(method string) *DcimDevicesNapalmParams {
+	o.SetMethod(method)
+	return o
+}
+
+// SetMethod adds the method to the dcim devices napalm params
+func (o *DcimDevicesNapalmParams) SetMethod(method string) {
+	o.Method = method
+}
+
 // WriteToRequest writes these params to a swagger request
 func (o *DcimDevicesNapalmParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -142,6 +155,15 @@ func (o *DcimDevicesNapalmParams) WriteToRequest(r runtime.ClientRequest, reg st
 	// path param id
 	if err := r.SetPathParam("id", swag.FormatInt64(o.ID)); err != nil {
 		return err
+	}
+
+	// query param method
+	qrMethod := o.Method
+	qMethod := qrMethod
+	if qMethod != "" {
+		if err := r.SetQueryParam("method", qMethod); err != nil {
+			return err
+		}
 	}
 
 	if len(res) > 0 {

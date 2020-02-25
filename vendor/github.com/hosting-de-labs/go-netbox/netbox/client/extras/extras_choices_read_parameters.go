@@ -27,6 +27,7 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
+	"github.com/go-openapi/swag"
 
 	strfmt "github.com/go-openapi/strfmt"
 )
@@ -76,7 +77,7 @@ for the extras choices read operation typically these are written to a http.Requ
 type ExtrasChoicesReadParams struct {
 
 	/*ID*/
-	ID string
+	ID int64
 
 	timeout    time.Duration
 	Context    context.Context
@@ -117,13 +118,13 @@ func (o *ExtrasChoicesReadParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithID adds the id to the extras choices read params
-func (o *ExtrasChoicesReadParams) WithID(id string) *ExtrasChoicesReadParams {
+func (o *ExtrasChoicesReadParams) WithID(id int64) *ExtrasChoicesReadParams {
 	o.SetID(id)
 	return o
 }
 
 // SetID adds the id to the extras choices read params
-func (o *ExtrasChoicesReadParams) SetID(id string) {
+func (o *ExtrasChoicesReadParams) SetID(id int64) {
 	o.ID = id
 }
 
@@ -136,7 +137,7 @@ func (o *ExtrasChoicesReadParams) WriteToRequest(r runtime.ClientRequest, reg st
 	var res []error
 
 	// path param id
-	if err := r.SetPathParam("id", o.ID); err != nil {
+	if err := r.SetPathParam("id", swag.FormatInt64(o.ID)); err != nil {
 		return err
 	}
 

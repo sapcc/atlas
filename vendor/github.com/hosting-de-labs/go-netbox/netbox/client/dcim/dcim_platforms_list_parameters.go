@@ -76,6 +76,8 @@ for the dcim platforms list operation typically these are written to a http.Requ
 */
 type DcimPlatformsListParams struct {
 
+	/*ID*/
+	ID *int64
 	/*Limit
 	  Number of results to return per page.
 
@@ -87,6 +89,8 @@ type DcimPlatformsListParams struct {
 	ManufacturerID *int64
 	/*Name*/
 	Name *string
+	/*NapalmDriver*/
+	NapalmDriver *string
 	/*Offset
 	  The initial index from which to return the results.
 
@@ -135,6 +139,17 @@ func (o *DcimPlatformsListParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
+// WithID adds the id to the dcim platforms list params
+func (o *DcimPlatformsListParams) WithID(id *int64) *DcimPlatformsListParams {
+	o.SetID(id)
+	return o
+}
+
+// SetID adds the id to the dcim platforms list params
+func (o *DcimPlatformsListParams) SetID(id *int64) {
+	o.ID = id
+}
+
 // WithLimit adds the limit to the dcim platforms list params
 func (o *DcimPlatformsListParams) WithLimit(limit *int64) *DcimPlatformsListParams {
 	o.SetLimit(limit)
@@ -179,6 +194,17 @@ func (o *DcimPlatformsListParams) SetName(name *string) {
 	o.Name = name
 }
 
+// WithNapalmDriver adds the napalmDriver to the dcim platforms list params
+func (o *DcimPlatformsListParams) WithNapalmDriver(napalmDriver *string) *DcimPlatformsListParams {
+	o.SetNapalmDriver(napalmDriver)
+	return o
+}
+
+// SetNapalmDriver adds the napalmDriver to the dcim platforms list params
+func (o *DcimPlatformsListParams) SetNapalmDriver(napalmDriver *string) {
+	o.NapalmDriver = napalmDriver
+}
+
 // WithOffset adds the offset to the dcim platforms list params
 func (o *DcimPlatformsListParams) WithOffset(offset *int64) *DcimPlatformsListParams {
 	o.SetOffset(offset)
@@ -219,6 +245,22 @@ func (o *DcimPlatformsListParams) WriteToRequest(r runtime.ClientRequest, reg st
 		return err
 	}
 	var res []error
+
+	if o.ID != nil {
+
+		// query param id
+		var qrID int64
+		if o.ID != nil {
+			qrID = *o.ID
+		}
+		qID := swag.FormatInt64(qrID)
+		if qID != "" {
+			if err := r.SetQueryParam("id", qID); err != nil {
+				return err
+			}
+		}
+
+	}
 
 	if o.Limit != nil {
 
@@ -278,6 +320,22 @@ func (o *DcimPlatformsListParams) WriteToRequest(r runtime.ClientRequest, reg st
 		qName := qrName
 		if qName != "" {
 			if err := r.SetQueryParam("name", qName); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.NapalmDriver != nil {
+
+		// query param napalm_driver
+		var qrNapalmDriver string
+		if o.NapalmDriver != nil {
+			qrNapalmDriver = *o.NapalmDriver
+		}
+		qNapalmDriver := qrNapalmDriver
+		if qNapalmDriver != "" {
+			if err := r.SetQueryParam("napalm_driver", qNapalmDriver); err != nil {
 				return err
 			}
 		}

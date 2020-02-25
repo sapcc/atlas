@@ -84,10 +84,22 @@ type DcimDevicesListParams struct {
 	ConsolePorts *string
 	/*ConsoleServerPorts*/
 	ConsoleServerPorts *string
+	/*Created*/
+	Created *string
+	/*CreatedGte*/
+	CreatedGte *string
+	/*CreatedLte*/
+	CreatedLte *string
+	/*DeviceBays*/
+	DeviceBays *string
 	/*DeviceTypeID*/
 	DeviceTypeID *int64
+	/*Face*/
+	Face *string
 	/*HasPrimaryIP*/
 	HasPrimaryIP *string
+	/*ID*/
+	ID *int64
 	/*IDIn
 	  Multiple values may be separated by commas.
 
@@ -97,11 +109,19 @@ type DcimDevicesListParams struct {
 	Interfaces *string
 	/*IsFullDepth*/
 	IsFullDepth *string
+	/*LastUpdated*/
+	LastUpdated *string
+	/*LastUpdatedGte*/
+	LastUpdatedGte *string
+	/*LastUpdatedLte*/
+	LastUpdatedLte *string
 	/*Limit
 	  Number of results to return per page.
 
 	*/
 	Limit *int64
+	/*LocalContextData*/
+	LocalContextData *string
 	/*MacAddress*/
 	MacAddress *string
 	/*Manufacturer*/
@@ -124,7 +144,7 @@ type DcimDevicesListParams struct {
 	/*PlatformID*/
 	PlatformID *int64
 	/*Position*/
-	Position *int64
+	Position *string
 	/*PowerOutlets*/
 	PowerOutlets *string
 	/*PowerPorts*/
@@ -155,10 +175,20 @@ type DcimDevicesListParams struct {
 	Tag *string
 	/*Tenant*/
 	Tenant *string
+	/*TenantGroup*/
+	TenantGroup *string
+	/*TenantGroupID*/
+	TenantGroupID *int64
 	/*TenantID*/
 	TenantID *int64
+	/*VcPosition*/
+	VcPosition *string
+	/*VcPriority*/
+	VcPriority *int64
 	/*VirtualChassisID*/
 	VirtualChassisID *string
+	/*VirtualChassisMember*/
+	VirtualChassisMember *string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -242,6 +272,50 @@ func (o *DcimDevicesListParams) SetConsoleServerPorts(consoleServerPorts *string
 	o.ConsoleServerPorts = consoleServerPorts
 }
 
+// WithCreated adds the created to the dcim devices list params
+func (o *DcimDevicesListParams) WithCreated(created *string) *DcimDevicesListParams {
+	o.SetCreated(created)
+	return o
+}
+
+// SetCreated adds the created to the dcim devices list params
+func (o *DcimDevicesListParams) SetCreated(created *string) {
+	o.Created = created
+}
+
+// WithCreatedGte adds the createdGte to the dcim devices list params
+func (o *DcimDevicesListParams) WithCreatedGte(createdGte *string) *DcimDevicesListParams {
+	o.SetCreatedGte(createdGte)
+	return o
+}
+
+// SetCreatedGte adds the createdGte to the dcim devices list params
+func (o *DcimDevicesListParams) SetCreatedGte(createdGte *string) {
+	o.CreatedGte = createdGte
+}
+
+// WithCreatedLte adds the createdLte to the dcim devices list params
+func (o *DcimDevicesListParams) WithCreatedLte(createdLte *string) *DcimDevicesListParams {
+	o.SetCreatedLte(createdLte)
+	return o
+}
+
+// SetCreatedLte adds the createdLte to the dcim devices list params
+func (o *DcimDevicesListParams) SetCreatedLte(createdLte *string) {
+	o.CreatedLte = createdLte
+}
+
+// WithDeviceBays adds the deviceBays to the dcim devices list params
+func (o *DcimDevicesListParams) WithDeviceBays(deviceBays *string) *DcimDevicesListParams {
+	o.SetDeviceBays(deviceBays)
+	return o
+}
+
+// SetDeviceBays adds the deviceBays to the dcim devices list params
+func (o *DcimDevicesListParams) SetDeviceBays(deviceBays *string) {
+	o.DeviceBays = deviceBays
+}
+
 // WithDeviceTypeID adds the deviceTypeID to the dcim devices list params
 func (o *DcimDevicesListParams) WithDeviceTypeID(deviceTypeID *int64) *DcimDevicesListParams {
 	o.SetDeviceTypeID(deviceTypeID)
@@ -253,6 +327,17 @@ func (o *DcimDevicesListParams) SetDeviceTypeID(deviceTypeID *int64) {
 	o.DeviceTypeID = deviceTypeID
 }
 
+// WithFace adds the face to the dcim devices list params
+func (o *DcimDevicesListParams) WithFace(face *string) *DcimDevicesListParams {
+	o.SetFace(face)
+	return o
+}
+
+// SetFace adds the face to the dcim devices list params
+func (o *DcimDevicesListParams) SetFace(face *string) {
+	o.Face = face
+}
+
 // WithHasPrimaryIP adds the hasPrimaryIP to the dcim devices list params
 func (o *DcimDevicesListParams) WithHasPrimaryIP(hasPrimaryIP *string) *DcimDevicesListParams {
 	o.SetHasPrimaryIP(hasPrimaryIP)
@@ -262,6 +347,17 @@ func (o *DcimDevicesListParams) WithHasPrimaryIP(hasPrimaryIP *string) *DcimDevi
 // SetHasPrimaryIP adds the hasPrimaryIp to the dcim devices list params
 func (o *DcimDevicesListParams) SetHasPrimaryIP(hasPrimaryIP *string) {
 	o.HasPrimaryIP = hasPrimaryIP
+}
+
+// WithID adds the id to the dcim devices list params
+func (o *DcimDevicesListParams) WithID(id *int64) *DcimDevicesListParams {
+	o.SetID(id)
+	return o
+}
+
+// SetID adds the id to the dcim devices list params
+func (o *DcimDevicesListParams) SetID(id *int64) {
+	o.ID = id
 }
 
 // WithIDIn adds the iDIn to the dcim devices list params
@@ -297,6 +393,39 @@ func (o *DcimDevicesListParams) SetIsFullDepth(isFullDepth *string) {
 	o.IsFullDepth = isFullDepth
 }
 
+// WithLastUpdated adds the lastUpdated to the dcim devices list params
+func (o *DcimDevicesListParams) WithLastUpdated(lastUpdated *string) *DcimDevicesListParams {
+	o.SetLastUpdated(lastUpdated)
+	return o
+}
+
+// SetLastUpdated adds the lastUpdated to the dcim devices list params
+func (o *DcimDevicesListParams) SetLastUpdated(lastUpdated *string) {
+	o.LastUpdated = lastUpdated
+}
+
+// WithLastUpdatedGte adds the lastUpdatedGte to the dcim devices list params
+func (o *DcimDevicesListParams) WithLastUpdatedGte(lastUpdatedGte *string) *DcimDevicesListParams {
+	o.SetLastUpdatedGte(lastUpdatedGte)
+	return o
+}
+
+// SetLastUpdatedGte adds the lastUpdatedGte to the dcim devices list params
+func (o *DcimDevicesListParams) SetLastUpdatedGte(lastUpdatedGte *string) {
+	o.LastUpdatedGte = lastUpdatedGte
+}
+
+// WithLastUpdatedLte adds the lastUpdatedLte to the dcim devices list params
+func (o *DcimDevicesListParams) WithLastUpdatedLte(lastUpdatedLte *string) *DcimDevicesListParams {
+	o.SetLastUpdatedLte(lastUpdatedLte)
+	return o
+}
+
+// SetLastUpdatedLte adds the lastUpdatedLte to the dcim devices list params
+func (o *DcimDevicesListParams) SetLastUpdatedLte(lastUpdatedLte *string) {
+	o.LastUpdatedLte = lastUpdatedLte
+}
+
 // WithLimit adds the limit to the dcim devices list params
 func (o *DcimDevicesListParams) WithLimit(limit *int64) *DcimDevicesListParams {
 	o.SetLimit(limit)
@@ -306,6 +435,17 @@ func (o *DcimDevicesListParams) WithLimit(limit *int64) *DcimDevicesListParams {
 // SetLimit adds the limit to the dcim devices list params
 func (o *DcimDevicesListParams) SetLimit(limit *int64) {
 	o.Limit = limit
+}
+
+// WithLocalContextData adds the localContextData to the dcim devices list params
+func (o *DcimDevicesListParams) WithLocalContextData(localContextData *string) *DcimDevicesListParams {
+	o.SetLocalContextData(localContextData)
+	return o
+}
+
+// SetLocalContextData adds the localContextData to the dcim devices list params
+func (o *DcimDevicesListParams) SetLocalContextData(localContextData *string) {
+	o.LocalContextData = localContextData
 }
 
 // WithMacAddress adds the macAddress to the dcim devices list params
@@ -408,13 +548,13 @@ func (o *DcimDevicesListParams) SetPlatformID(platformID *int64) {
 }
 
 // WithPosition adds the position to the dcim devices list params
-func (o *DcimDevicesListParams) WithPosition(position *int64) *DcimDevicesListParams {
+func (o *DcimDevicesListParams) WithPosition(position *string) *DcimDevicesListParams {
 	o.SetPosition(position)
 	return o
 }
 
 // SetPosition adds the position to the dcim devices list params
-func (o *DcimDevicesListParams) SetPosition(position *int64) {
+func (o *DcimDevicesListParams) SetPosition(position *string) {
 	o.Position = position
 }
 
@@ -583,6 +723,28 @@ func (o *DcimDevicesListParams) SetTenant(tenant *string) {
 	o.Tenant = tenant
 }
 
+// WithTenantGroup adds the tenantGroup to the dcim devices list params
+func (o *DcimDevicesListParams) WithTenantGroup(tenantGroup *string) *DcimDevicesListParams {
+	o.SetTenantGroup(tenantGroup)
+	return o
+}
+
+// SetTenantGroup adds the tenantGroup to the dcim devices list params
+func (o *DcimDevicesListParams) SetTenantGroup(tenantGroup *string) {
+	o.TenantGroup = tenantGroup
+}
+
+// WithTenantGroupID adds the tenantGroupID to the dcim devices list params
+func (o *DcimDevicesListParams) WithTenantGroupID(tenantGroupID *int64) *DcimDevicesListParams {
+	o.SetTenantGroupID(tenantGroupID)
+	return o
+}
+
+// SetTenantGroupID adds the tenantGroupId to the dcim devices list params
+func (o *DcimDevicesListParams) SetTenantGroupID(tenantGroupID *int64) {
+	o.TenantGroupID = tenantGroupID
+}
+
 // WithTenantID adds the tenantID to the dcim devices list params
 func (o *DcimDevicesListParams) WithTenantID(tenantID *int64) *DcimDevicesListParams {
 	o.SetTenantID(tenantID)
@@ -594,6 +756,28 @@ func (o *DcimDevicesListParams) SetTenantID(tenantID *int64) {
 	o.TenantID = tenantID
 }
 
+// WithVcPosition adds the vcPosition to the dcim devices list params
+func (o *DcimDevicesListParams) WithVcPosition(vcPosition *string) *DcimDevicesListParams {
+	o.SetVcPosition(vcPosition)
+	return o
+}
+
+// SetVcPosition adds the vcPosition to the dcim devices list params
+func (o *DcimDevicesListParams) SetVcPosition(vcPosition *string) {
+	o.VcPosition = vcPosition
+}
+
+// WithVcPriority adds the vcPriority to the dcim devices list params
+func (o *DcimDevicesListParams) WithVcPriority(vcPriority *int64) *DcimDevicesListParams {
+	o.SetVcPriority(vcPriority)
+	return o
+}
+
+// SetVcPriority adds the vcPriority to the dcim devices list params
+func (o *DcimDevicesListParams) SetVcPriority(vcPriority *int64) {
+	o.VcPriority = vcPriority
+}
+
 // WithVirtualChassisID adds the virtualChassisID to the dcim devices list params
 func (o *DcimDevicesListParams) WithVirtualChassisID(virtualChassisID *string) *DcimDevicesListParams {
 	o.SetVirtualChassisID(virtualChassisID)
@@ -603,6 +787,17 @@ func (o *DcimDevicesListParams) WithVirtualChassisID(virtualChassisID *string) *
 // SetVirtualChassisID adds the virtualChassisId to the dcim devices list params
 func (o *DcimDevicesListParams) SetVirtualChassisID(virtualChassisID *string) {
 	o.VirtualChassisID = virtualChassisID
+}
+
+// WithVirtualChassisMember adds the virtualChassisMember to the dcim devices list params
+func (o *DcimDevicesListParams) WithVirtualChassisMember(virtualChassisMember *string) *DcimDevicesListParams {
+	o.SetVirtualChassisMember(virtualChassisMember)
+	return o
+}
+
+// SetVirtualChassisMember adds the virtualChassisMember to the dcim devices list params
+func (o *DcimDevicesListParams) SetVirtualChassisMember(virtualChassisMember *string) {
+	o.VirtualChassisMember = virtualChassisMember
 }
 
 // WriteToRequest writes these params to a swagger request
@@ -677,6 +872,70 @@ func (o *DcimDevicesListParams) WriteToRequest(r runtime.ClientRequest, reg strf
 
 	}
 
+	if o.Created != nil {
+
+		// query param created
+		var qrCreated string
+		if o.Created != nil {
+			qrCreated = *o.Created
+		}
+		qCreated := qrCreated
+		if qCreated != "" {
+			if err := r.SetQueryParam("created", qCreated); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.CreatedGte != nil {
+
+		// query param created__gte
+		var qrCreatedGte string
+		if o.CreatedGte != nil {
+			qrCreatedGte = *o.CreatedGte
+		}
+		qCreatedGte := qrCreatedGte
+		if qCreatedGte != "" {
+			if err := r.SetQueryParam("created__gte", qCreatedGte); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.CreatedLte != nil {
+
+		// query param created__lte
+		var qrCreatedLte string
+		if o.CreatedLte != nil {
+			qrCreatedLte = *o.CreatedLte
+		}
+		qCreatedLte := qrCreatedLte
+		if qCreatedLte != "" {
+			if err := r.SetQueryParam("created__lte", qCreatedLte); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.DeviceBays != nil {
+
+		// query param device_bays
+		var qrDeviceBays string
+		if o.DeviceBays != nil {
+			qrDeviceBays = *o.DeviceBays
+		}
+		qDeviceBays := qrDeviceBays
+		if qDeviceBays != "" {
+			if err := r.SetQueryParam("device_bays", qDeviceBays); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.DeviceTypeID != nil {
 
 		// query param device_type_id
@@ -693,6 +952,22 @@ func (o *DcimDevicesListParams) WriteToRequest(r runtime.ClientRequest, reg strf
 
 	}
 
+	if o.Face != nil {
+
+		// query param face
+		var qrFace string
+		if o.Face != nil {
+			qrFace = *o.Face
+		}
+		qFace := qrFace
+		if qFace != "" {
+			if err := r.SetQueryParam("face", qFace); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.HasPrimaryIP != nil {
 
 		// query param has_primary_ip
@@ -703,6 +978,22 @@ func (o *DcimDevicesListParams) WriteToRequest(r runtime.ClientRequest, reg strf
 		qHasPrimaryIP := qrHasPrimaryIP
 		if qHasPrimaryIP != "" {
 			if err := r.SetQueryParam("has_primary_ip", qHasPrimaryIP); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.ID != nil {
+
+		// query param id
+		var qrID int64
+		if o.ID != nil {
+			qrID = *o.ID
+		}
+		qID := swag.FormatInt64(qrID)
+		if qID != "" {
+			if err := r.SetQueryParam("id", qID); err != nil {
 				return err
 			}
 		}
@@ -757,6 +1048,54 @@ func (o *DcimDevicesListParams) WriteToRequest(r runtime.ClientRequest, reg strf
 
 	}
 
+	if o.LastUpdated != nil {
+
+		// query param last_updated
+		var qrLastUpdated string
+		if o.LastUpdated != nil {
+			qrLastUpdated = *o.LastUpdated
+		}
+		qLastUpdated := qrLastUpdated
+		if qLastUpdated != "" {
+			if err := r.SetQueryParam("last_updated", qLastUpdated); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.LastUpdatedGte != nil {
+
+		// query param last_updated__gte
+		var qrLastUpdatedGte string
+		if o.LastUpdatedGte != nil {
+			qrLastUpdatedGte = *o.LastUpdatedGte
+		}
+		qLastUpdatedGte := qrLastUpdatedGte
+		if qLastUpdatedGte != "" {
+			if err := r.SetQueryParam("last_updated__gte", qLastUpdatedGte); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.LastUpdatedLte != nil {
+
+		// query param last_updated__lte
+		var qrLastUpdatedLte string
+		if o.LastUpdatedLte != nil {
+			qrLastUpdatedLte = *o.LastUpdatedLte
+		}
+		qLastUpdatedLte := qrLastUpdatedLte
+		if qLastUpdatedLte != "" {
+			if err := r.SetQueryParam("last_updated__lte", qLastUpdatedLte); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.Limit != nil {
 
 		// query param limit
@@ -767,6 +1106,22 @@ func (o *DcimDevicesListParams) WriteToRequest(r runtime.ClientRequest, reg strf
 		qLimit := swag.FormatInt64(qrLimit)
 		if qLimit != "" {
 			if err := r.SetQueryParam("limit", qLimit); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.LocalContextData != nil {
+
+		// query param local_context_data
+		var qrLocalContextData string
+		if o.LocalContextData != nil {
+			qrLocalContextData = *o.LocalContextData
+		}
+		qLocalContextData := qrLocalContextData
+		if qLocalContextData != "" {
+			if err := r.SetQueryParam("local_context_data", qLocalContextData); err != nil {
 				return err
 			}
 		}
@@ -920,11 +1275,11 @@ func (o *DcimDevicesListParams) WriteToRequest(r runtime.ClientRequest, reg strf
 	if o.Position != nil {
 
 		// query param position
-		var qrPosition int64
+		var qrPosition string
 		if o.Position != nil {
 			qrPosition = *o.Position
 		}
-		qPosition := swag.FormatInt64(qrPosition)
+		qPosition := qrPosition
 		if qPosition != "" {
 			if err := r.SetQueryParam("position", qPosition); err != nil {
 				return err
@@ -1173,6 +1528,38 @@ func (o *DcimDevicesListParams) WriteToRequest(r runtime.ClientRequest, reg strf
 
 	}
 
+	if o.TenantGroup != nil {
+
+		// query param tenant_group
+		var qrTenantGroup string
+		if o.TenantGroup != nil {
+			qrTenantGroup = *o.TenantGroup
+		}
+		qTenantGroup := qrTenantGroup
+		if qTenantGroup != "" {
+			if err := r.SetQueryParam("tenant_group", qTenantGroup); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.TenantGroupID != nil {
+
+		// query param tenant_group_id
+		var qrTenantGroupID int64
+		if o.TenantGroupID != nil {
+			qrTenantGroupID = *o.TenantGroupID
+		}
+		qTenantGroupID := swag.FormatInt64(qrTenantGroupID)
+		if qTenantGroupID != "" {
+			if err := r.SetQueryParam("tenant_group_id", qTenantGroupID); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.TenantID != nil {
 
 		// query param tenant_id
@@ -1189,6 +1576,38 @@ func (o *DcimDevicesListParams) WriteToRequest(r runtime.ClientRequest, reg strf
 
 	}
 
+	if o.VcPosition != nil {
+
+		// query param vc_position
+		var qrVcPosition string
+		if o.VcPosition != nil {
+			qrVcPosition = *o.VcPosition
+		}
+		qVcPosition := qrVcPosition
+		if qVcPosition != "" {
+			if err := r.SetQueryParam("vc_position", qVcPosition); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.VcPriority != nil {
+
+		// query param vc_priority
+		var qrVcPriority int64
+		if o.VcPriority != nil {
+			qrVcPriority = *o.VcPriority
+		}
+		qVcPriority := swag.FormatInt64(qrVcPriority)
+		if qVcPriority != "" {
+			if err := r.SetQueryParam("vc_priority", qVcPriority); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.VirtualChassisID != nil {
 
 		// query param virtual_chassis_id
@@ -1199,6 +1618,22 @@ func (o *DcimDevicesListParams) WriteToRequest(r runtime.ClientRequest, reg strf
 		qVirtualChassisID := qrVirtualChassisID
 		if qVirtualChassisID != "" {
 			if err := r.SetQueryParam("virtual_chassis_id", qVirtualChassisID); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.VirtualChassisMember != nil {
+
+		// query param virtual_chassis_member
+		var qrVirtualChassisMember string
+		if o.VirtualChassisMember != nil {
+			qrVirtualChassisMember = *o.VirtualChassisMember
+		}
+		qVirtualChassisMember := qrVirtualChassisMember
+		if qVirtualChassisMember != "" {
+			if err := r.SetQueryParam("virtual_chassis_member", qVirtualChassisMember); err != nil {
 				return err
 			}
 		}

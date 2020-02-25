@@ -45,6 +45,10 @@ type WritableDeviceType struct {
 	// Custom fields
 	CustomFields interface{} `json:"custom_fields,omitempty"`
 
+	// Device count
+	// Read Only: true
+	DeviceCount int64 `json:"device_count,omitempty"`
+
 	// Display name
 	// Read Only: true
 	DisplayName string `json:"display_name,omitempty"`
@@ -52,10 +56,6 @@ type WritableDeviceType struct {
 	// ID
 	// Read Only: true
 	ID int64 `json:"id,omitempty"`
-
-	// Instance count
-	// Read Only: true
-	InstanceCount int64 `json:"instance_count,omitempty"`
 
 	// Is full depth
 	//
@@ -92,9 +92,9 @@ type WritableDeviceType struct {
 
 	// Parent/child status
 	//
-	// Parent devices house child devices in device bays. Select "None" if this device type is neither a parent nor a child.
-	// Enum: [<nil> true false]
-	SubdeviceRole bool `json:"subdevice_role,omitempty"`
+	// Parent devices house child devices in device bays. Leave blank if this device type is neither a parent nor a child.
+	// Enum: [parent child]
+	SubdeviceRole string `json:"subdevice_role,omitempty"`
 
 	// tags
 	Tags []string `json:"tags"`
@@ -240,8 +240,8 @@ func (m *WritableDeviceType) validateSlug(formats strfmt.Registry) error {
 var writableDeviceTypeTypeSubdeviceRolePropEnum []interface{}
 
 func init() {
-	var res []bool
-	if err := json.Unmarshal([]byte(`[null,true,false]`), &res); err != nil {
+	var res []string
+	if err := json.Unmarshal([]byte(`["parent","child"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -249,8 +249,17 @@ func init() {
 	}
 }
 
+const (
+
+	// WritableDeviceTypeSubdeviceRoleParent captures enum value "parent"
+	WritableDeviceTypeSubdeviceRoleParent string = "parent"
+
+	// WritableDeviceTypeSubdeviceRoleChild captures enum value "child"
+	WritableDeviceTypeSubdeviceRoleChild string = "child"
+)
+
 // prop value enum
-func (m *WritableDeviceType) validateSubdeviceRoleEnum(path, location string, value bool) error {
+func (m *WritableDeviceType) validateSubdeviceRoleEnum(path, location string, value string) error {
 	if err := validate.Enum(path, location, value, writableDeviceTypeTypeSubdeviceRolePropEnum); err != nil {
 		return err
 	}

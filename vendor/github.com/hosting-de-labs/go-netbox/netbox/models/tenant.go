@@ -33,6 +33,14 @@ import (
 // swagger:model Tenant
 type Tenant struct {
 
+	// Circuit count
+	// Read Only: true
+	CircuitCount int64 `json:"circuit_count,omitempty"`
+
+	// Cluster count
+	// Read Only: true
+	ClusterCount int64 `json:"cluster_count,omitempty"`
+
 	// Comments
 	Comments string `json:"comments,omitempty"`
 
@@ -50,12 +58,20 @@ type Tenant struct {
 	// Max Length: 100
 	Description string `json:"description,omitempty"`
 
+	// Device count
+	// Read Only: true
+	DeviceCount int64 `json:"device_count,omitempty"`
+
 	// group
 	Group *NestedTenantGroup `json:"group,omitempty"`
 
 	// ID
 	// Read Only: true
 	ID int64 `json:"id,omitempty"`
+
+	// Ipaddress count
+	// Read Only: true
+	IpaddressCount int64 `json:"ipaddress_count,omitempty"`
 
 	// Last updated
 	// Read Only: true
@@ -68,6 +84,18 @@ type Tenant struct {
 	// Min Length: 1
 	Name *string `json:"name"`
 
+	// Prefix count
+	// Read Only: true
+	PrefixCount int64 `json:"prefix_count,omitempty"`
+
+	// Rack count
+	// Read Only: true
+	RackCount int64 `json:"rack_count,omitempty"`
+
+	// Site count
+	// Read Only: true
+	SiteCount int64 `json:"site_count,omitempty"`
+
 	// Slug
 	// Required: true
 	// Max Length: 50
@@ -77,6 +105,18 @@ type Tenant struct {
 
 	// tags
 	Tags []string `json:"tags"`
+
+	// Virtualmachine count
+	// Read Only: true
+	VirtualmachineCount int64 `json:"virtualmachine_count,omitempty"`
+
+	// Vlan count
+	// Read Only: true
+	VlanCount int64 `json:"vlan_count,omitempty"`
+
+	// Vrf count
+	// Read Only: true
+	VrfCount int64 `json:"vrf_count,omitempty"`
 }
 
 // Validate validates this tenant

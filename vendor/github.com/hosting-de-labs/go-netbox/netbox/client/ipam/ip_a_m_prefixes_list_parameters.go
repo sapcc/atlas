@@ -78,6 +78,12 @@ type IPAMPrefixesListParams struct {
 
 	/*Contains*/
 	Contains *string
+	/*Created*/
+	Created *string
+	/*CreatedGte*/
+	CreatedGte *string
+	/*CreatedLte*/
+	CreatedLte *string
 	/*Family*/
 	Family *string
 	/*IDIn
@@ -87,13 +93,19 @@ type IPAMPrefixesListParams struct {
 	IDIn *string
 	/*IsPool*/
 	IsPool *string
+	/*LastUpdated*/
+	LastUpdated *string
+	/*LastUpdatedGte*/
+	LastUpdatedGte *string
+	/*LastUpdatedLte*/
+	LastUpdatedLte *string
 	/*Limit
 	  Number of results to return per page.
 
 	*/
 	Limit *int64
 	/*MaskLength*/
-	MaskLength *int64
+	MaskLength *float64
 	/*Offset
 	  The initial index from which to return the results.
 
@@ -103,6 +115,10 @@ type IPAMPrefixesListParams struct {
 	Prefix *string
 	/*Q*/
 	Q *string
+	/*Region*/
+	Region *string
+	/*RegionID*/
+	RegionID *int64
 	/*Role*/
 	Role *string
 	/*RoleID*/
@@ -117,6 +133,10 @@ type IPAMPrefixesListParams struct {
 	Tag *string
 	/*Tenant*/
 	Tenant *string
+	/*TenantGroup*/
+	TenantGroup *string
+	/*TenantGroupID*/
+	TenantGroupID *int64
 	/*TenantID*/
 	TenantID *int64
 	/*VlanID*/
@@ -181,6 +201,39 @@ func (o *IPAMPrefixesListParams) SetContains(contains *string) {
 	o.Contains = contains
 }
 
+// WithCreated adds the created to the ipam prefixes list params
+func (o *IPAMPrefixesListParams) WithCreated(created *string) *IPAMPrefixesListParams {
+	o.SetCreated(created)
+	return o
+}
+
+// SetCreated adds the created to the ipam prefixes list params
+func (o *IPAMPrefixesListParams) SetCreated(created *string) {
+	o.Created = created
+}
+
+// WithCreatedGte adds the createdGte to the ipam prefixes list params
+func (o *IPAMPrefixesListParams) WithCreatedGte(createdGte *string) *IPAMPrefixesListParams {
+	o.SetCreatedGte(createdGte)
+	return o
+}
+
+// SetCreatedGte adds the createdGte to the ipam prefixes list params
+func (o *IPAMPrefixesListParams) SetCreatedGte(createdGte *string) {
+	o.CreatedGte = createdGte
+}
+
+// WithCreatedLte adds the createdLte to the ipam prefixes list params
+func (o *IPAMPrefixesListParams) WithCreatedLte(createdLte *string) *IPAMPrefixesListParams {
+	o.SetCreatedLte(createdLte)
+	return o
+}
+
+// SetCreatedLte adds the createdLte to the ipam prefixes list params
+func (o *IPAMPrefixesListParams) SetCreatedLte(createdLte *string) {
+	o.CreatedLte = createdLte
+}
+
 // WithFamily adds the family to the ipam prefixes list params
 func (o *IPAMPrefixesListParams) WithFamily(family *string) *IPAMPrefixesListParams {
 	o.SetFamily(family)
@@ -214,6 +267,39 @@ func (o *IPAMPrefixesListParams) SetIsPool(isPool *string) {
 	o.IsPool = isPool
 }
 
+// WithLastUpdated adds the lastUpdated to the ipam prefixes list params
+func (o *IPAMPrefixesListParams) WithLastUpdated(lastUpdated *string) *IPAMPrefixesListParams {
+	o.SetLastUpdated(lastUpdated)
+	return o
+}
+
+// SetLastUpdated adds the lastUpdated to the ipam prefixes list params
+func (o *IPAMPrefixesListParams) SetLastUpdated(lastUpdated *string) {
+	o.LastUpdated = lastUpdated
+}
+
+// WithLastUpdatedGte adds the lastUpdatedGte to the ipam prefixes list params
+func (o *IPAMPrefixesListParams) WithLastUpdatedGte(lastUpdatedGte *string) *IPAMPrefixesListParams {
+	o.SetLastUpdatedGte(lastUpdatedGte)
+	return o
+}
+
+// SetLastUpdatedGte adds the lastUpdatedGte to the ipam prefixes list params
+func (o *IPAMPrefixesListParams) SetLastUpdatedGte(lastUpdatedGte *string) {
+	o.LastUpdatedGte = lastUpdatedGte
+}
+
+// WithLastUpdatedLte adds the lastUpdatedLte to the ipam prefixes list params
+func (o *IPAMPrefixesListParams) WithLastUpdatedLte(lastUpdatedLte *string) *IPAMPrefixesListParams {
+	o.SetLastUpdatedLte(lastUpdatedLte)
+	return o
+}
+
+// SetLastUpdatedLte adds the lastUpdatedLte to the ipam prefixes list params
+func (o *IPAMPrefixesListParams) SetLastUpdatedLte(lastUpdatedLte *string) {
+	o.LastUpdatedLte = lastUpdatedLte
+}
+
 // WithLimit adds the limit to the ipam prefixes list params
 func (o *IPAMPrefixesListParams) WithLimit(limit *int64) *IPAMPrefixesListParams {
 	o.SetLimit(limit)
@@ -226,13 +312,13 @@ func (o *IPAMPrefixesListParams) SetLimit(limit *int64) {
 }
 
 // WithMaskLength adds the maskLength to the ipam prefixes list params
-func (o *IPAMPrefixesListParams) WithMaskLength(maskLength *int64) *IPAMPrefixesListParams {
+func (o *IPAMPrefixesListParams) WithMaskLength(maskLength *float64) *IPAMPrefixesListParams {
 	o.SetMaskLength(maskLength)
 	return o
 }
 
 // SetMaskLength adds the maskLength to the ipam prefixes list params
-func (o *IPAMPrefixesListParams) SetMaskLength(maskLength *int64) {
+func (o *IPAMPrefixesListParams) SetMaskLength(maskLength *float64) {
 	o.MaskLength = maskLength
 }
 
@@ -267,6 +353,28 @@ func (o *IPAMPrefixesListParams) WithQ(q *string) *IPAMPrefixesListParams {
 // SetQ adds the q to the ipam prefixes list params
 func (o *IPAMPrefixesListParams) SetQ(q *string) {
 	o.Q = q
+}
+
+// WithRegion adds the region to the ipam prefixes list params
+func (o *IPAMPrefixesListParams) WithRegion(region *string) *IPAMPrefixesListParams {
+	o.SetRegion(region)
+	return o
+}
+
+// SetRegion adds the region to the ipam prefixes list params
+func (o *IPAMPrefixesListParams) SetRegion(region *string) {
+	o.Region = region
+}
+
+// WithRegionID adds the regionID to the ipam prefixes list params
+func (o *IPAMPrefixesListParams) WithRegionID(regionID *int64) *IPAMPrefixesListParams {
+	o.SetRegionID(regionID)
+	return o
+}
+
+// SetRegionID adds the regionId to the ipam prefixes list params
+func (o *IPAMPrefixesListParams) SetRegionID(regionID *int64) {
+	o.RegionID = regionID
 }
 
 // WithRole adds the role to the ipam prefixes list params
@@ -344,6 +452,28 @@ func (o *IPAMPrefixesListParams) WithTenant(tenant *string) *IPAMPrefixesListPar
 // SetTenant adds the tenant to the ipam prefixes list params
 func (o *IPAMPrefixesListParams) SetTenant(tenant *string) {
 	o.Tenant = tenant
+}
+
+// WithTenantGroup adds the tenantGroup to the ipam prefixes list params
+func (o *IPAMPrefixesListParams) WithTenantGroup(tenantGroup *string) *IPAMPrefixesListParams {
+	o.SetTenantGroup(tenantGroup)
+	return o
+}
+
+// SetTenantGroup adds the tenantGroup to the ipam prefixes list params
+func (o *IPAMPrefixesListParams) SetTenantGroup(tenantGroup *string) {
+	o.TenantGroup = tenantGroup
+}
+
+// WithTenantGroupID adds the tenantGroupID to the ipam prefixes list params
+func (o *IPAMPrefixesListParams) WithTenantGroupID(tenantGroupID *int64) *IPAMPrefixesListParams {
+	o.SetTenantGroupID(tenantGroupID)
+	return o
+}
+
+// SetTenantGroupID adds the tenantGroupId to the ipam prefixes list params
+func (o *IPAMPrefixesListParams) SetTenantGroupID(tenantGroupID *int64) {
+	o.TenantGroupID = tenantGroupID
 }
 
 // WithTenantID adds the tenantID to the ipam prefixes list params
@@ -447,6 +577,54 @@ func (o *IPAMPrefixesListParams) WriteToRequest(r runtime.ClientRequest, reg str
 
 	}
 
+	if o.Created != nil {
+
+		// query param created
+		var qrCreated string
+		if o.Created != nil {
+			qrCreated = *o.Created
+		}
+		qCreated := qrCreated
+		if qCreated != "" {
+			if err := r.SetQueryParam("created", qCreated); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.CreatedGte != nil {
+
+		// query param created__gte
+		var qrCreatedGte string
+		if o.CreatedGte != nil {
+			qrCreatedGte = *o.CreatedGte
+		}
+		qCreatedGte := qrCreatedGte
+		if qCreatedGte != "" {
+			if err := r.SetQueryParam("created__gte", qCreatedGte); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.CreatedLte != nil {
+
+		// query param created__lte
+		var qrCreatedLte string
+		if o.CreatedLte != nil {
+			qrCreatedLte = *o.CreatedLte
+		}
+		qCreatedLte := qrCreatedLte
+		if qCreatedLte != "" {
+			if err := r.SetQueryParam("created__lte", qCreatedLte); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.Family != nil {
 
 		// query param family
@@ -495,6 +673,54 @@ func (o *IPAMPrefixesListParams) WriteToRequest(r runtime.ClientRequest, reg str
 
 	}
 
+	if o.LastUpdated != nil {
+
+		// query param last_updated
+		var qrLastUpdated string
+		if o.LastUpdated != nil {
+			qrLastUpdated = *o.LastUpdated
+		}
+		qLastUpdated := qrLastUpdated
+		if qLastUpdated != "" {
+			if err := r.SetQueryParam("last_updated", qLastUpdated); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.LastUpdatedGte != nil {
+
+		// query param last_updated__gte
+		var qrLastUpdatedGte string
+		if o.LastUpdatedGte != nil {
+			qrLastUpdatedGte = *o.LastUpdatedGte
+		}
+		qLastUpdatedGte := qrLastUpdatedGte
+		if qLastUpdatedGte != "" {
+			if err := r.SetQueryParam("last_updated__gte", qLastUpdatedGte); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.LastUpdatedLte != nil {
+
+		// query param last_updated__lte
+		var qrLastUpdatedLte string
+		if o.LastUpdatedLte != nil {
+			qrLastUpdatedLte = *o.LastUpdatedLte
+		}
+		qLastUpdatedLte := qrLastUpdatedLte
+		if qLastUpdatedLte != "" {
+			if err := r.SetQueryParam("last_updated__lte", qLastUpdatedLte); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.Limit != nil {
 
 		// query param limit
@@ -514,11 +740,11 @@ func (o *IPAMPrefixesListParams) WriteToRequest(r runtime.ClientRequest, reg str
 	if o.MaskLength != nil {
 
 		// query param mask_length
-		var qrMaskLength int64
+		var qrMaskLength float64
 		if o.MaskLength != nil {
 			qrMaskLength = *o.MaskLength
 		}
-		qMaskLength := swag.FormatInt64(qrMaskLength)
+		qMaskLength := swag.FormatFloat64(qrMaskLength)
 		if qMaskLength != "" {
 			if err := r.SetQueryParam("mask_length", qMaskLength); err != nil {
 				return err
@@ -569,6 +795,38 @@ func (o *IPAMPrefixesListParams) WriteToRequest(r runtime.ClientRequest, reg str
 		qQ := qrQ
 		if qQ != "" {
 			if err := r.SetQueryParam("q", qQ); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Region != nil {
+
+		// query param region
+		var qrRegion string
+		if o.Region != nil {
+			qrRegion = *o.Region
+		}
+		qRegion := qrRegion
+		if qRegion != "" {
+			if err := r.SetQueryParam("region", qRegion); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.RegionID != nil {
+
+		// query param region_id
+		var qrRegionID int64
+		if o.RegionID != nil {
+			qrRegionID = *o.RegionID
+		}
+		qRegionID := swag.FormatInt64(qrRegionID)
+		if qRegionID != "" {
+			if err := r.SetQueryParam("region_id", qRegionID); err != nil {
 				return err
 			}
 		}
@@ -681,6 +939,38 @@ func (o *IPAMPrefixesListParams) WriteToRequest(r runtime.ClientRequest, reg str
 		qTenant := qrTenant
 		if qTenant != "" {
 			if err := r.SetQueryParam("tenant", qTenant); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.TenantGroup != nil {
+
+		// query param tenant_group
+		var qrTenantGroup string
+		if o.TenantGroup != nil {
+			qrTenantGroup = *o.TenantGroup
+		}
+		qTenantGroup := qrTenantGroup
+		if qTenantGroup != "" {
+			if err := r.SetQueryParam("tenant_group", qTenantGroup); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.TenantGroupID != nil {
+
+		// query param tenant_group_id
+		var qrTenantGroupID int64
+		if o.TenantGroupID != nil {
+			qrTenantGroupID = *o.TenantGroupID
+		}
+		qTenantGroupID := swag.FormatInt64(qrTenantGroupID)
+		if qTenantGroupID != "" {
+			if err := r.SetQueryParam("tenant_group_id", qTenantGroupID); err != nil {
 				return err
 			}
 		}

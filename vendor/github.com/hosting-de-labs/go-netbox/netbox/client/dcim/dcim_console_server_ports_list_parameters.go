@@ -80,10 +80,14 @@ type DcimConsoleServerPortsListParams struct {
 	Cabled *string
 	/*ConnectionStatus*/
 	ConnectionStatus *string
+	/*Description*/
+	Description *string
 	/*Device*/
 	Device *string
 	/*DeviceID*/
 	DeviceID *int64
+	/*ID*/
+	ID *int64
 	/*Limit
 	  Number of results to return per page.
 
@@ -98,8 +102,18 @@ type DcimConsoleServerPortsListParams struct {
 	Offset *int64
 	/*Q*/
 	Q *string
+	/*Region*/
+	Region *string
+	/*RegionID*/
+	RegionID *int64
+	/*Site*/
+	Site *string
+	/*SiteID*/
+	SiteID *int64
 	/*Tag*/
 	Tag *string
+	/*Type*/
+	Type *string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -161,6 +175,17 @@ func (o *DcimConsoleServerPortsListParams) SetConnectionStatus(connectionStatus 
 	o.ConnectionStatus = connectionStatus
 }
 
+// WithDescription adds the description to the dcim console server ports list params
+func (o *DcimConsoleServerPortsListParams) WithDescription(description *string) *DcimConsoleServerPortsListParams {
+	o.SetDescription(description)
+	return o
+}
+
+// SetDescription adds the description to the dcim console server ports list params
+func (o *DcimConsoleServerPortsListParams) SetDescription(description *string) {
+	o.Description = description
+}
+
 // WithDevice adds the device to the dcim console server ports list params
 func (o *DcimConsoleServerPortsListParams) WithDevice(device *string) *DcimConsoleServerPortsListParams {
 	o.SetDevice(device)
@@ -181,6 +206,17 @@ func (o *DcimConsoleServerPortsListParams) WithDeviceID(deviceID *int64) *DcimCo
 // SetDeviceID adds the deviceId to the dcim console server ports list params
 func (o *DcimConsoleServerPortsListParams) SetDeviceID(deviceID *int64) {
 	o.DeviceID = deviceID
+}
+
+// WithID adds the id to the dcim console server ports list params
+func (o *DcimConsoleServerPortsListParams) WithID(id *int64) *DcimConsoleServerPortsListParams {
+	o.SetID(id)
+	return o
+}
+
+// SetID adds the id to the dcim console server ports list params
+func (o *DcimConsoleServerPortsListParams) SetID(id *int64) {
+	o.ID = id
 }
 
 // WithLimit adds the limit to the dcim console server ports list params
@@ -227,6 +263,50 @@ func (o *DcimConsoleServerPortsListParams) SetQ(q *string) {
 	o.Q = q
 }
 
+// WithRegion adds the region to the dcim console server ports list params
+func (o *DcimConsoleServerPortsListParams) WithRegion(region *string) *DcimConsoleServerPortsListParams {
+	o.SetRegion(region)
+	return o
+}
+
+// SetRegion adds the region to the dcim console server ports list params
+func (o *DcimConsoleServerPortsListParams) SetRegion(region *string) {
+	o.Region = region
+}
+
+// WithRegionID adds the regionID to the dcim console server ports list params
+func (o *DcimConsoleServerPortsListParams) WithRegionID(regionID *int64) *DcimConsoleServerPortsListParams {
+	o.SetRegionID(regionID)
+	return o
+}
+
+// SetRegionID adds the regionId to the dcim console server ports list params
+func (o *DcimConsoleServerPortsListParams) SetRegionID(regionID *int64) {
+	o.RegionID = regionID
+}
+
+// WithSite adds the site to the dcim console server ports list params
+func (o *DcimConsoleServerPortsListParams) WithSite(site *string) *DcimConsoleServerPortsListParams {
+	o.SetSite(site)
+	return o
+}
+
+// SetSite adds the site to the dcim console server ports list params
+func (o *DcimConsoleServerPortsListParams) SetSite(site *string) {
+	o.Site = site
+}
+
+// WithSiteID adds the siteID to the dcim console server ports list params
+func (o *DcimConsoleServerPortsListParams) WithSiteID(siteID *int64) *DcimConsoleServerPortsListParams {
+	o.SetSiteID(siteID)
+	return o
+}
+
+// SetSiteID adds the siteId to the dcim console server ports list params
+func (o *DcimConsoleServerPortsListParams) SetSiteID(siteID *int64) {
+	o.SiteID = siteID
+}
+
 // WithTag adds the tag to the dcim console server ports list params
 func (o *DcimConsoleServerPortsListParams) WithTag(tag *string) *DcimConsoleServerPortsListParams {
 	o.SetTag(tag)
@@ -236,6 +316,17 @@ func (o *DcimConsoleServerPortsListParams) WithTag(tag *string) *DcimConsoleServ
 // SetTag adds the tag to the dcim console server ports list params
 func (o *DcimConsoleServerPortsListParams) SetTag(tag *string) {
 	o.Tag = tag
+}
+
+// WithType adds the typeVar to the dcim console server ports list params
+func (o *DcimConsoleServerPortsListParams) WithType(typeVar *string) *DcimConsoleServerPortsListParams {
+	o.SetType(typeVar)
+	return o
+}
+
+// SetType adds the type to the dcim console server ports list params
+func (o *DcimConsoleServerPortsListParams) SetType(typeVar *string) {
+	o.Type = typeVar
 }
 
 // WriteToRequest writes these params to a swagger request
@@ -278,6 +369,22 @@ func (o *DcimConsoleServerPortsListParams) WriteToRequest(r runtime.ClientReques
 
 	}
 
+	if o.Description != nil {
+
+		// query param description
+		var qrDescription string
+		if o.Description != nil {
+			qrDescription = *o.Description
+		}
+		qDescription := qrDescription
+		if qDescription != "" {
+			if err := r.SetQueryParam("description", qDescription); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.Device != nil {
 
 		// query param device
@@ -304,6 +411,22 @@ func (o *DcimConsoleServerPortsListParams) WriteToRequest(r runtime.ClientReques
 		qDeviceID := swag.FormatInt64(qrDeviceID)
 		if qDeviceID != "" {
 			if err := r.SetQueryParam("device_id", qDeviceID); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.ID != nil {
+
+		// query param id
+		var qrID int64
+		if o.ID != nil {
+			qrID = *o.ID
+		}
+		qID := swag.FormatInt64(qrID)
+		if qID != "" {
+			if err := r.SetQueryParam("id", qID); err != nil {
 				return err
 			}
 		}
@@ -374,6 +497,70 @@ func (o *DcimConsoleServerPortsListParams) WriteToRequest(r runtime.ClientReques
 
 	}
 
+	if o.Region != nil {
+
+		// query param region
+		var qrRegion string
+		if o.Region != nil {
+			qrRegion = *o.Region
+		}
+		qRegion := qrRegion
+		if qRegion != "" {
+			if err := r.SetQueryParam("region", qRegion); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.RegionID != nil {
+
+		// query param region_id
+		var qrRegionID int64
+		if o.RegionID != nil {
+			qrRegionID = *o.RegionID
+		}
+		qRegionID := swag.FormatInt64(qrRegionID)
+		if qRegionID != "" {
+			if err := r.SetQueryParam("region_id", qRegionID); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Site != nil {
+
+		// query param site
+		var qrSite string
+		if o.Site != nil {
+			qrSite = *o.Site
+		}
+		qSite := qrSite
+		if qSite != "" {
+			if err := r.SetQueryParam("site", qSite); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.SiteID != nil {
+
+		// query param site_id
+		var qrSiteID int64
+		if o.SiteID != nil {
+			qrSiteID = *o.SiteID
+		}
+		qSiteID := swag.FormatInt64(qrSiteID)
+		if qSiteID != "" {
+			if err := r.SetQueryParam("site_id", qSiteID); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.Tag != nil {
 
 		// query param tag
@@ -384,6 +571,22 @@ func (o *DcimConsoleServerPortsListParams) WriteToRequest(r runtime.ClientReques
 		qTag := qrTag
 		if qTag != "" {
 			if err := r.SetQueryParam("tag", qTag); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Type != nil {
+
+		// query param type
+		var qrType string
+		if o.Type != nil {
+			qrType = *o.Type
+		}
+		qType := qrType
+		if qType != "" {
+			if err := r.SetQueryParam("type", qType); err != nil {
 				return err
 			}
 		}

@@ -61,7 +61,7 @@ func NewDcimDevicesUpdateOK() *DcimDevicesUpdateOK {
 DcimDevicesUpdateOK dcim devices update o k
 */
 type DcimDevicesUpdateOK struct {
-	Payload *models.Device
+	Payload *models.DeviceWithConfigContext
 }
 
 func (o *DcimDevicesUpdateOK) Error() string {
@@ -70,7 +70,7 @@ func (o *DcimDevicesUpdateOK) Error() string {
 
 func (o *DcimDevicesUpdateOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(models.Device)
+	o.Payload = new(models.DeviceWithConfigContext)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {

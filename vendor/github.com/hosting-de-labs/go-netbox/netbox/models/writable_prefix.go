@@ -81,8 +81,8 @@ type WritablePrefix struct {
 	// Status
 	//
 	// Operational status of this prefix
-	// Enum: [0 1 2 3]
-	Status int64 `json:"status,omitempty"`
+	// Enum: [container active reserved deprecated]
+	Status string `json:"status,omitempty"`
 
 	// tags
 	Tags []string `json:"tags"`
@@ -182,8 +182,8 @@ func (m *WritablePrefix) validatePrefix(formats strfmt.Registry) error {
 var writablePrefixTypeStatusPropEnum []interface{}
 
 func init() {
-	var res []int64
-	if err := json.Unmarshal([]byte(`[0,1,2,3]`), &res); err != nil {
+	var res []string
+	if err := json.Unmarshal([]byte(`["container","active","reserved","deprecated"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -191,8 +191,23 @@ func init() {
 	}
 }
 
+const (
+
+	// WritablePrefixStatusContainer captures enum value "container"
+	WritablePrefixStatusContainer string = "container"
+
+	// WritablePrefixStatusActive captures enum value "active"
+	WritablePrefixStatusActive string = "active"
+
+	// WritablePrefixStatusReserved captures enum value "reserved"
+	WritablePrefixStatusReserved string = "reserved"
+
+	// WritablePrefixStatusDeprecated captures enum value "deprecated"
+	WritablePrefixStatusDeprecated string = "deprecated"
+)
+
 // prop value enum
-func (m *WritablePrefix) validateStatusEnum(path, location string, value int64) error {
+func (m *WritablePrefix) validateStatusEnum(path, location string, value string) error {
 	if err := validate.Enum(path, location, value, writablePrefixTypeStatusPropEnum); err != nil {
 		return err
 	}

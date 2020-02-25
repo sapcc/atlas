@@ -37,8 +37,12 @@ type PowerOutlet struct {
 	Cable *NestedCable `json:"cable,omitempty"`
 
 	// Connected endpoint
+	//
+	//
+	//         Return the appropriate serializer for the type of connected object.
+	//
 	// Read Only: true
-	ConnectedEndpoint interface{} `json:"connected_endpoint,omitempty"`
+	ConnectedEndpoint map[string]string `json:"connected_endpoint,omitempty"`
 
 	// Connected endpoint type
 	// Read Only: true
@@ -47,9 +51,16 @@ type PowerOutlet struct {
 	// connection status
 	ConnectionStatus *PowerOutletConnectionStatus `json:"connection_status,omitempty"`
 
+	// Description
+	// Max Length: 100
+	Description string `json:"description,omitempty"`
+
 	// device
 	// Required: true
 	Device *NestedDevice `json:"device"`
+
+	// feed leg
+	FeedLeg *PowerOutletFeedLeg `json:"feed_leg,omitempty"`
 
 	// ID
 	// Read Only: true
@@ -61,8 +72,14 @@ type PowerOutlet struct {
 	// Min Length: 1
 	Name *string `json:"name"`
 
+	// power port
+	PowerPort *NestedPowerPort `json:"power_port,omitempty"`
+
 	// tags
 	Tags []string `json:"tags"`
+
+	// type
+	Type *PowerOutletType `json:"type,omitempty"`
 }
 
 // Validate validates this power outlet
@@ -77,7 +94,15 @@ func (m *PowerOutlet) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateDescription(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateDevice(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateFeedLeg(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -85,7 +110,15 @@ func (m *PowerOutlet) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validatePowerPort(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateTags(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateType(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -131,6 +164,19 @@ func (m *PowerOutlet) validateConnectionStatus(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *PowerOutlet) validateDescription(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Description) { // not required
+		return nil
+	}
+
+	if err := validate.MaxLength("description", "body", string(m.Description), 100); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *PowerOutlet) validateDevice(formats strfmt.Registry) error {
 
 	if err := validate.Required("device", "body", m.Device); err != nil {
@@ -141,6 +187,24 @@ func (m *PowerOutlet) validateDevice(formats strfmt.Registry) error {
 		if err := m.Device.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("device")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *PowerOutlet) validateFeedLeg(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.FeedLeg) { // not required
+		return nil
+	}
+
+	if m.FeedLeg != nil {
+		if err := m.FeedLeg.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("feed_leg")
 			}
 			return err
 		}
@@ -166,6 +230,24 @@ func (m *PowerOutlet) validateName(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *PowerOutlet) validatePowerPort(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.PowerPort) { // not required
+		return nil
+	}
+
+	if m.PowerPort != nil {
+		if err := m.PowerPort.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("power_port")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *PowerOutlet) validateTags(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Tags) { // not required
@@ -178,6 +260,24 @@ func (m *PowerOutlet) validateTags(formats strfmt.Registry) error {
 			return err
 		}
 
+	}
+
+	return nil
+}
+
+func (m *PowerOutlet) validateType(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Type) { // not required
+		return nil
+	}
+
+	if m.Type != nil {
+		if err := m.Type.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("type")
+			}
+			return err
+		}
 	}
 
 	return nil
@@ -261,6 +361,140 @@ func (m *PowerOutletConnectionStatus) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *PowerOutletConnectionStatus) UnmarshalBinary(b []byte) error {
 	var res PowerOutletConnectionStatus
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// PowerOutletFeedLeg Feed leg
+// swagger:model PowerOutletFeedLeg
+type PowerOutletFeedLeg struct {
+
+	// label
+	// Required: true
+	Label *string `json:"label"`
+
+	// value
+	// Required: true
+	Value *string `json:"value"`
+}
+
+// Validate validates this power outlet feed leg
+func (m *PowerOutletFeedLeg) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateLabel(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateValue(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *PowerOutletFeedLeg) validateLabel(formats strfmt.Registry) error {
+
+	if err := validate.Required("feed_leg"+"."+"label", "body", m.Label); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *PowerOutletFeedLeg) validateValue(formats strfmt.Registry) error {
+
+	if err := validate.Required("feed_leg"+"."+"value", "body", m.Value); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *PowerOutletFeedLeg) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *PowerOutletFeedLeg) UnmarshalBinary(b []byte) error {
+	var res PowerOutletFeedLeg
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// PowerOutletType Type
+// swagger:model PowerOutletType
+type PowerOutletType struct {
+
+	// label
+	// Required: true
+	Label *string `json:"label"`
+
+	// value
+	// Required: true
+	Value *string `json:"value"`
+}
+
+// Validate validates this power outlet type
+func (m *PowerOutletType) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateLabel(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateValue(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *PowerOutletType) validateLabel(formats strfmt.Registry) error {
+
+	if err := validate.Required("type"+"."+"label", "body", m.Label); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *PowerOutletType) validateValue(formats strfmt.Registry) error {
+
+	if err := validate.Required("type"+"."+"value", "body", m.Value); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *PowerOutletType) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *PowerOutletType) UnmarshalBinary(b []byte) error {
+	var res PowerOutletType
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

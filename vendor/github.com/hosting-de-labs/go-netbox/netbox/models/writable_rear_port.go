@@ -65,8 +65,8 @@ type WritableRearPort struct {
 
 	// Type
 	// Required: true
-	// Enum: [1000 1100 2200 2300 2310 2600 2610 2500 2400 2100 2110 2000]
-	Type *int64 `json:"type"`
+	// Enum: [8p8c 110-punch bnc fc lc lc-apc lsh lsh-apc mpo mtrj sc sc-apc st]
+	Type *string `json:"type"`
 }
 
 // Validate validates this writable rear port
@@ -201,8 +201,8 @@ func (m *WritableRearPort) validateTags(formats strfmt.Registry) error {
 var writableRearPortTypeTypePropEnum []interface{}
 
 func init() {
-	var res []int64
-	if err := json.Unmarshal([]byte(`[1000,1100,2200,2300,2310,2600,2610,2500,2400,2100,2110,2000]`), &res); err != nil {
+	var res []string
+	if err := json.Unmarshal([]byte(`["8p8c","110-punch","bnc","fc","lc","lc-apc","lsh","lsh-apc","mpo","mtrj","sc","sc-apc","st"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -210,8 +210,50 @@ func init() {
 	}
 }
 
+const (
+
+	// WritableRearPortTypeNr8p8c captures enum value "8p8c"
+	WritableRearPortTypeNr8p8c string = "8p8c"
+
+	// WritableRearPortTypeNr110Punch captures enum value "110-punch"
+	WritableRearPortTypeNr110Punch string = "110-punch"
+
+	// WritableRearPortTypeBnc captures enum value "bnc"
+	WritableRearPortTypeBnc string = "bnc"
+
+	// WritableRearPortTypeFc captures enum value "fc"
+	WritableRearPortTypeFc string = "fc"
+
+	// WritableRearPortTypeLc captures enum value "lc"
+	WritableRearPortTypeLc string = "lc"
+
+	// WritableRearPortTypeLcApc captures enum value "lc-apc"
+	WritableRearPortTypeLcApc string = "lc-apc"
+
+	// WritableRearPortTypeLsh captures enum value "lsh"
+	WritableRearPortTypeLsh string = "lsh"
+
+	// WritableRearPortTypeLshApc captures enum value "lsh-apc"
+	WritableRearPortTypeLshApc string = "lsh-apc"
+
+	// WritableRearPortTypeMpo captures enum value "mpo"
+	WritableRearPortTypeMpo string = "mpo"
+
+	// WritableRearPortTypeMtrj captures enum value "mtrj"
+	WritableRearPortTypeMtrj string = "mtrj"
+
+	// WritableRearPortTypeSc captures enum value "sc"
+	WritableRearPortTypeSc string = "sc"
+
+	// WritableRearPortTypeScApc captures enum value "sc-apc"
+	WritableRearPortTypeScApc string = "sc-apc"
+
+	// WritableRearPortTypeSt captures enum value "st"
+	WritableRearPortTypeSt string = "st"
+)
+
 // prop value enum
-func (m *WritableRearPort) validateTypeEnum(path, location string, value int64) error {
+func (m *WritableRearPort) validateTypeEnum(path, location string, value string) error {
 	if err := validate.Enum(path, location, value, writableRearPortTypeTypePropEnum); err != nil {
 		return err
 	}

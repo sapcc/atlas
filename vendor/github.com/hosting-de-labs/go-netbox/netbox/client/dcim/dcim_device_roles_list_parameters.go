@@ -78,6 +78,8 @@ type DcimDeviceRolesListParams struct {
 
 	/*Color*/
 	Color *string
+	/*ID*/
+	ID *int64
 	/*Limit
 	  Number of results to return per page.
 
@@ -144,6 +146,17 @@ func (o *DcimDeviceRolesListParams) WithColor(color *string) *DcimDeviceRolesLis
 // SetColor adds the color to the dcim device roles list params
 func (o *DcimDeviceRolesListParams) SetColor(color *string) {
 	o.Color = color
+}
+
+// WithID adds the id to the dcim device roles list params
+func (o *DcimDeviceRolesListParams) WithID(id *int64) *DcimDeviceRolesListParams {
+	o.SetID(id)
+	return o
+}
+
+// SetID adds the id to the dcim device roles list params
+func (o *DcimDeviceRolesListParams) SetID(id *int64) {
+	o.ID = id
 }
 
 // WithLimit adds the limit to the dcim device roles list params
@@ -230,6 +243,22 @@ func (o *DcimDeviceRolesListParams) WriteToRequest(r runtime.ClientRequest, reg 
 		qColor := qrColor
 		if qColor != "" {
 			if err := r.SetQueryParam("color", qColor); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.ID != nil {
+
+		// query param id
+		var qrID int64
+		if o.ID != nil {
+			qrID = *o.ID
+		}
+		qID := swag.FormatInt64(qrID)
+		if qID != "" {
+			if err := r.SetQueryParam("id", qID); err != nil {
 				return err
 			}
 		}

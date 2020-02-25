@@ -61,7 +61,7 @@ func NewDcimDevicesNapalmOK() *DcimDevicesNapalmOK {
 DcimDevicesNapalmOK dcim devices napalm o k
 */
 type DcimDevicesNapalmOK struct {
-	Payload *models.Device
+	Payload *models.DeviceNAPALM
 }
 
 func (o *DcimDevicesNapalmOK) Error() string {
@@ -70,7 +70,7 @@ func (o *DcimDevicesNapalmOK) Error() string {
 
 func (o *DcimDevicesNapalmOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(models.Device)
+	o.Payload = new(models.DeviceNAPALM)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {

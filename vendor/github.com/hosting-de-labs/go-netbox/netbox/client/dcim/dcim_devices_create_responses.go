@@ -61,7 +61,7 @@ func NewDcimDevicesCreateCreated() *DcimDevicesCreateCreated {
 DcimDevicesCreateCreated dcim devices create created
 */
 type DcimDevicesCreateCreated struct {
-	Payload *models.Device
+	Payload *models.DeviceWithConfigContext
 }
 
 func (o *DcimDevicesCreateCreated) Error() string {
@@ -70,7 +70,7 @@ func (o *DcimDevicesCreateCreated) Error() string {
 
 func (o *DcimDevicesCreateCreated) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(models.Device)
+	o.Payload = new(models.DeviceWithConfigContext)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {

@@ -80,10 +80,16 @@ type DcimPowerOutletsListParams struct {
 	Cabled *string
 	/*ConnectionStatus*/
 	ConnectionStatus *string
+	/*Description*/
+	Description *string
 	/*Device*/
 	Device *string
 	/*DeviceID*/
 	DeviceID *int64
+	/*FeedLeg*/
+	FeedLeg *string
+	/*ID*/
+	ID *int64
 	/*Limit
 	  Number of results to return per page.
 
@@ -98,8 +104,18 @@ type DcimPowerOutletsListParams struct {
 	Offset *int64
 	/*Q*/
 	Q *string
+	/*Region*/
+	Region *string
+	/*RegionID*/
+	RegionID *int64
+	/*Site*/
+	Site *string
+	/*SiteID*/
+	SiteID *int64
 	/*Tag*/
 	Tag *string
+	/*Type*/
+	Type *string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -161,6 +177,17 @@ func (o *DcimPowerOutletsListParams) SetConnectionStatus(connectionStatus *strin
 	o.ConnectionStatus = connectionStatus
 }
 
+// WithDescription adds the description to the dcim power outlets list params
+func (o *DcimPowerOutletsListParams) WithDescription(description *string) *DcimPowerOutletsListParams {
+	o.SetDescription(description)
+	return o
+}
+
+// SetDescription adds the description to the dcim power outlets list params
+func (o *DcimPowerOutletsListParams) SetDescription(description *string) {
+	o.Description = description
+}
+
 // WithDevice adds the device to the dcim power outlets list params
 func (o *DcimPowerOutletsListParams) WithDevice(device *string) *DcimPowerOutletsListParams {
 	o.SetDevice(device)
@@ -181,6 +208,28 @@ func (o *DcimPowerOutletsListParams) WithDeviceID(deviceID *int64) *DcimPowerOut
 // SetDeviceID adds the deviceId to the dcim power outlets list params
 func (o *DcimPowerOutletsListParams) SetDeviceID(deviceID *int64) {
 	o.DeviceID = deviceID
+}
+
+// WithFeedLeg adds the feedLeg to the dcim power outlets list params
+func (o *DcimPowerOutletsListParams) WithFeedLeg(feedLeg *string) *DcimPowerOutletsListParams {
+	o.SetFeedLeg(feedLeg)
+	return o
+}
+
+// SetFeedLeg adds the feedLeg to the dcim power outlets list params
+func (o *DcimPowerOutletsListParams) SetFeedLeg(feedLeg *string) {
+	o.FeedLeg = feedLeg
+}
+
+// WithID adds the id to the dcim power outlets list params
+func (o *DcimPowerOutletsListParams) WithID(id *int64) *DcimPowerOutletsListParams {
+	o.SetID(id)
+	return o
+}
+
+// SetID adds the id to the dcim power outlets list params
+func (o *DcimPowerOutletsListParams) SetID(id *int64) {
+	o.ID = id
 }
 
 // WithLimit adds the limit to the dcim power outlets list params
@@ -227,6 +276,50 @@ func (o *DcimPowerOutletsListParams) SetQ(q *string) {
 	o.Q = q
 }
 
+// WithRegion adds the region to the dcim power outlets list params
+func (o *DcimPowerOutletsListParams) WithRegion(region *string) *DcimPowerOutletsListParams {
+	o.SetRegion(region)
+	return o
+}
+
+// SetRegion adds the region to the dcim power outlets list params
+func (o *DcimPowerOutletsListParams) SetRegion(region *string) {
+	o.Region = region
+}
+
+// WithRegionID adds the regionID to the dcim power outlets list params
+func (o *DcimPowerOutletsListParams) WithRegionID(regionID *int64) *DcimPowerOutletsListParams {
+	o.SetRegionID(regionID)
+	return o
+}
+
+// SetRegionID adds the regionId to the dcim power outlets list params
+func (o *DcimPowerOutletsListParams) SetRegionID(regionID *int64) {
+	o.RegionID = regionID
+}
+
+// WithSite adds the site to the dcim power outlets list params
+func (o *DcimPowerOutletsListParams) WithSite(site *string) *DcimPowerOutletsListParams {
+	o.SetSite(site)
+	return o
+}
+
+// SetSite adds the site to the dcim power outlets list params
+func (o *DcimPowerOutletsListParams) SetSite(site *string) {
+	o.Site = site
+}
+
+// WithSiteID adds the siteID to the dcim power outlets list params
+func (o *DcimPowerOutletsListParams) WithSiteID(siteID *int64) *DcimPowerOutletsListParams {
+	o.SetSiteID(siteID)
+	return o
+}
+
+// SetSiteID adds the siteId to the dcim power outlets list params
+func (o *DcimPowerOutletsListParams) SetSiteID(siteID *int64) {
+	o.SiteID = siteID
+}
+
 // WithTag adds the tag to the dcim power outlets list params
 func (o *DcimPowerOutletsListParams) WithTag(tag *string) *DcimPowerOutletsListParams {
 	o.SetTag(tag)
@@ -236,6 +329,17 @@ func (o *DcimPowerOutletsListParams) WithTag(tag *string) *DcimPowerOutletsListP
 // SetTag adds the tag to the dcim power outlets list params
 func (o *DcimPowerOutletsListParams) SetTag(tag *string) {
 	o.Tag = tag
+}
+
+// WithType adds the typeVar to the dcim power outlets list params
+func (o *DcimPowerOutletsListParams) WithType(typeVar *string) *DcimPowerOutletsListParams {
+	o.SetType(typeVar)
+	return o
+}
+
+// SetType adds the type to the dcim power outlets list params
+func (o *DcimPowerOutletsListParams) SetType(typeVar *string) {
+	o.Type = typeVar
 }
 
 // WriteToRequest writes these params to a swagger request
@@ -278,6 +382,22 @@ func (o *DcimPowerOutletsListParams) WriteToRequest(r runtime.ClientRequest, reg
 
 	}
 
+	if o.Description != nil {
+
+		// query param description
+		var qrDescription string
+		if o.Description != nil {
+			qrDescription = *o.Description
+		}
+		qDescription := qrDescription
+		if qDescription != "" {
+			if err := r.SetQueryParam("description", qDescription); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.Device != nil {
 
 		// query param device
@@ -304,6 +424,38 @@ func (o *DcimPowerOutletsListParams) WriteToRequest(r runtime.ClientRequest, reg
 		qDeviceID := swag.FormatInt64(qrDeviceID)
 		if qDeviceID != "" {
 			if err := r.SetQueryParam("device_id", qDeviceID); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.FeedLeg != nil {
+
+		// query param feed_leg
+		var qrFeedLeg string
+		if o.FeedLeg != nil {
+			qrFeedLeg = *o.FeedLeg
+		}
+		qFeedLeg := qrFeedLeg
+		if qFeedLeg != "" {
+			if err := r.SetQueryParam("feed_leg", qFeedLeg); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.ID != nil {
+
+		// query param id
+		var qrID int64
+		if o.ID != nil {
+			qrID = *o.ID
+		}
+		qID := swag.FormatInt64(qrID)
+		if qID != "" {
+			if err := r.SetQueryParam("id", qID); err != nil {
 				return err
 			}
 		}
@@ -374,6 +526,70 @@ func (o *DcimPowerOutletsListParams) WriteToRequest(r runtime.ClientRequest, reg
 
 	}
 
+	if o.Region != nil {
+
+		// query param region
+		var qrRegion string
+		if o.Region != nil {
+			qrRegion = *o.Region
+		}
+		qRegion := qrRegion
+		if qRegion != "" {
+			if err := r.SetQueryParam("region", qRegion); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.RegionID != nil {
+
+		// query param region_id
+		var qrRegionID int64
+		if o.RegionID != nil {
+			qrRegionID = *o.RegionID
+		}
+		qRegionID := swag.FormatInt64(qrRegionID)
+		if qRegionID != "" {
+			if err := r.SetQueryParam("region_id", qRegionID); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Site != nil {
+
+		// query param site
+		var qrSite string
+		if o.Site != nil {
+			qrSite = *o.Site
+		}
+		qSite := qrSite
+		if qSite != "" {
+			if err := r.SetQueryParam("site", qSite); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.SiteID != nil {
+
+		// query param site_id
+		var qrSiteID int64
+		if o.SiteID != nil {
+			qrSiteID = *o.SiteID
+		}
+		qSiteID := swag.FormatInt64(qrSiteID)
+		if qSiteID != "" {
+			if err := r.SetQueryParam("site_id", qSiteID); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.Tag != nil {
 
 		// query param tag
@@ -384,6 +600,22 @@ func (o *DcimPowerOutletsListParams) WriteToRequest(r runtime.ClientRequest, reg
 		qTag := qrTag
 		if qTag != "" {
 			if err := r.SetQueryParam("tag", qTag); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Type != nil {
+
+		// query param type
+		var qrType string
+		if o.Type != nil {
+			qrType = *o.Type
+		}
+		qType := qrType
+		if qType != "" {
+			if err := r.SetQueryParam("type", qType); err != nil {
 				return err
 			}
 		}

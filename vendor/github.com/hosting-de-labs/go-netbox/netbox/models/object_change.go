@@ -35,8 +35,18 @@ type ObjectChange struct {
 	Action *ObjectChangeAction `json:"action,omitempty"`
 
 	// Changed object
+	//
+	//
+	//         Serialize a nested representation of the changed object.
+	//
 	// Read Only: true
-	ChangedObject string `json:"changed_object,omitempty"`
+	ChangedObject map[string]string `json:"changed_object,omitempty"`
+
+	// Changed object id
+	// Required: true
+	// Maximum: 2.147483647e+09
+	// Minimum: 0
+	ChangedObjectID *int64 `json:"changed_object_id"`
 
 	// Changed object type
 	// Read Only: true
@@ -77,6 +87,10 @@ func (m *ObjectChange) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateChangedObjectID(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateRequestID(formats); err != nil {
 		res = append(res, err)
 	}
@@ -112,6 +126,23 @@ func (m *ObjectChange) validateAction(formats strfmt.Registry) error {
 			}
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (m *ObjectChange) validateChangedObjectID(formats strfmt.Registry) error {
+
+	if err := validate.Required("changed_object_id", "body", m.ChangedObjectID); err != nil {
+		return err
+	}
+
+	if err := validate.MinimumInt("changed_object_id", "body", int64(*m.ChangedObjectID), 0, false); err != nil {
+		return err
+	}
+
+	if err := validate.MaximumInt("changed_object_id", "body", int64(*m.ChangedObjectID), 2.147483647e+09, false); err != nil {
+		return err
 	}
 
 	return nil
@@ -202,7 +233,7 @@ type ObjectChangeAction struct {
 
 	// value
 	// Required: true
-	Value *int64 `json:"value"`
+	Value *string `json:"value"`
 }
 
 // Validate validates this object change action

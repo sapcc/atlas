@@ -38,6 +38,14 @@ type DeviceRole struct {
 	// Pattern: ^[0-9a-f]{6}$
 	Color *string `json:"color"`
 
+	// Description
+	// Max Length: 100
+	Description string `json:"description,omitempty"`
+
+	// Device count
+	// Read Only: true
+	DeviceCount int64 `json:"device_count,omitempty"`
+
 	// ID
 	// Read Only: true
 	ID int64 `json:"id,omitempty"`
@@ -55,6 +63,10 @@ type DeviceRole struct {
 	// Pattern: ^[-a-zA-Z0-9_]+$
 	Slug *string `json:"slug"`
 
+	// Virtualmachine count
+	// Read Only: true
+	VirtualmachineCount int64 `json:"virtualmachine_count,omitempty"`
+
 	// VM Role
 	//
 	// Virtual machines may be assigned to this role
@@ -66,6 +78,10 @@ func (m *DeviceRole) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateColor(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateDescription(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -98,6 +114,19 @@ func (m *DeviceRole) validateColor(formats strfmt.Registry) error {
 	}
 
 	if err := validate.Pattern("color", "body", string(*m.Color), `^[0-9a-f]{6}$`); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *DeviceRole) validateDescription(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Description) { // not required
+		return nil
+	}
+
+	if err := validate.MaxLength("description", "body", string(m.Description), 100); err != nil {
 		return err
 	}
 

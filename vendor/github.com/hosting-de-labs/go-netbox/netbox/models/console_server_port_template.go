@@ -44,6 +44,9 @@ type ConsoleServerPortTemplate struct {
 	// Max Length: 50
 	// Min Length: 1
 	Name *string `json:"name"`
+
+	// type
+	Type *ConsoleServerPortTemplateType `json:"type,omitempty"`
 }
 
 // Validate validates this console server port template
@@ -55,6 +58,10 @@ func (m *ConsoleServerPortTemplate) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateType(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -99,6 +106,24 @@ func (m *ConsoleServerPortTemplate) validateName(formats strfmt.Registry) error 
 	return nil
 }
 
+func (m *ConsoleServerPortTemplate) validateType(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Type) { // not required
+		return nil
+	}
+
+	if m.Type != nil {
+		if err := m.Type.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("type")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 // MarshalBinary interface implementation
 func (m *ConsoleServerPortTemplate) MarshalBinary() ([]byte, error) {
 	if m == nil {
@@ -110,6 +135,73 @@ func (m *ConsoleServerPortTemplate) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *ConsoleServerPortTemplate) UnmarshalBinary(b []byte) error {
 	var res ConsoleServerPortTemplate
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// ConsoleServerPortTemplateType Type
+// swagger:model ConsoleServerPortTemplateType
+type ConsoleServerPortTemplateType struct {
+
+	// label
+	// Required: true
+	Label *string `json:"label"`
+
+	// value
+	// Required: true
+	Value *string `json:"value"`
+}
+
+// Validate validates this console server port template type
+func (m *ConsoleServerPortTemplateType) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateLabel(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateValue(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ConsoleServerPortTemplateType) validateLabel(formats strfmt.Registry) error {
+
+	if err := validate.Required("type"+"."+"label", "body", m.Label); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *ConsoleServerPortTemplateType) validateValue(formats strfmt.Registry) error {
+
+	if err := validate.Required("type"+"."+"value", "body", m.Value); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *ConsoleServerPortTemplateType) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *ConsoleServerPortTemplateType) UnmarshalBinary(b []byte) error {
+	var res ConsoleServerPortTemplateType
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

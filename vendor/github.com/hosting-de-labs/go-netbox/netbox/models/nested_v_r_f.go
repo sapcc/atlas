@@ -41,6 +41,10 @@ type NestedVRF struct {
 	// Min Length: 1
 	Name *string `json:"name"`
 
+	// Prefix count
+	// Read Only: true
+	PrefixCount int64 `json:"prefix_count,omitempty"`
+
 	// Route distinguisher
 	// Max Length: 21
 	Rd *string `json:"rd,omitempty"`

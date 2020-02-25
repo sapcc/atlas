@@ -76,10 +76,14 @@ for the dcim device bays list operation typically these are written to a http.Re
 */
 type DcimDeviceBaysListParams struct {
 
+	/*Description*/
+	Description *string
 	/*Device*/
 	Device *string
 	/*DeviceID*/
 	DeviceID *int64
+	/*ID*/
+	ID *int64
 	/*Limit
 	  Number of results to return per page.
 
@@ -94,6 +98,14 @@ type DcimDeviceBaysListParams struct {
 	Offset *int64
 	/*Q*/
 	Q *string
+	/*Region*/
+	Region *string
+	/*RegionID*/
+	RegionID *int64
+	/*Site*/
+	Site *string
+	/*SiteID*/
+	SiteID *int64
 	/*Tag*/
 	Tag *string
 
@@ -135,6 +147,17 @@ func (o *DcimDeviceBaysListParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
+// WithDescription adds the description to the dcim device bays list params
+func (o *DcimDeviceBaysListParams) WithDescription(description *string) *DcimDeviceBaysListParams {
+	o.SetDescription(description)
+	return o
+}
+
+// SetDescription adds the description to the dcim device bays list params
+func (o *DcimDeviceBaysListParams) SetDescription(description *string) {
+	o.Description = description
+}
+
 // WithDevice adds the device to the dcim device bays list params
 func (o *DcimDeviceBaysListParams) WithDevice(device *string) *DcimDeviceBaysListParams {
 	o.SetDevice(device)
@@ -155,6 +178,17 @@ func (o *DcimDeviceBaysListParams) WithDeviceID(deviceID *int64) *DcimDeviceBays
 // SetDeviceID adds the deviceId to the dcim device bays list params
 func (o *DcimDeviceBaysListParams) SetDeviceID(deviceID *int64) {
 	o.DeviceID = deviceID
+}
+
+// WithID adds the id to the dcim device bays list params
+func (o *DcimDeviceBaysListParams) WithID(id *int64) *DcimDeviceBaysListParams {
+	o.SetID(id)
+	return o
+}
+
+// SetID adds the id to the dcim device bays list params
+func (o *DcimDeviceBaysListParams) SetID(id *int64) {
+	o.ID = id
 }
 
 // WithLimit adds the limit to the dcim device bays list params
@@ -201,6 +235,50 @@ func (o *DcimDeviceBaysListParams) SetQ(q *string) {
 	o.Q = q
 }
 
+// WithRegion adds the region to the dcim device bays list params
+func (o *DcimDeviceBaysListParams) WithRegion(region *string) *DcimDeviceBaysListParams {
+	o.SetRegion(region)
+	return o
+}
+
+// SetRegion adds the region to the dcim device bays list params
+func (o *DcimDeviceBaysListParams) SetRegion(region *string) {
+	o.Region = region
+}
+
+// WithRegionID adds the regionID to the dcim device bays list params
+func (o *DcimDeviceBaysListParams) WithRegionID(regionID *int64) *DcimDeviceBaysListParams {
+	o.SetRegionID(regionID)
+	return o
+}
+
+// SetRegionID adds the regionId to the dcim device bays list params
+func (o *DcimDeviceBaysListParams) SetRegionID(regionID *int64) {
+	o.RegionID = regionID
+}
+
+// WithSite adds the site to the dcim device bays list params
+func (o *DcimDeviceBaysListParams) WithSite(site *string) *DcimDeviceBaysListParams {
+	o.SetSite(site)
+	return o
+}
+
+// SetSite adds the site to the dcim device bays list params
+func (o *DcimDeviceBaysListParams) SetSite(site *string) {
+	o.Site = site
+}
+
+// WithSiteID adds the siteID to the dcim device bays list params
+func (o *DcimDeviceBaysListParams) WithSiteID(siteID *int64) *DcimDeviceBaysListParams {
+	o.SetSiteID(siteID)
+	return o
+}
+
+// SetSiteID adds the siteId to the dcim device bays list params
+func (o *DcimDeviceBaysListParams) SetSiteID(siteID *int64) {
+	o.SiteID = siteID
+}
+
 // WithTag adds the tag to the dcim device bays list params
 func (o *DcimDeviceBaysListParams) WithTag(tag *string) *DcimDeviceBaysListParams {
 	o.SetTag(tag)
@@ -219,6 +297,22 @@ func (o *DcimDeviceBaysListParams) WriteToRequest(r runtime.ClientRequest, reg s
 		return err
 	}
 	var res []error
+
+	if o.Description != nil {
+
+		// query param description
+		var qrDescription string
+		if o.Description != nil {
+			qrDescription = *o.Description
+		}
+		qDescription := qrDescription
+		if qDescription != "" {
+			if err := r.SetQueryParam("description", qDescription); err != nil {
+				return err
+			}
+		}
+
+	}
 
 	if o.Device != nil {
 
@@ -246,6 +340,22 @@ func (o *DcimDeviceBaysListParams) WriteToRequest(r runtime.ClientRequest, reg s
 		qDeviceID := swag.FormatInt64(qrDeviceID)
 		if qDeviceID != "" {
 			if err := r.SetQueryParam("device_id", qDeviceID); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.ID != nil {
+
+		// query param id
+		var qrID int64
+		if o.ID != nil {
+			qrID = *o.ID
+		}
+		qID := swag.FormatInt64(qrID)
+		if qID != "" {
+			if err := r.SetQueryParam("id", qID); err != nil {
 				return err
 			}
 		}
@@ -310,6 +420,70 @@ func (o *DcimDeviceBaysListParams) WriteToRequest(r runtime.ClientRequest, reg s
 		qQ := qrQ
 		if qQ != "" {
 			if err := r.SetQueryParam("q", qQ); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Region != nil {
+
+		// query param region
+		var qrRegion string
+		if o.Region != nil {
+			qrRegion = *o.Region
+		}
+		qRegion := qrRegion
+		if qRegion != "" {
+			if err := r.SetQueryParam("region", qRegion); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.RegionID != nil {
+
+		// query param region_id
+		var qrRegionID int64
+		if o.RegionID != nil {
+			qrRegionID = *o.RegionID
+		}
+		qRegionID := swag.FormatInt64(qrRegionID)
+		if qRegionID != "" {
+			if err := r.SetQueryParam("region_id", qRegionID); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Site != nil {
+
+		// query param site
+		var qrSite string
+		if o.Site != nil {
+			qrSite = *o.Site
+		}
+		qSite := qrSite
+		if qSite != "" {
+			if err := r.SetQueryParam("site", qSite); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.SiteID != nil {
+
+		// query param site_id
+		var qrSiteID int64
+		if o.SiteID != nil {
+			qrSiteID = *o.SiteID
+		}
+		qSiteID := swag.FormatInt64(qrSiteID)
+		if qSiteID != "" {
+			if err := r.SetQueryParam("site_id", qSiteID); err != nil {
 				return err
 			}
 		}

@@ -33,6 +33,10 @@ import (
 // swagger:model DeviceBay
 type DeviceBay struct {
 
+	// Description
+	// Max Length: 100
+	Description string `json:"description,omitempty"`
+
 	// device
 	// Required: true
 	Device *NestedDevice `json:"device"`
@@ -58,6 +62,10 @@ type DeviceBay struct {
 func (m *DeviceBay) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateDescription(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateDevice(formats); err != nil {
 		res = append(res, err)
 	}
@@ -77,6 +85,19 @@ func (m *DeviceBay) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *DeviceBay) validateDescription(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Description) { // not required
+		return nil
+	}
+
+	if err := validate.MaxLength("description", "body", string(m.Description), 100); err != nil {
+		return err
+	}
+
 	return nil
 }
 

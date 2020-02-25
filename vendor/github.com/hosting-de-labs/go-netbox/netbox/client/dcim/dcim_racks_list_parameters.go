@@ -78,6 +78,12 @@ type DcimRacksListParams struct {
 
 	/*AssetTag*/
 	AssetTag *string
+	/*Created*/
+	Created *string
+	/*CreatedGte*/
+	CreatedGte *string
+	/*CreatedLte*/
+	CreatedLte *string
 	/*DescUnits*/
 	DescUnits *string
 	/*FacilityID*/
@@ -86,11 +92,19 @@ type DcimRacksListParams struct {
 	Group *string
 	/*GroupID*/
 	GroupID *int64
+	/*ID*/
+	ID *int64
 	/*IDIn
 	  Multiple values may be separated by commas.
 
 	*/
 	IDIn *string
+	/*LastUpdated*/
+	LastUpdated *string
+	/*LastUpdatedGte*/
+	LastUpdatedGte *string
+	/*LastUpdatedLte*/
+	LastUpdatedLte *string
 	/*Limit
 	  Number of results to return per page.
 
@@ -111,6 +125,10 @@ type DcimRacksListParams struct {
 	OuterWidth *float64
 	/*Q*/
 	Q *string
+	/*Region*/
+	Region *string
+	/*RegionID*/
+	RegionID *int64
 	/*Role*/
 	Role *string
 	/*RoleID*/
@@ -127,6 +145,10 @@ type DcimRacksListParams struct {
 	Tag *string
 	/*Tenant*/
 	Tenant *string
+	/*TenantGroup*/
+	TenantGroup *string
+	/*TenantGroupID*/
+	TenantGroupID *int64
 	/*TenantID*/
 	TenantID *int64
 	/*Type*/
@@ -185,6 +207,39 @@ func (o *DcimRacksListParams) SetAssetTag(assetTag *string) {
 	o.AssetTag = assetTag
 }
 
+// WithCreated adds the created to the dcim racks list params
+func (o *DcimRacksListParams) WithCreated(created *string) *DcimRacksListParams {
+	o.SetCreated(created)
+	return o
+}
+
+// SetCreated adds the created to the dcim racks list params
+func (o *DcimRacksListParams) SetCreated(created *string) {
+	o.Created = created
+}
+
+// WithCreatedGte adds the createdGte to the dcim racks list params
+func (o *DcimRacksListParams) WithCreatedGte(createdGte *string) *DcimRacksListParams {
+	o.SetCreatedGte(createdGte)
+	return o
+}
+
+// SetCreatedGte adds the createdGte to the dcim racks list params
+func (o *DcimRacksListParams) SetCreatedGte(createdGte *string) {
+	o.CreatedGte = createdGte
+}
+
+// WithCreatedLte adds the createdLte to the dcim racks list params
+func (o *DcimRacksListParams) WithCreatedLte(createdLte *string) *DcimRacksListParams {
+	o.SetCreatedLte(createdLte)
+	return o
+}
+
+// SetCreatedLte adds the createdLte to the dcim racks list params
+func (o *DcimRacksListParams) SetCreatedLte(createdLte *string) {
+	o.CreatedLte = createdLte
+}
+
 // WithDescUnits adds the descUnits to the dcim racks list params
 func (o *DcimRacksListParams) WithDescUnits(descUnits *string) *DcimRacksListParams {
 	o.SetDescUnits(descUnits)
@@ -229,6 +284,17 @@ func (o *DcimRacksListParams) SetGroupID(groupID *int64) {
 	o.GroupID = groupID
 }
 
+// WithID adds the id to the dcim racks list params
+func (o *DcimRacksListParams) WithID(id *int64) *DcimRacksListParams {
+	o.SetID(id)
+	return o
+}
+
+// SetID adds the id to the dcim racks list params
+func (o *DcimRacksListParams) SetID(id *int64) {
+	o.ID = id
+}
+
 // WithIDIn adds the iDIn to the dcim racks list params
 func (o *DcimRacksListParams) WithIDIn(iDIn *string) *DcimRacksListParams {
 	o.SetIDIn(iDIn)
@@ -238,6 +304,39 @@ func (o *DcimRacksListParams) WithIDIn(iDIn *string) *DcimRacksListParams {
 // SetIDIn adds the idIn to the dcim racks list params
 func (o *DcimRacksListParams) SetIDIn(iDIn *string) {
 	o.IDIn = iDIn
+}
+
+// WithLastUpdated adds the lastUpdated to the dcim racks list params
+func (o *DcimRacksListParams) WithLastUpdated(lastUpdated *string) *DcimRacksListParams {
+	o.SetLastUpdated(lastUpdated)
+	return o
+}
+
+// SetLastUpdated adds the lastUpdated to the dcim racks list params
+func (o *DcimRacksListParams) SetLastUpdated(lastUpdated *string) {
+	o.LastUpdated = lastUpdated
+}
+
+// WithLastUpdatedGte adds the lastUpdatedGte to the dcim racks list params
+func (o *DcimRacksListParams) WithLastUpdatedGte(lastUpdatedGte *string) *DcimRacksListParams {
+	o.SetLastUpdatedGte(lastUpdatedGte)
+	return o
+}
+
+// SetLastUpdatedGte adds the lastUpdatedGte to the dcim racks list params
+func (o *DcimRacksListParams) SetLastUpdatedGte(lastUpdatedGte *string) {
+	o.LastUpdatedGte = lastUpdatedGte
+}
+
+// WithLastUpdatedLte adds the lastUpdatedLte to the dcim racks list params
+func (o *DcimRacksListParams) WithLastUpdatedLte(lastUpdatedLte *string) *DcimRacksListParams {
+	o.SetLastUpdatedLte(lastUpdatedLte)
+	return o
+}
+
+// SetLastUpdatedLte adds the lastUpdatedLte to the dcim racks list params
+func (o *DcimRacksListParams) SetLastUpdatedLte(lastUpdatedLte *string) {
+	o.LastUpdatedLte = lastUpdatedLte
 }
 
 // WithLimit adds the limit to the dcim racks list params
@@ -315,6 +414,28 @@ func (o *DcimRacksListParams) WithQ(q *string) *DcimRacksListParams {
 // SetQ adds the q to the dcim racks list params
 func (o *DcimRacksListParams) SetQ(q *string) {
 	o.Q = q
+}
+
+// WithRegion adds the region to the dcim racks list params
+func (o *DcimRacksListParams) WithRegion(region *string) *DcimRacksListParams {
+	o.SetRegion(region)
+	return o
+}
+
+// SetRegion adds the region to the dcim racks list params
+func (o *DcimRacksListParams) SetRegion(region *string) {
+	o.Region = region
+}
+
+// WithRegionID adds the regionID to the dcim racks list params
+func (o *DcimRacksListParams) WithRegionID(regionID *int64) *DcimRacksListParams {
+	o.SetRegionID(regionID)
+	return o
+}
+
+// SetRegionID adds the regionId to the dcim racks list params
+func (o *DcimRacksListParams) SetRegionID(regionID *int64) {
+	o.RegionID = regionID
 }
 
 // WithRole adds the role to the dcim racks list params
@@ -405,6 +526,28 @@ func (o *DcimRacksListParams) SetTenant(tenant *string) {
 	o.Tenant = tenant
 }
 
+// WithTenantGroup adds the tenantGroup to the dcim racks list params
+func (o *DcimRacksListParams) WithTenantGroup(tenantGroup *string) *DcimRacksListParams {
+	o.SetTenantGroup(tenantGroup)
+	return o
+}
+
+// SetTenantGroup adds the tenantGroup to the dcim racks list params
+func (o *DcimRacksListParams) SetTenantGroup(tenantGroup *string) {
+	o.TenantGroup = tenantGroup
+}
+
+// WithTenantGroupID adds the tenantGroupID to the dcim racks list params
+func (o *DcimRacksListParams) WithTenantGroupID(tenantGroupID *int64) *DcimRacksListParams {
+	o.SetTenantGroupID(tenantGroupID)
+	return o
+}
+
+// SetTenantGroupID adds the tenantGroupId to the dcim racks list params
+func (o *DcimRacksListParams) SetTenantGroupID(tenantGroupID *int64) {
+	o.TenantGroupID = tenantGroupID
+}
+
 // WithTenantID adds the tenantID to the dcim racks list params
 func (o *DcimRacksListParams) WithTenantID(tenantID *int64) *DcimRacksListParams {
 	o.SetTenantID(tenantID)
@@ -467,6 +610,54 @@ func (o *DcimRacksListParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		qAssetTag := qrAssetTag
 		if qAssetTag != "" {
 			if err := r.SetQueryParam("asset_tag", qAssetTag); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Created != nil {
+
+		// query param created
+		var qrCreated string
+		if o.Created != nil {
+			qrCreated = *o.Created
+		}
+		qCreated := qrCreated
+		if qCreated != "" {
+			if err := r.SetQueryParam("created", qCreated); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.CreatedGte != nil {
+
+		// query param created__gte
+		var qrCreatedGte string
+		if o.CreatedGte != nil {
+			qrCreatedGte = *o.CreatedGte
+		}
+		qCreatedGte := qrCreatedGte
+		if qCreatedGte != "" {
+			if err := r.SetQueryParam("created__gte", qCreatedGte); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.CreatedLte != nil {
+
+		// query param created__lte
+		var qrCreatedLte string
+		if o.CreatedLte != nil {
+			qrCreatedLte = *o.CreatedLte
+		}
+		qCreatedLte := qrCreatedLte
+		if qCreatedLte != "" {
+			if err := r.SetQueryParam("created__lte", qCreatedLte); err != nil {
 				return err
 			}
 		}
@@ -537,6 +728,22 @@ func (o *DcimRacksListParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 
 	}
 
+	if o.ID != nil {
+
+		// query param id
+		var qrID int64
+		if o.ID != nil {
+			qrID = *o.ID
+		}
+		qID := swag.FormatInt64(qrID)
+		if qID != "" {
+			if err := r.SetQueryParam("id", qID); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.IDIn != nil {
 
 		// query param id__in
@@ -547,6 +754,54 @@ func (o *DcimRacksListParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		qIDIn := qrIDIn
 		if qIDIn != "" {
 			if err := r.SetQueryParam("id__in", qIDIn); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.LastUpdated != nil {
+
+		// query param last_updated
+		var qrLastUpdated string
+		if o.LastUpdated != nil {
+			qrLastUpdated = *o.LastUpdated
+		}
+		qLastUpdated := qrLastUpdated
+		if qLastUpdated != "" {
+			if err := r.SetQueryParam("last_updated", qLastUpdated); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.LastUpdatedGte != nil {
+
+		// query param last_updated__gte
+		var qrLastUpdatedGte string
+		if o.LastUpdatedGte != nil {
+			qrLastUpdatedGte = *o.LastUpdatedGte
+		}
+		qLastUpdatedGte := qrLastUpdatedGte
+		if qLastUpdatedGte != "" {
+			if err := r.SetQueryParam("last_updated__gte", qLastUpdatedGte); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.LastUpdatedLte != nil {
+
+		// query param last_updated__lte
+		var qrLastUpdatedLte string
+		if o.LastUpdatedLte != nil {
+			qrLastUpdatedLte = *o.LastUpdatedLte
+		}
+		qLastUpdatedLte := qrLastUpdatedLte
+		if qLastUpdatedLte != "" {
+			if err := r.SetQueryParam("last_updated__lte", qLastUpdatedLte); err != nil {
 				return err
 			}
 		}
@@ -659,6 +914,38 @@ func (o *DcimRacksListParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		qQ := qrQ
 		if qQ != "" {
 			if err := r.SetQueryParam("q", qQ); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Region != nil {
+
+		// query param region
+		var qrRegion string
+		if o.Region != nil {
+			qrRegion = *o.Region
+		}
+		qRegion := qrRegion
+		if qRegion != "" {
+			if err := r.SetQueryParam("region", qRegion); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.RegionID != nil {
+
+		// query param region_id
+		var qrRegionID int64
+		if o.RegionID != nil {
+			qrRegionID = *o.RegionID
+		}
+		qRegionID := swag.FormatInt64(qrRegionID)
+		if qRegionID != "" {
+			if err := r.SetQueryParam("region_id", qRegionID); err != nil {
 				return err
 			}
 		}
@@ -787,6 +1074,38 @@ func (o *DcimRacksListParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		qTenant := qrTenant
 		if qTenant != "" {
 			if err := r.SetQueryParam("tenant", qTenant); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.TenantGroup != nil {
+
+		// query param tenant_group
+		var qrTenantGroup string
+		if o.TenantGroup != nil {
+			qrTenantGroup = *o.TenantGroup
+		}
+		qTenantGroup := qrTenantGroup
+		if qTenantGroup != "" {
+			if err := r.SetQueryParam("tenant_group", qTenantGroup); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.TenantGroupID != nil {
+
+		// query param tenant_group_id
+		var qrTenantGroupID int64
+		if o.TenantGroupID != nil {
+			qrTenantGroupID = *o.TenantGroupID
+		}
+		qTenantGroupID := swag.FormatInt64(qrTenantGroupID)
+		if qTenantGroupID != "" {
+			if err := r.SetQueryParam("tenant_group_id", qTenantGroupID); err != nil {
 				return err
 			}
 		}
