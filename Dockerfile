@@ -1,4 +1,4 @@
-FROM golang:1.13.0-alpine3.9 as builder
+FROM golang:1.13.8-alpine3.11 as builder
 WORKDIR /go/src/github.com/sapcc/atlas
 RUN apk add --no-cache make
 COPY . .
