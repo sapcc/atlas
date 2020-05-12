@@ -180,7 +180,7 @@ func (sd *NetboxDiscovery) loadDcimDevices(d dcimDevice, groupsCh chan<- []*targ
 	}
 	wg.Add(len(dcims))
 	for _, dv := range dcims {
-		go sd.createGroup(d.CustomLabels, d.MetricsLabel, d.Target, dv, &wg, groupCh)
+		go sd.createGroups(d.CustomLabels, d.MetricsLabel, d.Target, dv, &wg, groupCh)
 	}
 	go func() {
 		wg.Wait()
@@ -205,7 +205,7 @@ func (sd *NetboxDiscovery) loadVirtualizationVMs(d virtualizationVM, groupsCh ch
 	}
 	wg.Add(len(vms))
 	for _, vm := range vms {
-		go sd.createGroup(d.CustomLabels, d.MetricsLabel, d.Target, vm, &wg, groupCh)
+		go sd.createGroups(d.CustomLabels, d.MetricsLabel, d.Target, vm, &wg, groupCh)
 	}
 	go func() {
 		wg.Wait()
@@ -219,7 +219,7 @@ func (sd *NetboxDiscovery) loadVirtualizationVMs(d virtualizationVM, groupsCh ch
 	return
 }
 
-func (sd *NetboxDiscovery) createGroup(c map[string]string, metricsLabel string, t int, d interface{}, wg *sync.WaitGroup, groupsCh chan<- *targetgroup.Group) {
+func (sd *NetboxDiscovery) createGroups(c map[string]string, metricsLabel string, t int, d interface{}, wg *sync.WaitGroup, groupsCh chan<- *targetgroup.Group) {
 	cLabels := model.LabelSet{}
 	var tgroup *targetgroup.Group
 	defer wg.Done()
@@ -228,76 +228,87 @@ func (sd *NetboxDiscovery) createGroup(c map[string]string, metricsLabel string,
 	}
 	switch dv := d.(type) {
 	case models.DeviceWithConfigContext:
-		deviceIP, err := sd.getDeviceIP(t, dv.ID, dv.PrimaryIP)
+		deviceIPs, err := sd.getDeviceIP(t, dv.ID, dv.PrimaryIP)
 		id := strconv.Itoa(int(dv.ID))
 		if err != nil {
 			level.Error(log.With(sd.logger, "component", "NetboxDiscovery")).Log("error", fmt.Errorf("Ignoring device: %s. Error: %s", id, err.Error()))
 			return
 		}
+		for _, deviceIP := range deviceIPs {
+			tgroup = &targetgroup.Group{
+				Source:  strconv.Itoa(rand.Intn(300000000)),
+				Labels:  make(model.LabelSet),
+				Targets: make([]model.LabelSet, 0, 1),
+			}
+			target := model.LabelSet{model.AddressLabel: model.LabelValue(deviceIP)}
+			labels := model.LabelSet{
+				model.LabelName("name"):          model.LabelValue(dv.DisplayName),
+				model.LabelName("server_name"):   model.LabelValue(*dv.Name),
+				model.LabelName("manufacturer"):  model.LabelValue(*dv.DeviceType.Manufacturer.Name),
+				model.LabelName("status"):        model.LabelValue(*dv.Status.Label),
+				model.LabelName("serial"):        model.LabelValue(dv.Serial),
+				model.LabelName("model"):         model.LabelValue(*dv.DeviceType.Model),
+				model.LabelName("server_id"):     model.LabelValue(id),
+				model.LabelName("role"):          model.LabelValue(*dv.DeviceRole.Slug),
+				model.LabelName("metrics_label"): model.LabelValue(metricsLabel),
+			}
+			labels = labels.Merge(cLabels)
 
-		tgroup = &targetgroup.Group{
-			Source:  strconv.Itoa(rand.Intn(300000000)),
-			Labels:  make(model.LabelSet),
-			Targets: make([]model.LabelSet, 0, 1),
+			tgroup.Labels = labels
+			tgroup.Targets = append(tgroup.Targets, target)
 		}
-		target := model.LabelSet{model.AddressLabel: model.LabelValue(deviceIP)}
-		labels := model.LabelSet{
-			model.LabelName("name"):          model.LabelValue(dv.DisplayName),
-			model.LabelName("server_name"):   model.LabelValue(*dv.Name),
-			model.LabelName("manufacturer"):  model.LabelValue(*dv.DeviceType.Manufacturer.Name),
-			model.LabelName("status"):        model.LabelValue(*dv.Status.Label),
-			model.LabelName("serial"):        model.LabelValue(dv.Serial),
-			model.LabelName("model"):         model.LabelValue(*dv.DeviceType.Model),
-			model.LabelName("server_id"):     model.LabelValue(id),
-			model.LabelName("role"):          model.LabelValue(*dv.DeviceRole.Slug),
-			model.LabelName("metrics_label"): model.LabelValue(metricsLabel),
-		}
-		labels = labels.Merge(cLabels)
 
-		tgroup.Labels = labels
-		tgroup.Targets = append(tgroup.Targets, target)
 	case models.VirtualMachineWithConfigContext:
 		id := strconv.Itoa(int(dv.ID))
-		deviceIP, err := sd.getDeviceIP(t, dv.ID, dv.PrimaryIP)
+		deviceIPs, err := sd.getDeviceIP(t, dv.ID, dv.PrimaryIP)
 		if err != nil {
 			level.Error(log.With(sd.logger, "component", "NetboxDiscovery")).Log("error", fmt.Errorf("Ignoring vm: %s. Error: %s", id, err.Error()))
 			return
 		}
-		tgroup = &targetgroup.Group{
-			Source:  strconv.Itoa(rand.Intn(300000000)),
-			Labels:  make(model.LabelSet),
-			Targets: make([]model.LabelSet, 0, 1),
+		for _, deviceIP := range deviceIPs {
+			tgroup = &targetgroup.Group{
+				Source:  strconv.Itoa(rand.Intn(300000000)),
+				Labels:  make(model.LabelSet),
+				Targets: make([]model.LabelSet, 0, 1),
+			}
+			target := model.LabelSet{model.AddressLabel: model.LabelValue(deviceIP)}
+			labels := model.LabelSet{
+				model.LabelName("state"):         model.LabelValue(*dv.Status.Label),
+				model.LabelName("server_name"):   model.LabelValue(*dv.Name),
+				model.LabelName("server_id"):     model.LabelValue(id),
+				model.LabelName("role"):          model.LabelValue(*dv.Role.Slug),
+				model.LabelName("metrics_label"): model.LabelValue(metricsLabel),
+			}
+			labels = labels.Merge(cLabels)
+			tgroup.Labels = labels
+			tgroup.Targets = append(tgroup.Targets, target)
 		}
-		target := model.LabelSet{model.AddressLabel: model.LabelValue(deviceIP)}
-		labels := model.LabelSet{
-			model.LabelName("state"):         model.LabelValue(*dv.Status.Label),
-			model.LabelName("server_name"):   model.LabelValue(*dv.Name),
-			model.LabelName("server_id"):     model.LabelValue(id),
-			model.LabelName("role"):          model.LabelValue(*dv.Role.Slug),
-			model.LabelName("metrics_label"): model.LabelValue(metricsLabel),
-		}
-		labels = labels.Merge(cLabels)
-		tgroup.Labels = labels
-		tgroup.Targets = append(tgroup.Targets, target)
+
 	default:
-		level.Error(log.With(sd.logger, "component", "NetboxDiscovery")).Log("error", fmt.Errorf("Not supported device interface"))
+		level.Error(log.With(sd.logger, "component", "NetboxDiscovery")).Log("error", fmt.Errorf("not supported device interface"))
 		return
 	}
 	groupsCh <- tgroup
 }
 
-func (sd *NetboxDiscovery) getDeviceIP(t int, id int64, i *models.NestedIPAddress) (ip string, err error) {
+func (sd *NetboxDiscovery) createGroup(c map[string]string, metricsLabel string, t int, d interface{}) {
+
+}
+
+func (sd *NetboxDiscovery) getDeviceIP(t int, id int64, i *models.NestedIPAddress) (ips []string, err error) {
+	ips = make([]string, 0)
 	switch t {
 	case managementIP:
-		ip, err = sd.netbox.ManagementIP(id)
+		ips, err = sd.netbox.ManagementIPs(id)
 	case primaryIP:
+		var ip string
 		ip, err = sd.netbox.GetNestedDeviceIP(i)
+		ips = append(ips, ip)
 	default:
-		return ip, fmt.Errorf("Error getting ip from device: %d. Error: %s", id, "unknown target in config")
+		return ips, fmt.Errorf("Error getting ip from device: %d. Error: %s", id, "unknown target in config")
 	}
-
 	if err != nil {
-		return ip, fmt.Errorf("Error getting ip from device: %d. Error: %s", id, err.Error())
+		return ips, fmt.Errorf("Error getting ip from device: %d. Error: %s", id, err.Error())
 	}
 	return
 }

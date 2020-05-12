@@ -205,6 +205,23 @@ func (nb *Netbox) DevicesByParams(params dcim.DcimDevicesListParams) (res []mode
 	return res, err
 }
 
+//DevicesByRegion retrieves devices by region, manufacturer and status
+func (nb *Netbox) DeviceByParams(params dcim.DcimDevicesListParams) (res models.DeviceWithConfigContext, err error) {
+	limit := int64(1)
+	params.WithLimit(&limit)
+	params.WithTimeout(30 * time.Second)
+
+	list, err := nb.client.Dcim.DcimDevicesList(&params, nil)
+	if err != nil {
+		return res, err
+	}
+	for _, device := range list.Payload.Results {
+		res = *device
+	}
+
+	return res, err
+}
+
 //VMsByTag retrieves devices by region, manufacturer and status
 func (nb *Netbox) VMsByParams(params virtualization.VirtualizationVirtualMachinesListParams) (res []models.VirtualMachineWithConfigContext, err error) {
 	res = make([]models.VirtualMachineWithConfigContext, 0)
@@ -261,28 +278,29 @@ func (nb *Netbox) VMsByTag(query, status, tag string) (res []models.VirtualMachi
 }
 
 // ManagementIP retrieves the IP of the management interface for server
-func (nb *Netbox) ManagementIP(serverID int64) (string, error) {
+func (nb *Netbox) ManagementIPs(serverID int64) (ips []string, err error) {
 
 	managementInterface, err := nb.MgmtInterface(serverID, true)
 	if err != nil {
-		return "", err
+		return
 	}
+	ips = make([]string, 0)
+	for _, intf := range managementInterface {
+		managementIPAddress, err := nb.IPAddressByDeviceAndIntefrace(serverID, intf.ID)
+		if err != nil {
+			return ips, err
+		}
+		if managementIPAddress.Address == nil {
+			return ips, fmt.Errorf("no ip address for device %d", serverID)
+		}
+		ip, _, err := net.ParseCIDR(*managementIPAddress.Address)
 
-	managementIPAddress, err := nb.IPAddressByDeviceAndIntefrace(serverID, managementInterface.ID)
-	if err != nil {
-		return "", err
+		if err != nil {
+			return ips, err
+		}
+		ips = append(ips, ip.String())
 	}
-
-	if managementIPAddress.Address == nil {
-		return "", fmt.Errorf("no ip address for device %d", serverID)
-	}
-	ip, _, err := net.ParseCIDR(*managementIPAddress.Address)
-
-	if err != nil {
-		return "", err
-	}
-	return ip.String(), nil
-
+	return
 }
 
 // Interface retrieves the interface on the device
@@ -310,27 +328,21 @@ func (nb *Netbox) Interface(deviceID int64, interfaceName string) (*models.Devic
 }
 
 // MgmtInterface retrieves the management interface on the device
-func (nb *Netbox) MgmtInterface(deviceID int64, mgmtOnly bool) (*models.DeviceInterface, error) {
+func (nb *Netbox) MgmtInterface(deviceID int64, mgmtOnly bool) ([]*models.DeviceInterface, error) {
 	mgmtOnlyString := strconv.FormatBool(mgmtOnly)
 	params := dcim.NewDcimInterfacesListParams()
 	params.DeviceID = &deviceID
 	params.MgmtOnly = &mgmtOnlyString
 
-	limit := int64(1)
+	limit := int64(2)
 	params.Limit = &limit
 
 	list, err := nb.client.Dcim.DcimInterfacesList(params, nil)
 	if err != nil {
 		return nil, err
 	}
-	if *list.Payload.Count < 1 {
-		return nil, fmt.Errorf("no MgmtOnly=%s interface found for device %d", mgmtOnlyString, deviceID)
-	}
-	if *list.Payload.Count > 1 {
-		return nil, fmt.Errorf("more than 1 MgmtOnly=%s interface found for device %d", mgmtOnlyString, deviceID)
-	}
 
-	return list.Payload.Results[0], nil
+	return list.Payload.Results, nil
 }
 
 // IPAddressByDeviceAndIntefrace retrieves the IP address by device and interface
@@ -346,6 +358,7 @@ func (nb *Netbox) IPAddressByDeviceAndIntefrace(deviceID int64, interfaceID int6
 	if err != nil {
 		return nil, err
 	}
+
 	if *list.Payload.Count < 1 {
 		return nil, fmt.Errorf(fmt.Sprintf("no ip found for device %d and interface %d", deviceID, interfaceID))
 	}

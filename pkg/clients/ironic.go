@@ -49,7 +49,7 @@ func NewIronicClient(provider *gophercloud.ProviderClient) (*IronicClient, error
 ////////////////////////////////////////////////////////////////////////////////
 // list nodes
 
-type ironicNode struct {
+type IronicNode struct {
 	ID                   string  `json:"uuid"`
 	InstanceUuID         string  `json:"instance_uuid"`
 	Name                 string  `json:"name"`
@@ -73,18 +73,18 @@ type ironicNode struct {
 	} `json:"driver_info"`
 }
 
-func (n ironicNode) StableProvisionState() string {
+func (n IronicNode) StableProvisionState() string {
 	if n.TargetProvisionState != nil {
 		return *n.TargetProvisionState
 	}
 	return n.ProvisionState
 }
 
-func (n ironicNode) ProvisionStateEnroll() bool {
+func (n IronicNode) ProvisionStateEnroll() bool {
 	return n.ProvisionState == "enroll"
 }
 
-func extractNodes(page pagination.Page) (nodes []ironicNode, err error) {
+func extractNodes(page pagination.Page) (nodes []IronicNode, err error) {
 	err = page.(ironicNodePage).Result.ExtractIntoSlicePtr(&nodes, "nodes")
 	return
 }
@@ -106,7 +106,7 @@ func (p ironicNodePage) LastMarker() (string, error) {
 	return nodes[len(nodes)-1].ID, nil
 }
 
-func (c IronicClient) GetNodes() ([]ironicNode, error) {
+func (c IronicClient) GetNodes() ([]IronicNode, error) {
 	url := c.ServiceURL("nodes", "detail")
 	pager := pagination.NewPager(c.ServiceClient, url, func(r pagination.PageResult) pagination.Page {
 		page := ironicNodePage{pagination.MarkerPageBase{PageResult: r}}
@@ -120,7 +120,7 @@ func (c IronicClient) GetNodes() ([]ironicNode, error) {
 		"X-Openstack-Ironic-Api-Version": "1.22",
 	}
 
-	var result []ironicNode
+	var result []IronicNode
 	err := pager.EachPage(func(page pagination.Page) (bool, error) {
 		pageNodes, err := extractNodes(page)
 		if err != nil {
