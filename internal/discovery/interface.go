@@ -4,8 +4,6 @@ import (
 	"context"
 	"sync"
 
-	"github.com/sapcc/atlas/pkg/writer"
-
 	"github.com/go-kit/kit/log"
 	"github.com/prometheus/prometheus/discovery/targetgroup"
 	"github.com/sapcc/atlas/pkg/adapter"
@@ -23,7 +21,7 @@ type Discovery interface {
 	GetAdapter() adapter.Adapter
 }
 
-type DiscoveryFactory func(config interface{}, ctx context.Context, opts config.Options, w writer.Writer, l log.Logger) (Discovery, error)
+type DiscoveryFactory func(config interface{}, ctx context.Context, opts config.Options, l log.Logger) (Discovery, error)
 
 type Status struct {
 	sync.Mutex

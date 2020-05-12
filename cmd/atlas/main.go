@@ -33,14 +33,12 @@ import (
 	"github.com/namsral/flag"
 	"github.com/sapcc/atlas/internal/discovery"
 	"github.com/sapcc/atlas/pkg/config"
-	"github.com/sapcc/atlas/pkg/writer"
 )
 
 var (
 	logger log.Logger
 	opts   config.Options
 	cfg    config.Config
-	w      writer.Writer
 	err    error
 )
 
@@ -55,12 +53,6 @@ func init() {
 	flag.StringVar(&opts.WriteTo, "WRITE_TO", "file", "k8s Region the service is running in")
 
 	flag.StringVar(&opts.ConfigFilePath, "CONFIG_FILE", "./etc/config/config.yaml", "Path to the config file")
-	if val, ok := os.LookupEnv("PROM_CONFIGMAP_NAME"); ok {
-		opts.ConfigmapName = val
-	} else {
-		level.Error(log.With(logger, "component", "atlas")).Log("err", "no configmap name given")
-		os.Exit(2)
-	}
 	flag.Parse()
 
 	switch strings.ToLower(opts.LogLevel) {
@@ -72,13 +64,6 @@ func init() {
 		logger = level.NewFilter(logger, level.AllowWarn())
 	case "error":
 		logger = level.NewFilter(logger, level.AllowError())
-	}
-
-	switch strings.ToLower(opts.WriteTo) {
-	case "configmap":
-		w, err = writer.NewConfigMap(opts.ConfigmapName, opts.NameSpace, logger)
-	case "file":
-		w, err = writer.NewFile(opts.ConfigmapName, logger)
 	}
 
 	if err != nil {
@@ -104,7 +89,7 @@ func main() {
 
 	wg := &sync.WaitGroup{}
 
-	discovery := discovery.New(ctx, opts, w, logger)
+	discovery := discovery.New(ctx, opts, logger)
 
 	go discovery.Start(ctx, wg, cfg, opts)
 

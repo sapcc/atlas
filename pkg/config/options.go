@@ -20,7 +20,6 @@ package config
 type Options struct {
 	LogLevel       string
 	WriteTo        string
-	ConfigmapName  string
 	Version        string
 	ConfigFilePath string
 	NameSpace      string

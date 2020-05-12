@@ -8,8 +8,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/sapcc/atlas/pkg/writer"
-
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	"github.com/prometheus/client_golang/prometheus"
@@ -23,18 +21,16 @@ var discoveryFactories = make(map[string]DiscoveryFactory)
 
 type (
 	discovery struct {
-		opts   config.Options
-		ctx    context.Context
-		writer writer.Writer
-		log    log.Logger
+		opts config.Options
+		ctx  context.Context
+		log  log.Logger
 	}
 )
 
-func New(ctx context.Context, o config.Options, w writer.Writer, l log.Logger) *discovery {
+func New(ctx context.Context, o config.Options, l log.Logger) *discovery {
 	discovery := &discovery{
 		o,
 		ctx,
-		w,
 		l,
 	}
 
@@ -62,7 +58,7 @@ func (d discovery) createDiscovery(name string, config interface{}) (Discovery, 
 	}
 
 	// Run the factory with the configuration.
-	return discoveryFactory(config, d.ctx, d.opts, d.writer, d.log)
+	return discoveryFactory(config, d.ctx, d.opts, d.log)
 }
 
 func (d discovery) getDiscoveries() []string {

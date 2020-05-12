@@ -21,6 +21,7 @@ package discovery
 import (
 	"context"
 	"strconv"
+	"strings"
 	"time"
 
 	netbox_dcim "github.com/hosting-de-labs/go-netbox/netbox/client/dcim"
@@ -60,6 +61,7 @@ type (
 		TargetsFileName  string          `yaml:"targets_file_name"`
 		OpenstackAuth    auth.OSProvider `yaml:"os_auth"`
 		MetricsLabel     string          `yaml:"metrics_label"`
+		ConfigmapName    string          `yaml:"configmap_name"`
 	}
 )
 
@@ -70,7 +72,7 @@ func init() {
 }
 
 //NewIronicDiscovery creates a new Ironic Discovery
-func NewIronicDiscovery(disc interface{}, ctx context.Context, opts config.Options, w writer.Writer, l log.Logger) (d Discovery, err error) {
+func NewIronicDiscovery(disc interface{}, ctx context.Context, opts config.Options, l log.Logger) (d Discovery, err error) {
 	var cfg ironicConfig
 	if err := UnmarshalHandler(disc, &cfg, nil); err != nil {
 		return d, err
@@ -90,6 +92,14 @@ func NewIronicDiscovery(disc interface{}, ctx context.Context, opts config.Optio
 	nClient, err := netbox.New(cfg.NetboxHost, cfg.NetboxAPIToken)
 	if err != nil {
 		return nil, err
+	}
+
+	var w writer.Writer
+	switch strings.ToLower(opts.WriteTo) {
+	case "configmap":
+		w, err = writer.NewConfigMap(cfg.ConfigmapName, opts.NameSpace, l)
+	case "file":
+		w, err = writer.NewFile(cfg.ConfigmapName, l)
 	}
 
 	a := adapter.NewPrometheus(ctx, cfg.TargetsFileName, w, l)

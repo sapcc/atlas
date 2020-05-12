@@ -124,7 +124,7 @@ github.com/hashicorp/go-cleanhttp
 github.com/hashicorp/go-multierror
 # github.com/hashicorp/serf v0.0.0-20161007004122-1d4fa605f6ff
 github.com/hashicorp/serf/coordinate
-# github.com/hosting-de-labs/go-netbox v1.0.1-api2.7.6 => github.com/stefanhipfel/go-netbox v1.0.4-api2.7.7
+# github.com/hosting-de-labs/go-netbox v1.0.1-api2.7.6 => github.com/stefanhipfel/go-netbox v1.0.7-api2.7.7
 github.com/hosting-de-labs/go-netbox/netbox/client
 github.com/hosting-de-labs/go-netbox/netbox/client/circuits
 github.com/hosting-de-labs/go-netbox/netbox/client/dcim

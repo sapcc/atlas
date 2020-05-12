@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"math/rand"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -43,6 +44,7 @@ type (
 		TargetsFileName string         `yaml:"targets_file_name"`
 		DCIM            dcim           `yaml:"dcim"`
 		Virtualization  virtualization `yaml:"virtualization"`
+		ConfigmapName   string         `yaml:"configmap_name"`
 	}
 
 	configValues struct {
@@ -57,7 +59,7 @@ func init() {
 }
 
 //NewNetboxDiscovery creates
-func NewNetboxDiscovery(disc interface{}, ctx context.Context, opts config.Options, w writer.Writer, l log.Logger) (d Discovery, err error) {
+func NewNetboxDiscovery(disc interface{}, ctx context.Context, opts config.Options, l log.Logger) (d Discovery, err error) {
 	var cfg netboxConfig
 	configValues := configValues{Region: opts.Region}
 	if err := UnmarshalHandler(disc, &cfg, configValues); err != nil {
@@ -71,6 +73,14 @@ func NewNetboxDiscovery(disc interface{}, ctx context.Context, opts config.Optio
 
 	if err != nil {
 		return d, err
+	}
+
+	var w writer.Writer
+	switch strings.ToLower(opts.WriteTo) {
+	case "configmap":
+		w, err = writer.NewConfigMap(cfg.ConfigmapName, opts.NameSpace, l)
+	case "file":
+		w, err = writer.NewFile(cfg.ConfigmapName, l)
 	}
 
 	a := adapter.NewPrometheus(ctx, cfg.TargetsFileName, w, l)
