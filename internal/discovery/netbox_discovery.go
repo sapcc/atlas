@@ -244,6 +244,10 @@ func (sd *NetboxDiscovery) createGroups(c map[string]string, metricsLabel string
 			level.Error(log.With(sd.logger, "component", "NetboxDiscovery")).Log("error", fmt.Errorf("Ignoring device: %s. Error: %s", id, err.Error()))
 			return
 		}
+		if len(deviceIPs) == 0 {
+			level.Error(log.With(sd.logger, "component", "NetboxDiscovery")).Log("error", fmt.Errorf("Ignoring device: %s. Error: no device ips", id))
+			return
+		}
 		for _, deviceIP := range deviceIPs {
 			tgroup = &targetgroup.Group{
 				Source:  strconv.Itoa(rand.Intn(300000000)),
@@ -275,6 +279,10 @@ func (sd *NetboxDiscovery) createGroups(c map[string]string, metricsLabel string
 			level.Error(log.With(sd.logger, "component", "NetboxDiscovery")).Log("error", fmt.Errorf("Ignoring vm: %s. Error: %s", id, err.Error()))
 			return
 		}
+		if len(deviceIPs) == 0 {
+			level.Error(log.With(sd.logger, "component", "NetboxDiscovery")).Log("error", fmt.Errorf("Ignoring device: %s. Error: no vm ips", id))
+			return
+		}
 		for _, deviceIP := range deviceIPs {
 			tgroup = &targetgroup.Group{
 				Source:  strconv.Itoa(rand.Intn(300000000)),
@@ -299,10 +307,6 @@ func (sd *NetboxDiscovery) createGroups(c map[string]string, metricsLabel string
 		return
 	}
 	groupsCh <- tgroup
-}
-
-func (sd *NetboxDiscovery) createGroup(c map[string]string, metricsLabel string, t int, d interface{}) {
-
 }
 
 func (sd *NetboxDiscovery) getDeviceIP(t int, id int64, i *models.NestedIPAddress) (ips []string, err error) {
