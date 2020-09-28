@@ -3,7 +3,7 @@ package discovery
 import (
 	"context"
 	"errors"
-	"fmt"
+	"fmt"	
 	"math/rand"
 	"strconv"
 	"strings"
@@ -14,7 +14,7 @@ import (
 	"github.com/go-kit/kit/log/level"
 	"github.com/go-openapi/runtime"
 	multierror "github.com/hashicorp/go-multierror"
-	"github.com/hosting-de-labs/go-netbox/netbox/models"
+	"github.com/netbox-community/go-netbox/netbox/models"
 	"github.com/prometheus/common/model"
 	"github.com/prometheus/prometheus/discovery/targetgroup"
 	"github.com/sapcc/atlas/pkg/adapter"
@@ -113,7 +113,7 @@ func (sd *NetboxDiscovery) Run(ctx context.Context, ch chan<- []*targetgroup.Gro
 				ch <- tgs
 			}
 		} else {
-			level.Debug(log.With(sd.logger, "component", "NetboxDiscovery")).Log("error", "error loading netbox data")
+			level.Debug(log.With(sd.logger, "component", "NetboxDiscovery")).Log("error", "error loading netbox data "+err.Error())
 			merr, ok := err.(*multierror.Error)
 			if merr != nil {
 				if ok {
@@ -313,7 +313,7 @@ func (sd *NetboxDiscovery) getDeviceIP(t int, id int64, i *models.NestedIPAddres
 	ips = make([]string, 0)
 	switch t {
 	case managementIP:
-		ips, err = sd.netbox.ManagementIPs(id)
+		ips, err = sd.netbox.ManagementIPs(strconv.FormatInt(id, 10))
 	case primaryIP:
 		var ip string
 		ip, err = sd.netbox.GetNestedDeviceIP(i)

@@ -14,7 +14,7 @@ require (
 	github.com/ghodss/yaml v0.0.0-20150909031657-73d445a93680 // indirect
 	github.com/go-ini/ini v1.21.1 // indirect
 	github.com/go-kit/kit v0.8.0
-	github.com/go-openapi/runtime v0.19.11
+	github.com/go-openapi/runtime v0.19.21
 	github.com/golang/glog v0.0.0-20141105023935-44145f04b68c // indirect
 	github.com/google/gofuzz v0.0.0-20161122191042-44d81051d367 // indirect
 	github.com/gophercloud/gophercloud v0.0.0-20180928224355-bfc006765209
@@ -25,10 +25,10 @@ require (
 	github.com/hashicorp/memberlist v0.1.4 // indirect
 	github.com/hashicorp/raft v1.1.1 // indirect
 	github.com/hashicorp/serf v0.0.0-20161007004122-1d4fa605f6ff // indirect
-	github.com/hosting-de-labs/go-netbox v1.0.1-api2.7.6
 	github.com/jmespath/go-jmespath v0.0.0-20160803190731-bd40a432e4c7 // indirect
 	github.com/juju/ratelimit v0.0.0-20151125201925-77ed1c8a0121 // indirect
 	github.com/namsral/flag v1.7.4-pre
+	github.com/netbox-community/go-netbox v0.0.0-20200923200002-49832662a6fd
 	github.com/opencontainers/go-digest v1.0.0-rc1 // indirect
 	github.com/prometheus/client_golang v1.0.0
 	github.com/prometheus/common v0.4.1
@@ -44,9 +44,9 @@ require (
 	google.golang.org/cloud v0.0.0-20160622021550-0a83eba2cadb // indirect
 	gopkg.in/fsnotify/fsnotify.v1 v1.3.0 // indirect
 	gopkg.in/inf.v0 v0.9.0 // indirect
-	gopkg.in/yaml.v2 v2.2.8
+	gopkg.in/yaml.v2 v2.3.0
 	k8s.io/apimachinery v0.0.0-20170321210947-75b8dd260ef0
 	k8s.io/client-go v3.0.0-beta.0+incompatible
 )
 
-replace github.com/hosting-de-labs/go-netbox => github.com/stefanhipfel/go-netbox v1.0.7-api2.7.7
+replace github.com/netbox-community/go-netbox => github.com/stefanhipfel/go-netbox v0.0.0-20200928114340-fcd4119414a4

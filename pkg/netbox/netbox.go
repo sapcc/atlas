@@ -22,19 +22,19 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/hosting-de-labs/go-netbox/netbox/client/virtualization"
+	"github.com/netbox-community/go-netbox/netbox/client/virtualization"
 
 	runtimeclient "github.com/go-openapi/runtime/client"
-	netboxclient "github.com/hosting-de-labs/go-netbox/netbox/client"
-	"github.com/hosting-de-labs/go-netbox/netbox/client/dcim"
-	"github.com/hosting-de-labs/go-netbox/netbox/client/ipam"
-	"github.com/hosting-de-labs/go-netbox/netbox/models"
+	netboxclient "github.com/netbox-community/go-netbox/netbox/client"
+	"github.com/netbox-community/go-netbox/netbox/client/dcim"
+	"github.com/netbox-community/go-netbox/netbox/client/ipam"
+	"github.com/netbox-community/go-netbox/netbox/models"
 )
 
 const netboxDefaultHost = "netbox.global.cloud.sap"
 
 type Netbox struct {
-	client *netboxclient.NetBox
+	client *netboxclient.NetBoxAPI
 }
 
 // NewDefaultHost creates a Netbox instance for the default host
@@ -81,13 +81,13 @@ func (nb *Netbox) Sites(region string) ([]models.Site, error) {
 }
 
 // Racks retrieves all the racks with the specified role in the site
-func (nb *Netbox) Racks(role string, siteID int64) ([]models.Rack, error) {
+func (nb *Netbox) Racks(role string, siteID string) ([]models.Rack, error) {
 	result := make([]models.Rack, 0)
 	params := dcim.NewDcimRacksListParams()
 	if role != "" {
 		params.Role = &role
 	}
-	if siteID > 0 {
+	if siteID != "" {
 		params.SiteID = &siteID
 	}
 	limit := int64(50)
@@ -116,7 +116,7 @@ func (nb *Netbox) Racks(role string, siteID int64) ([]models.Rack, error) {
 }
 
 // Servers retrieves all the servers in the rack
-func (nb *Netbox) Servers(rackID int64) ([]models.DeviceWithConfigContext, error) {
+func (nb *Netbox) Servers(rackID string) ([]models.DeviceWithConfigContext, error) {
 	result := make([]models.DeviceWithConfigContext, 0)
 	params := dcim.NewDcimDevicesListParams()
 	params.RackID = &rackID
@@ -278,7 +278,7 @@ func (nb *Netbox) VMsByTag(query, status, tag string) (res []models.VirtualMachi
 }
 
 // ManagementIP retrieves the IP of the management interface for server
-func (nb *Netbox) ManagementIPs(serverID int64) (ips []string, err error) {
+func (nb *Netbox) ManagementIPs(serverID string) (ips []string, err error) {
 
 	managementInterface, err := nb.MgmtInterface(serverID, true)
 	if err != nil {
@@ -286,7 +286,7 @@ func (nb *Netbox) ManagementIPs(serverID int64) (ips []string, err error) {
 	}
 	ips = make([]string, 0)
 	for _, intf := range managementInterface {
-		managementIPAddress, err := nb.IPAddressByDeviceAndIntefrace(serverID, intf.ID)
+		managementIPAddress, err := nb.IPAddressByDeviceAndIntefrace(serverID, strconv.FormatInt(intf.ID, 10))
 		if err != nil {
 			return ips, err
 		}
@@ -304,7 +304,7 @@ func (nb *Netbox) ManagementIPs(serverID int64) (ips []string, err error) {
 }
 
 // Interface retrieves the interface on the device
-func (nb *Netbox) Interface(deviceID int64, interfaceName string) (*models.DeviceInterface, error) {
+func (nb *Netbox) Interface(deviceID string, interfaceName string) (*models.Interface, error) {
 	params := dcim.NewDcimInterfacesListParams()
 	params.DeviceID = &deviceID
 	params.Name = &interfaceName
@@ -328,7 +328,7 @@ func (nb *Netbox) Interface(deviceID int64, interfaceName string) (*models.Devic
 }
 
 // MgmtInterface retrieves the management interface on the device
-func (nb *Netbox) MgmtInterface(deviceID int64, mgmtOnly bool) ([]*models.DeviceInterface, error) {
+func (nb *Netbox) MgmtInterface(deviceID string, mgmtOnly bool) ([]*models.Interface, error) {
 	mgmtOnlyString := strconv.FormatBool(mgmtOnly)
 	params := dcim.NewDcimInterfacesListParams()
 	params.DeviceID = &deviceID
@@ -346,15 +346,15 @@ func (nb *Netbox) MgmtInterface(deviceID int64, mgmtOnly bool) ([]*models.Device
 }
 
 // IPAddressByDeviceAndIntefrace retrieves the IP address by device and interface
-func (nb *Netbox) IPAddressByDeviceAndIntefrace(deviceID int64, interfaceID int64) (*models.IPAddress, error) {
+func (nb *Netbox) IPAddressByDeviceAndIntefrace(deviceID string, interfaceID string) (*models.IPAddress, error) {
 
-	params := ipam.NewIPAMIPAddressesListParams()
+	params := ipam.NewIpamIPAddressesListParams()
 	params.DeviceID = &deviceID
 	params.InterfaceID = &interfaceID
 
 	limit := int64(1)
 	params.Limit = &limit
-	list, err := nb.client.IPAM.IPAMIPAddressesList(params, nil)
+	list, err := nb.client.Ipam.IpamIPAddressesList(params, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -372,12 +372,12 @@ func (nb *Netbox) IPAddressByDeviceAndIntefrace(deviceID int64, interfaceID int6
 
 // IPAddress retrieves the IPAddress by its ID
 func (nb *Netbox) IPAddress(id int64) (*models.IPAddress, error) {
-	params := ipam.NewIPAMIPAddressesListParams()
+	params := ipam.NewIpamIPAddressesListParams()
 	ids := fmt.Sprintf("%d", id)
-	params.IDIn = &ids
+	params.IDn = &ids
 	limit := int64(1)
 	params.Limit = &limit
-	list, err := nb.client.IPAM.IPAMIPAddressesList(params, nil)
+	list, err := nb.client.Ipam.IpamIPAddressesList(params, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -416,7 +416,7 @@ func (nb *Netbox) RacksByRegion(role string, region string) ([]models.Rack, erro
 
 	result := make([]models.Rack, 0)
 	for _, s := range siteResults {
-		r, err := nb.Racks(role, s.ID)
+		r, err := nb.Racks(role, strconv.FormatInt(s.ID, 10))
 		if err != nil {
 			return nil, err
 		}
@@ -437,7 +437,7 @@ func (nb *Netbox) ServersByRegion(rackRole string, region string) ([]models.Devi
 
 	for _, rack := range racks {
 
-		r, err := nb.Servers(rack.ID)
+		r, err := nb.Servers(strconv.FormatInt(rack.ID, 10))
 		if err != nil {
 			return nil, err
 		}
@@ -474,7 +474,7 @@ func (nb *Netbox) ActiveDevicesByCustomParameters(query string, params *dcim.Dci
 	return res, nil
 }
 
-func client(host, token string) (*netboxclient.NetBox, error) {
+func client(host, token string) (*netboxclient.NetBoxAPI, error) {
 
 	tlsClient, err := runtimeclient.TLSClient(runtimeclient.TLSClientOptions{InsecureSkipVerify: true})
 

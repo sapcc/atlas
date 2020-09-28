@@ -24,7 +24,7 @@ import (
 	"strings"
 	"time"
 
-	netbox_dcim "github.com/hosting-de-labs/go-netbox/netbox/client/dcim"
+	netbox_dcim "github.com/netbox-community/go-netbox/netbox/client/dcim"
 	"github.com/sapcc/atlas/pkg/config"
 	"github.com/sapcc/atlas/pkg/netbox"
 	"github.com/sapcc/atlas/pkg/writer"
@@ -208,7 +208,7 @@ func (d *IronicDiscovery) parseServiceNodes() (tgroups []*targetgroup.Group, err
 		if err != nil {
 			return tgroups, err
 		}
-		ips, err := d.netbox.ManagementIPs(dev.ID)
+		ips, err := d.netbox.ManagementIPs(strconv.FormatInt(dev.ID, 10))
 		for _, ip := range ips {
 			tgroup, err := d.createNodeGroup(node, ip)
 			if err != nil {

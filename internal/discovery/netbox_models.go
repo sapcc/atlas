@@ -1,8 +1,8 @@
 package discovery
 
 import (
-	ndcim "github.com/hosting-de-labs/go-netbox/netbox/client/dcim"
-	virt "github.com/hosting-de-labs/go-netbox/netbox/client/virtualization"
+	ndcim "github.com/netbox-community/go-netbox/netbox/client/dcim"
+	virt "github.com/netbox-community/go-netbox/netbox/client/virtualization"
 )
 
 const (
