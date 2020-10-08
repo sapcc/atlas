@@ -17,6 +17,7 @@
 package netbox
 
 import (
+	"context"
 	"fmt"
 	"net"
 	"strconv"
@@ -55,6 +56,7 @@ func New(host, token string) (*Netbox, error) {
 func (nb *Netbox) Sites(region string) ([]models.Site, error) {
 	result := make([]models.Site, 0)
 	params := dcim.NewDcimSitesListParams()
+	params.WithContext(context.Background())
 	params.Region = &region
 	limit := int64(50)
 	params.Limit = &limit
@@ -84,6 +86,7 @@ func (nb *Netbox) Sites(region string) ([]models.Site, error) {
 func (nb *Netbox) Racks(role string, siteID string) ([]models.Rack, error) {
 	result := make([]models.Rack, 0)
 	params := dcim.NewDcimRacksListParams()
+	params.WithContext(context.Background())
 	if role != "" {
 		params.Role = &role
 	}
@@ -119,6 +122,7 @@ func (nb *Netbox) Racks(role string, siteID string) ([]models.Rack, error) {
 func (nb *Netbox) Servers(rackID string) ([]models.DeviceWithConfigContext, error) {
 	result := make([]models.DeviceWithConfigContext, 0)
 	params := dcim.NewDcimDevicesListParams()
+	params.WithContext(context.Background())
 	params.RackID = &rackID
 	role := "server"
 	params.Role = &role
@@ -155,6 +159,7 @@ func (nb *Netbox) DevicesByRegion(query, manufacturer, region, status string) (r
 	params.WithRegion(&region)
 	params.WithManufacturer(&manufacturer)
 	params.WithStatus(&status)
+	params.WithContext(context.Background())
 	limit := int64(100)
 	params.WithLimit(&limit)
 	for {
@@ -184,6 +189,7 @@ func (nb *Netbox) DevicesByParams(params dcim.DcimDevicesListParams) (res []mode
 	limit := int64(100)
 	params.WithLimit(&limit)
 	params.WithTimeout(30 * time.Second)
+	params.WithContext(context.Background())
 
 	for {
 		offset := int64(0)
@@ -209,7 +215,9 @@ func (nb *Netbox) DevicesByParams(params dcim.DcimDevicesListParams) (res []mode
 func (nb *Netbox) DeviceByParams(params dcim.DcimDevicesListParams) (res models.DeviceWithConfigContext, err error) {
 	limit := int64(1)
 	params.WithLimit(&limit)
+	params.WithContext(context.Background())
 	params.WithTimeout(30 * time.Second)
+	params.WithContext(context.Background())
 
 	list, err := nb.client.Dcim.DcimDevicesList(&params, nil)
 	if err != nil {
@@ -228,6 +236,7 @@ func (nb *Netbox) VMsByParams(params virtualization.VirtualizationVirtualMachine
 	params.WithTimeout(30 * time.Second)
 	limit := int64(100)
 	params.WithLimit(&limit)
+	params.WithContext(context.Background())
 	for {
 		offset := int64(0)
 		if params.Offset != nil {
@@ -253,6 +262,7 @@ func (nb *Netbox) VMsByTag(query, status, tag string) (res []models.VirtualMachi
 	res = make([]models.VirtualMachineWithConfigContext, 0)
 	params := virtualization.NewVirtualizationVirtualMachinesListParams()
 	params.WithQ(&query)
+	params.WithContext(context.Background())
 	params.WithStatus(&status)
 	params.WithTag(&tag)
 	limit := int64(100)
@@ -308,6 +318,7 @@ func (nb *Netbox) Interface(deviceID string, interfaceName string) (*models.Inte
 	params := dcim.NewDcimInterfacesListParams()
 	params.DeviceID = &deviceID
 	params.Name = &interfaceName
+	params.WithContext(context.Background())
 
 	limit := int64(1)
 	params.Limit = &limit
@@ -333,6 +344,7 @@ func (nb *Netbox) MgmtInterface(deviceID string, mgmtOnly bool) ([]*models.Inter
 	params := dcim.NewDcimInterfacesListParams()
 	params.DeviceID = &deviceID
 	params.MgmtOnly = &mgmtOnlyString
+	params.WithContext(context.Background())
 
 	limit := int64(2)
 	params.Limit = &limit
@@ -351,6 +363,7 @@ func (nb *Netbox) IPAddressByDeviceAndIntefrace(deviceID string, interfaceID str
 	params := ipam.NewIpamIPAddressesListParams()
 	params.DeviceID = &deviceID
 	params.InterfaceID = &interfaceID
+	params.WithContext(context.Background())
 
 	limit := int64(1)
 	params.Limit = &limit
@@ -373,6 +386,7 @@ func (nb *Netbox) IPAddressByDeviceAndIntefrace(deviceID string, interfaceID str
 // IPAddress retrieves the IPAddress by its ID
 func (nb *Netbox) IPAddress(id int64) (*models.IPAddress, error) {
 	params := ipam.NewIpamIPAddressesListParams()
+	params.WithContext(context.Background())
 	ids := fmt.Sprintf("%d", id)
 	params.IDn = &ids
 	limit := int64(1)
@@ -454,6 +468,7 @@ func (nb *Netbox) ActiveDevicesByCustomParameters(query string, params *dcim.Dci
 	limit := int64(100)
 	params.WithStatus(&activeStatus)
 	params.WithLimit(&limit)
+	params.WithContext(context.Background())
 	for {
 		offset := int64(0)
 		if params.Offset != nil {
