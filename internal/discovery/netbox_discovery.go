@@ -3,7 +3,7 @@ package discovery
 import (
 	"context"
 	"errors"
-	"fmt"	
+	"fmt"
 	"math/rand"
 	"strconv"
 	"strings"
@@ -35,12 +35,14 @@ type (
 		status          *Status
 		outputFile      string
 		cfg             netboxConfig
+		rateLimiter     *time.Ticker
 	}
 
 	netboxConfig struct {
 		RefreshInterval int            `yaml:"refresh_interval"`
 		NetboxHost      string         `yaml:"netbox_host"`
 		NetboxAPIToken  string         `yaml:"netbox_api_token"`
+		RateLimiter     time.Duration  `yaml:"rate_limit"`
 		TargetsFileName string         `yaml:"targets_file_name"`
 		DCIM            dcim           `yaml:"dcim"`
 		Virtualization  virtualization `yaml:"virtualization"`
@@ -101,7 +103,9 @@ func NewNetboxDiscovery(disc interface{}, ctx context.Context, opts config.Optio
 func (sd *NetboxDiscovery) Run(ctx context.Context, ch chan<- []*targetgroup.Group) {
 	for c := time.Tick(time.Duration(sd.refreshInterval) * time.Second); ; {
 		level.Debug(log.With(sd.logger, "component", "NetboxDiscovery")).Log("debug", "Loading Netbox data")
-		tgs, err := sd.getData()
+		sd.rateLimiter = time.NewTicker(sd.cfg.RateLimiter * time.Millisecond)
+		tgs, err := sd.loadData()
+		sd.rateLimiter.Stop()
 		if err == nil {
 			level.Debug(log.With(sd.logger, "component", "NetboxDiscovery")).Log("debug", "netbox data loaded")
 			sd.status.Lock()
@@ -146,7 +150,7 @@ func (sd *NetboxDiscovery) Run(ctx context.Context, ch chan<- []*targetgroup.Gro
 	}
 }
 
-func (sd *NetboxDiscovery) getData() (tgroups []*targetgroup.Group, err error) {
+func (sd *NetboxDiscovery) loadData() (tgroups []*targetgroup.Group, err error) {
 	groupCh := make(chan []*targetgroup.Group, 0)
 	var eg errgroup.Group
 	for _, dcim := range sd.cfg.DCIM.Devices {
@@ -190,6 +194,9 @@ func (sd *NetboxDiscovery) loadDcimDevices(d dcimDevice, groupsCh chan<- []*targ
 	}
 	wg.Add(len(dcims))
 	for _, dv := range dcims {
+		if sd.cfg.RateLimiter > 0 {
+			<-sd.rateLimiter.C
+		}
 		go sd.createGroups(d.CustomLabels, d.MetricsLabel, d.Target, dv, &wg, groupCh)
 	}
 	go func() {
@@ -215,6 +222,9 @@ func (sd *NetboxDiscovery) loadVirtualizationVMs(d virtualizationVM, groupsCh ch
 	}
 	wg.Add(len(vms))
 	for _, vm := range vms {
+		if sd.cfg.RateLimiter > 0 {
+			<-sd.rateLimiter.C
+		}
 		go sd.createGroups(d.CustomLabels, d.MetricsLabel, d.Target, vm, &wg, groupCh)
 	}
 	go func() {
