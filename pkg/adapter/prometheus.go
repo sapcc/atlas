@@ -104,9 +104,9 @@ func (p *Prom) generateTargetGroups(allTargetGroups []*targetgroup.Group) error 
 }
 
 func (p *Prom) writeOutput() error {
-	fmt.Println(len(p.groups))
 	arr := mapToArray(p.groups)
-	b, _ := json.MarshalIndent(arr, "", "    ")
+	//b, _ := json.MarshalIndent(arr, "", "")
+	b, _ := json.Marshal(arr)
 
 	return p.writer.Write(p.outputFileName, string(b))
 }
