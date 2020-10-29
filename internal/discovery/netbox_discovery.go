@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"math/rand"
 	"strconv"
-	"strings"
 	"sync"
 	"time"
 
@@ -78,11 +77,10 @@ func NewNetboxDiscovery(disc interface{}, ctx context.Context, opts config.Optio
 	}
 
 	var w writer.Writer
-	switch strings.ToLower(opts.WriteTo) {
-	case "configmap":
+	if cfg.ConfigmapName != "" {
 		w, err = writer.NewConfigMap(cfg.ConfigmapName, opts.NameSpace, l)
-	case "file":
-		w, err = writer.NewFile(cfg.ConfigmapName, l)
+	} else {
+		w, err = writer.NewFile(cfg.TargetsFileName, l)
 	}
 
 	a := adapter.NewPrometheus(ctx, cfg.TargetsFileName, w, l)
@@ -192,6 +190,7 @@ func (sd *NetboxDiscovery) loadDcimDevices(d dcimDevice, groupsCh chan<- []*targ
 		dout, _ := yaml.Marshal(d.DcimDevicesListParams)
 		return fmt.Errorf("Error loading devices / Query=%s: %w", string(dout), err)
 	}
+	level.Debug(log.With(sd.logger, "component", "NetboxDiscovery")).Log("debug", fmt.Sprintf("found %d dcimDevices", len(dcims)))
 	wg.Add(len(dcims))
 	for _, dv := range dcims {
 		if sd.cfg.RateLimiter > 0 {
@@ -220,6 +219,7 @@ func (sd *NetboxDiscovery) loadVirtualizationVMs(d virtualizationVM, groupsCh ch
 		dout, _ := yaml.Marshal(d)
 		return fmt.Errorf("Error loading vms %s: %w", string(dout), err)
 	}
+	level.Debug(log.With(sd.logger, "component", "NetboxDiscovery")).Log("debug", fmt.Sprintf("found %d virtualizationVM", len(vms)))
 	wg.Add(len(vms))
 	for _, vm := range vms {
 		if sd.cfg.RateLimiter > 0 {

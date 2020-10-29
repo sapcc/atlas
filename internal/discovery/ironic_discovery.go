@@ -21,7 +21,6 @@ package discovery
 import (
 	"context"
 	"strconv"
-	"strings"
 	"time"
 
 	netbox_dcim "github.com/netbox-community/go-netbox/netbox/client/dcim"
@@ -95,10 +94,9 @@ func NewIronicDiscovery(disc interface{}, ctx context.Context, opts config.Optio
 	}
 
 	var w writer.Writer
-	switch strings.ToLower(opts.WriteTo) {
-	case "configmap":
+	if cfg.ConfigmapName != "" {
 		w, err = writer.NewConfigMap(cfg.ConfigmapName, opts.NameSpace, l)
-	case "file":
+	} else {
 		w, err = writer.NewFile(cfg.ConfigmapName, l)
 	}
 

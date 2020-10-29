@@ -19,7 +19,6 @@ package config
 // Options passed via cmd line
 type Options struct {
 	LogLevel       string
-	WriteTo        string
 	Version        string
 	ConfigFilePath string
 	NameSpace      string
