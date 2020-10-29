@@ -99,11 +99,17 @@ func NewNetboxDiscovery(disc interface{}, ctx context.Context, opts config.Optio
 }
 
 func (sd *NetboxDiscovery) Run(ctx context.Context, ch chan<- []*targetgroup.Group) {
+	defer func() {
+		if sd.rateLimiter != nil {
+			sd.rateLimiter.Stop()
+		}
+	}()
 	for c := time.Tick(time.Duration(sd.refreshInterval) * time.Second); ; {
 		level.Debug(log.With(sd.logger, "component", "NetboxDiscovery")).Log("debug", "Loading Netbox data")
-		sd.rateLimiter = time.NewTicker(sd.cfg.RateLimiter * time.Millisecond)
+		if sd.cfg.RateLimiter > 0 && sd.rateLimiter == nil {
+			sd.rateLimiter = time.NewTicker(sd.cfg.RateLimiter * time.Millisecond)
+		}
 		tgs, err := sd.loadData()
-		sd.rateLimiter.Stop()
 		if err == nil {
 			level.Debug(log.With(sd.logger, "component", "NetboxDiscovery")).Log("debug", "netbox data loaded")
 			sd.status.Lock()
@@ -196,6 +202,7 @@ func (sd *NetboxDiscovery) loadDcimDevices(d dcimDevice, groupsCh chan<- []*targ
 		if sd.cfg.RateLimiter > 0 {
 			<-sd.rateLimiter.C
 		}
+
 		go sd.createGroups(d.CustomLabels, d.MetricsLabel, d.Target, dv, &wg, groupCh)
 	}
 	go func() {

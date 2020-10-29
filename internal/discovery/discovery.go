@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"html/template"
 	"strings"
-	"sync"
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
@@ -70,9 +69,7 @@ func (d discovery) getDiscoveries() []string {
 }
 
 // Start is running all enabled discovery services
-func (d discovery) Start(ctx context.Context, wg *sync.WaitGroup, cfg config.Config, opts config.Options) {
-	defer wg.Done()
-	wg.Add(1)
+func (d discovery) Start(ctx context.Context, cfg config.Config, opts config.Options) {
 	adapterList := make([]adapter.Adapter, 0)
 	discoveryList := make([]Discovery, 0)
 
