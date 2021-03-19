@@ -281,10 +281,15 @@ func (sd *NetboxDiscovery) createGroups(c map[string]string, metricsLabel string
 				model.LabelName("model"):         model.LabelValue(*dv.DeviceType.Model),
 				model.LabelName("server_id"):     model.LabelValue(id),
 				model.LabelName("role"):          model.LabelValue(*dv.DeviceRole.Slug),
-				model.LabelName("site"):          model.LabelValue(*dv.Site.Slug),
-				model.LabelName("cluster"):       model.LabelValue(*dv.Cluster.Name),
 				model.LabelName("metrics_label"): model.LabelValue(metricsLabel),
 			}
+			if dv.Site != nil && dv.Site.Slug != nil {
+				labels[model.LabelName("site")] = model.LabelValue(*dv.Site.Slug)
+			}
+			if dv.Cluster != nil && dv.Cluster.Name != nil {
+				labels[model.LabelName("cluster")] = model.LabelValue(*dv.Cluster.Name)
+			}
+
 			labels = labels.Merge(cLabels)
 
 			tgroup.Labels = labels
