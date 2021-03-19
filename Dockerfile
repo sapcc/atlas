@@ -5,7 +5,7 @@ COPY . .
 ARG VERSION
 RUN make all
 
-FROM alpine:3.9
+FROM keppel.eu-de-1.cloud.sap/ccloud-dockerhub-mirror/library/alpine:3.9
 LABEL maintainer="Stefan Hipfel <stefan.hipfel@sap.com>"
 LABEL source_repository="https://github.com/sapcc/atlas"
 
