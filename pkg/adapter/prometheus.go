@@ -115,6 +115,10 @@ func (p *Prom) GetStatus() *Status {
 	return p.Status
 }
 
+func (p *Prom) GetData() (string, error) {
+	return p.writer.GetData(p.outputFileName)
+}
+
 func (p *Prom) GetNumberOfTargetsFor(label string) (targets int) {
 	data, err := p.writer.GetData(p.outputFileName)
 	if err != nil {

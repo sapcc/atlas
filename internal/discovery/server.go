@@ -26,9 +26,29 @@ func NewServer(a []adapter.Adapter, d []Discovery, l log.Logger) *Server {
 
 func (s *Server) Start() {
 	http.Handle("/metrics", promhttp.Handler())
+	for _, d := range s.discovery {
+		http.HandleFunc("/service_discovery/"+d.GetName(), s.serviceDiscovery(d))
+	}
 	http.HandleFunc("/healthz", s.health)
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		panic(err)
+	}
+}
+
+func (s *Server) serviceDiscovery(d Discovery) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
+		data, err := d.GetAdapter().GetData()
+		if err != nil {
+			level.Error(log.With(s.logger, "component", "service_discovery")).Log("error", err.Error())
+			_, err = w.Write([]byte("[]"))
+		}
+		_, err = w.Write([]byte(data))
+		if err != nil {
+			level.Error(log.With(s.logger, "component", "service_discovery")).Log("error", err.Error())
+			_, err = w.Write([]byte("[]"))
+		}
 	}
 }
 

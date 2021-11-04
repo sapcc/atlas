@@ -97,7 +97,7 @@ func NewIronicDiscovery(disc interface{}, ctx context.Context, opts config.Optio
 	if cfg.ConfigmapName != "" {
 		w, err = writer.NewConfigMap(cfg.ConfigmapName, opts.NameSpace, l)
 	} else {
-		w, err = writer.NewFile(cfg.ConfigmapName, l)
+		w, err = writer.NewFile(cfg.TargetsFileName, l)
 	}
 
 	a := adapter.NewPrometheus(ctx, cfg.TargetsFileName, w, l)

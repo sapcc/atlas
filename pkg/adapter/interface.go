@@ -37,4 +37,5 @@ type Adapter interface {
 	GetStatus() *Status
 	Run(ctx context.Context, updates <-chan []*targetgroup.Group)
 	GetNumberOfTargetsFor(label string) int
+	GetData() (string, error)
 }
