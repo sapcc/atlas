@@ -37,8 +37,8 @@ func (s *Server) Start() {
 
 func (s *Server) serviceDiscovery(d Discovery) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
 		data, err := d.GetAdapter().GetData()
 		if err != nil {
 			level.Error(log.With(s.logger, "component", "service_discovery")).Log("error", err.Error())
