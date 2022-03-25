@@ -116,7 +116,7 @@ type VirtualMachineWithConfigContext struct {
 	// VCPUs
 	// Maximum: 32767
 	// Minimum: 0
-	Vcpus *string `json:"vcpus,omitempty"`
+	Vcpus *float64 `json:"vcpus,omitempty"`
 }
 
 // Validate validates this virtual machine with config context
