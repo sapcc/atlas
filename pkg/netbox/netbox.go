@@ -217,7 +217,6 @@ func (nb *Netbox) DeviceByParams(params dcim.DcimDevicesListParams) (res models.
 	params.WithLimit(&limit)
 	params.WithContext(context.Background())
 	params.WithTimeout(30 * time.Second)
-	params.WithContext(context.Background())
 
 	list, err := nb.client.Dcim.DcimDevicesList(&params, nil)
 	if err != nil {

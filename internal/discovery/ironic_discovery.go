@@ -20,11 +20,13 @@ package discovery
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 	"time"
 
 	netbox_dcim "github.com/netbox-community/go-netbox/netbox/client/dcim"
 	"github.com/sapcc/atlas/pkg/config"
+	"github.com/sapcc/atlas/pkg/errgroup"
 	"github.com/sapcc/atlas/pkg/netbox"
 	"github.com/sapcc/atlas/pkg/writer"
 
@@ -183,40 +185,62 @@ func (d *IronicDiscovery) parseServiceNodes() (tgroups []*targetgroup.Group, err
 		level.Info(log.With(d.logger, "component", "IronicDiscovery")).Log("info", "no ironic nodes found")
 	}
 
-	tgroups = make([]*targetgroup.Group, 0, len(nodes))
+	level.Debug(log.With(d.logger, "component", "IronicDiscovery")).Log("debug", fmt.Sprintf("found %d nodes", len(nodes)))
 
+	groupCh := make(chan []*targetgroup.Group, 0)
+	var eg errgroup.Group
 	for _, node := range nodes {
-		if node.ProvisionStateEnroll() {
-			continue
-		}
+		func(node internalClients.IronicNode, groupCh chan<- []*targetgroup.Group) {
+			eg.Go(func() error {
+				var tgs []*targetgroup.Group
+				if node.ProvisionStateEnroll() {
+					return nil
+				}
 
-		if d.mgmtInterfaceIPs == nil || !*d.mgmtInterfaceIPs {
-			tgroup, err := d.createNodeGroup(node, node.DriverInfo.IpmiAddress)
-			if err != nil {
-				return tgroups, err
-			}
-			tgroups = append(tgroups, tgroup)
-			continue
-		}
+				if d.mgmtInterfaceIPs == nil || !*d.mgmtInterfaceIPs {
+					tgroup, err := d.createNodeGroup(node, node.DriverInfo.IpmiAddress)
+					if err != nil {
+						return err
+					}
+					tgs = append(tgs, tgroup)
+					groupCh <- tgs
+					return nil
+				}
 
-		params := netbox_dcim.DcimDevicesListParams{
-			Name: &node.Name,
-		}
-		dev, err := d.netbox.DeviceByParams(params)
-		if err != nil {
-			return tgroups, err
-		}
-		ips, err := d.netbox.ManagementIPs(strconv.FormatInt(dev.ID, 10))
-		for _, ip := range ips {
-			tgroup, err := d.createNodeGroup(node, ip)
-			if err != nil {
-				return tgroups, err
-			}
-			tgroups = append(tgroups, tgroup)
-		}
+				params := netbox_dcim.DcimDevicesListParams{
+					Name: &node.Name,
+				}
+				dev, err := d.netbox.DeviceByParams(params)
+				if err != nil {
+					return err
+				}
 
+				ips, err := d.netbox.ManagementIPs(strconv.FormatInt(dev.ID, 10))
+				for _, ip := range ips {
+					tgroup, err := d.createNodeGroup(node, ip)
+					if err != nil {
+						return err
+					}
+					tgs = append(tgs, tgroup)
+				}
+				level.Debug(log.With(d.logger, "component", "IronicDiscovery")).Log("debug", fmt.Sprintf("finished node: %s", node.Name))
+				groupCh <- tgs
+				return nil
+			})
+		}(node, groupCh)
 	}
-	return tgroups, nil
+	go func() error {
+		if err = eg.Wait(); err != nil {
+			close(groupCh)
+			return err
+		}
+		close(groupCh)
+		return nil
+	}()
+	for groups := range groupCh {
+		tgroups = append(tgroups, groups...)
+	}
+	return tgroups, err
 }
 
 func (d *IronicDiscovery) createNodeGroup(node internalClients.IronicNode, ipAddress string) (tgroup *targetgroup.Group, err error) {
