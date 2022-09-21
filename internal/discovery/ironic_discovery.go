@@ -43,11 +43,13 @@ import (
 
 type (
 	IronicDiscovery struct {
+		cfg              ironicConfig
 		adapter          adapter.Adapter
 		netbox           *netbox.Netbox
 		providerClient   *gophercloud.ProviderClient
 		ironicClient     *clients.IronicClient
 		refreshInterval  int
+		rateLimiter      *time.Ticker
 		logger           log.Logger
 		status           *Status
 		outputFile       string
@@ -59,6 +61,7 @@ type (
 		NetboxAPIToken   string          `yaml:"netbox_api_token"`
 		MgmtInterfaceIPs *bool           `yaml:"mgmt_interface_ips"`
 		RefreshInterval  int             `yaml:"refresh_interval"`
+		RateLimiter      time.Duration   `yaml:"rate_limit"`
 		TargetsFileName  string          `yaml:"targets_file_name"`
 		OpenstackAuth    auth.OSProvider `yaml:"os_auth"`
 		MetricsLabel     string          `yaml:"metrics_label"`
@@ -109,6 +112,7 @@ func NewIronicDiscovery(disc interface{}, ctx context.Context, opts config.Optio
 		providerClient:   p,
 		ironicClient:     i,
 		refreshInterval:  cfg.RefreshInterval,
+		cfg:              cfg,
 		metricsLabel:     cfg.MetricsLabel,
 		logger:           l,
 		status:           &Status{Up: false, Targets: make(map[string]int)},
@@ -119,7 +123,15 @@ func NewIronicDiscovery(disc interface{}, ctx context.Context, opts config.Optio
 }
 
 func (d *IronicDiscovery) Run(ctx context.Context, ch chan<- []*targetgroup.Group) {
+	defer func() {
+		if d.rateLimiter != nil {
+			d.rateLimiter.Stop()
+		}
+	}()
 	for c := time.Tick(time.Duration(d.refreshInterval) * time.Second); ; {
+		if d.cfg.RateLimiter > 0 && d.rateLimiter == nil {
+			d.rateLimiter = time.NewTicker(d.cfg.RateLimiter * time.Millisecond)
+		}
 		tgs, err := d.parseServiceNodes()
 		d.setAdditionalLabels(tgs)
 		if err == nil {
@@ -190,6 +202,9 @@ func (d *IronicDiscovery) parseServiceNodes() (tgroups []*targetgroup.Group, err
 	groupCh := make(chan []*targetgroup.Group, 0)
 	var eg errgroup.Group
 	for _, node := range nodes {
+		if d.cfg.RateLimiter > 0 {
+			<-d.rateLimiter.C
+		}
 		func(node internalClients.IronicNode, groupCh chan<- []*targetgroup.Group) {
 			eg.Go(func() error {
 				var tgs []*targetgroup.Group
