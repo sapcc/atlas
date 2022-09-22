@@ -497,7 +497,9 @@ func client(host, token string) (*netboxclient.NetBoxAPI, error) {
 	}
 
 	transport := runtimeclient.NewWithClient(host, netboxclient.DefaultBasePath, []string{"https"}, tlsClient)
-	transport.DefaultAuthentication = runtimeclient.APIKeyAuth("Authorization", "header", fmt.Sprintf("Token %v", token))
+	if token != "" {
+		transport.DefaultAuthentication = runtimeclient.APIKeyAuth("Authorization", "header", fmt.Sprintf("Token %v", token))
+	}
 
 	c := netboxclient.New(transport, nil)
 
