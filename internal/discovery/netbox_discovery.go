@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
-	"net"
 	"strconv"
 	"sync"
 	"time"
@@ -344,22 +343,7 @@ func (sd *NetboxDiscovery) getDeviceIP(t int, id int64, i *models.NestedIPAddres
 		ip, err = sd.netbox.GetNestedDeviceIP(i)
 		ips = append(ips, ip)
 	case loopback10:
-		var intf *models.Interface
-		var ipAddr *models.IPAddress
-		intf, err = sd.netbox.Interface(strconv.FormatInt(id, 10), "Loopback10")
-		if err != nil {
-			return ips, fmt.Errorf("Error getting ip from device: %d. Error: %s", id, err.Error())
-		}
-		ipAddr, err = sd.netbox.IPAddressByDeviceAndIntefrace(strconv.FormatInt(id, 10), strconv.FormatInt(intf.ID, 10))
-		if err != nil {
-			return ips, fmt.Errorf("Error getting ip from device: %d. Error: %s", id, err.Error())
-		}
-		var ip net.IP
-		ip, _, err := net.ParseCIDR(*ipAddr.Address)
-		if err != nil {
-			return ips, fmt.Errorf("Error getting ip from device: %d. Error: %s", id, err.Error())
-		}
-		ips = append(ips, ip.String())
+		ips, err = sd.netbox.DeviceInterfaceNameIPs("Loopback10", strconv.FormatInt(id, 10))
 	default:
 		return ips, fmt.Errorf("Error getting ip from device: %d. Error: %s", id, "unknown target in config")
 	}

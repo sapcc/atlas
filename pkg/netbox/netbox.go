@@ -312,6 +312,28 @@ func (nb *Netbox) ManagementIPs(serverID string) (ips []string, err error) {
 	return
 }
 
+// DeviceInterfaceNameIPs retrieves the IP of the named interface for server
+func (nb *Netbox) DeviceInterfaceNameIPs(name, deviceID string) (ips []string, err error) {
+	var intf *models.Interface
+	var ipAddr *models.IPAddress
+	intf, err = nb.Interface(deviceID, name)
+	if err != nil {
+		return ips, fmt.Errorf("Error getting interface from device: %s. Error: %s", deviceID, err.Error())
+	}
+	ipAddr, err = nb.IPAddressByDeviceAndIntefrace(deviceID, strconv.FormatInt(intf.ID, 10))
+	if err != nil {
+		return ips, fmt.Errorf("Error getting ip from device interface: %s. Error: %s", deviceID, err.Error())
+	}
+	var ip net.IP
+	ip, _, err = net.ParseCIDR(*ipAddr.Address)
+	if err != nil {
+		return ips, fmt.Errorf("Error parsing ip from device: %s. Error: %s", deviceID, err.Error())
+	}
+	ips = append(ips, ip.String())
+
+	return
+}
+
 // Interface retrieves the interface on the device
 func (nb *Netbox) Interface(deviceID string, interfaceName string) (*models.Interface, error) {
 	params := dcim.NewDcimInterfacesListParams()
@@ -372,10 +394,10 @@ func (nb *Netbox) IPAddressByDeviceAndIntefrace(deviceID string, interfaceID str
 	}
 
 	if *list.Payload.Count < 1 {
-		return nil, fmt.Errorf(fmt.Sprintf("no ip found for device %d and interface %d", deviceID, interfaceID))
+		return nil, fmt.Errorf(fmt.Sprintf("no ip found for device %s and interface %s", deviceID, interfaceID))
 	}
 	if *list.Payload.Count > 1 {
-		return nil, fmt.Errorf(fmt.Sprintf("more than 1 ip found for device %d and interface %d", deviceID, interfaceID))
+		return nil, fmt.Errorf(fmt.Sprintf("more than 1 ip found for device %s and interface %s", deviceID, interfaceID))
 	}
 
 	return list.Payload.Results[0], nil
