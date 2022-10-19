@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
+	"net"
 	"strconv"
 	"sync"
 	"time"
@@ -353,7 +354,12 @@ func (sd *NetboxDiscovery) getDeviceIP(t int, id int64, i *models.NestedIPAddres
 		if err != nil {
 			return ips, fmt.Errorf("Error getting ip from device: %d. Error: %s", id, err.Error())
 		}
-		ips = append(ips, *ipAddr.Address)
+		var ip net.IP
+		ip, _, err := net.ParseCIDR(*ipAddr.Address)
+		if err != nil {
+			return ips, fmt.Errorf("Error getting ip from device: %d. Error: %s", id, err.Error())
+		}
+		ips = append(ips, ip.String())
 	default:
 		return ips, fmt.Errorf("Error getting ip from device: %d. Error: %s", id, "unknown target in config")
 	}
