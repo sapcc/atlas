@@ -300,7 +300,7 @@ func (nb *Netbox) ManagementIPs(serverID string) (ips []string, err error) {
 			return ips, err
 		}
 		if managementIPAddress.Address == nil {
-			return ips, fmt.Errorf("no ip address for device %d", serverID)
+			return ips, fmt.Errorf("no ip address for device %s", serverID)
 		}
 		ip, _, err := net.ParseCIDR(*managementIPAddress.Address)
 
@@ -327,10 +327,10 @@ func (nb *Netbox) Interface(deviceID string, interfaceName string) (*models.Inte
 		return nil, err
 	}
 	if *list.Payload.Count < 1 {
-		return nil, fmt.Errorf("no %s interface found for device %d", interfaceName, deviceID)
+		return nil, fmt.Errorf("no %s interface found for device %s", interfaceName, deviceID)
 	}
 	if *list.Payload.Count > 1 {
-		return nil, fmt.Errorf("more than 1 %s interface found for device %d", interfaceName, deviceID)
+		return nil, fmt.Errorf("more than 1 %s interface found for device %s", interfaceName, deviceID)
 	}
 
 	return list.Payload.Results[0], nil

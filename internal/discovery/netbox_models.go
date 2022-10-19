@@ -8,6 +8,7 @@ import (
 const (
 	primaryIP    int = 1
 	managementIP int = 2
+	loopback10   int = 3
 )
 
 type (
