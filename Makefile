@@ -5,7 +5,7 @@ GOOS    ?= $(shell go env | grep GOOS | cut -d'"' -f2)
 BINARY  := atlas
 
 LDFLAGS := -X github.com/sapcc/atlas/pkg/atlas.VERSION=$(VERSION)
-GOFLAGS := -ldflags "$(LDFLAGS)"
+GOFLAGS := -mod vendor -ldflags "-s -w $(LDFLAGS)"
 
 SRCDIRS  := cmd pkg internal
 PACKAGES := $(shell find $(SRCDIRS) -type d)
@@ -16,9 +16,9 @@ GOFILES  := $(wildcard $(GOFILES))
 all: bin/$(GOOS)/$(BINARY)
 
 bin/%/$(BINARY): $(GOFILES) Makefile
-	GOOS=$* GOARCH=amd64 go build $(GOFLAGS) -v -i -o bin/$*/$(BINARY) ./cmd/atlas
+	GOOS=$* GOARCH=amd64 go build $(GOFLAGS) -o bin/$*/$(BINARY) ./cmd/atlas
 
-build: 
+build:
 	docker build -t $(IMAGE):$(VERSION) .
 
 push: build
