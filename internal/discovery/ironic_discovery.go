@@ -75,7 +75,7 @@ func init() {
 	Register(ironicDiscovery, NewIronicDiscovery)
 }
 
-//NewIronicDiscovery creates a new Ironic Discovery
+// NewIronicDiscovery creates a new Ironic Discovery
 func NewIronicDiscovery(disc interface{}, ctx context.Context, opts config.Options, l log.Logger) (d Discovery, err error) {
 	var cfg ironicConfig
 	if err := UnmarshalHandler(disc, &cfg, nil); err != nil {

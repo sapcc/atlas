@@ -136,10 +136,10 @@ func (c IronicClient) GetNodes() ([]IronicNode, error) {
 ////////////////////////////////////////////////////////////////////////////////
 // OpenStack is being inconsistent with itself again
 
-//For fields that are sometimes missing, sometimes an integer, sometimes a string.
+// For fields that are sometimes missing, sometimes an integer, sometimes a string.
 type veryFlexibleUint64 uint64
 
-//UnmarshalJSON implements the json.Unmarshaler interface.
+// UnmarshalJSON implements the json.Unmarshaler interface.
 func (value *veryFlexibleUint64) UnmarshalJSON(buf []byte) error {
 	if string(buf) == "null" {
 		*value = 0

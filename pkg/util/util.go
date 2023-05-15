@@ -46,16 +46,16 @@ var DefaultBackoff = wait.Backoff{
 // write. Callers should preserve previous executions if they wish to retry changes. It performs an
 // exponential backoff.
 //
-//     var pod *api.Pod
-//     err := RetryOnConflict(DefaultBackoff, func() (err error) {
-//       pod, err = c.Pods("mynamespace").UpdateStatus(podStatus)
-//       return
-//     })
-//     if err != nil {
-//       // may be conflict if max retries were hit
-//       return err
-//     }
-//     ...
+//	var pod *api.Pod
+//	err := RetryOnConflict(DefaultBackoff, func() (err error) {
+//	  pod, err = c.Pods("mynamespace").UpdateStatus(podStatus)
+//	  return
+//	})
+//	if err != nil {
+//	  // may be conflict if max retries were hit
+//	  return err
+//	}
+//	...
 //
 // TODO: Make Backoff an interface?
 func RetryOnConflict(backoff wait.Backoff, fn func() error) error {
