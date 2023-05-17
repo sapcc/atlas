@@ -16,14 +16,14 @@ discoveries:
         netbox_api_token: netbox_api_token
         dcim:
           devices:
-            - custom_labels: 
+            - custom_labels:
                 job: "snmp"
               target: 1
               role: "aci-leaf"
               manufacturer: "cisco"
               region: "eu-west"
               status: "1"
-            - custom_labels: 
+            - custom_labels:
                 job: "snmp2"
               role: "aci-spine"
               target: 1

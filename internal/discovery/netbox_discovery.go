@@ -59,7 +59,7 @@ func init() {
 	Register(netboxDiscovery, NewNetboxDiscovery)
 }
 
-//NewNetboxDiscovery creates
+// NewNetboxDiscovery creates
 func NewNetboxDiscovery(disc interface{}, ctx context.Context, opts config.Options, l log.Logger) (d Discovery, err error) {
 	var cfg netboxConfig
 	configValues := configValues{Region: opts.Region}

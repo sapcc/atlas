@@ -151,7 +151,7 @@ func (nb *Netbox) Servers(rackID string) ([]models.DeviceWithConfigContext, erro
 
 }
 
-//DevicesByRegion retrieves devices by region, manufacturer and status
+// DevicesByRegion retrieves devices by region, manufacturer and status
 func (nb *Netbox) DevicesByRegion(query, manufacturer, region, status string) (res []models.DeviceWithConfigContext, err error) {
 	res = make([]models.DeviceWithConfigContext, 0)
 	params := dcim.NewDcimDevicesListParams()
@@ -183,7 +183,7 @@ func (nb *Netbox) DevicesByRegion(query, manufacturer, region, status string) (r
 	return res, err
 }
 
-//DevicesByRegion retrieves devices by region, manufacturer and status
+// DevicesByRegion retrieves devices by region, manufacturer and status
 func (nb *Netbox) DevicesByParams(params dcim.DcimDevicesListParams) (res []models.DeviceWithConfigContext, err error) {
 	res = make([]models.DeviceWithConfigContext, 0)
 	limit := int64(100)
@@ -211,7 +211,7 @@ func (nb *Netbox) DevicesByParams(params dcim.DcimDevicesListParams) (res []mode
 	return res, err
 }
 
-//DevicesByRegion retrieves devices by region, manufacturer and status
+// DevicesByRegion retrieves devices by region, manufacturer and status
 func (nb *Netbox) DeviceByParams(params dcim.DcimDevicesListParams) (res models.DeviceWithConfigContext, err error) {
 	limit := int64(1)
 	params.WithLimit(&limit)
@@ -229,7 +229,7 @@ func (nb *Netbox) DeviceByParams(params dcim.DcimDevicesListParams) (res models.
 	return res, err
 }
 
-//VMsByTag retrieves devices by region, manufacturer and status
+// VMsByTag retrieves devices by region, manufacturer and status
 func (nb *Netbox) VMsByParams(params virtualization.VirtualizationVirtualMachinesListParams) (res []models.VirtualMachineWithConfigContext, err error) {
 	res = make([]models.VirtualMachineWithConfigContext, 0)
 	params.WithTimeout(30 * time.Second)
@@ -256,7 +256,7 @@ func (nb *Netbox) VMsByParams(params virtualization.VirtualizationVirtualMachine
 	return res, err
 }
 
-//VMsByTag retrieves devices by region, manufacturer and status
+// VMsByTag retrieves devices by region, manufacturer and status
 func (nb *Netbox) VMsByTag(query, status, tag string) (res []models.VirtualMachineWithConfigContext, err error) {
 	res = make([]models.VirtualMachineWithConfigContext, 0)
 	params := virtualization.NewVirtualizationVirtualMachinesListParams()
